@@ -1,0 +1,84 @@
+{% macro talk_block(talks, class) %}
+{% for item in talks %}
+- {{ item.year }}{% if item.title %}, “{{ item.title }}”{%- endif -%}
+{%- if item.event %}, {{ item.event }}{% endif -%}
+{%- if item.where %}, {{ item.where }}{% endif -%}
+{%- if item.note %} [{{ item.note }}]{% endif %}
+
+{% endfor %}
+{% endmacro -%}
+
+{%- macro pub_block(types) -%}
+{%- for item in references|selectattr("type", "in", types)|sortrefs -%}
+- {{ item|reftomd }}{% if item.DOI %}, doi:{{ item.DOI }}{% endif %}
+
+{% endfor -%}
+{%- endmacro -%}
+
+Dr. Jan Hermann
+===============
+
+Employment
+----------
+
+{% for item in employment %}
+{% for position in item.positions %}
+- {{ position.date|dateformat }}, {{ position.title }}, {{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+Education
+---------
+
+{% for item in education %}
+{% for degree in item.degrees %}
+- {{ degree.date|dateformat }}, {{ degree.degree }}, {{ degree.field }}{% if degree.summa %}, summa cum laude{% endif %}, {{ item.university }}{% if item.location %}, {{ item.location }}{% endif %}
+
+{% endfor %}
+{% endfor %}
+
+Awards
+------
+
+{% for item in awards %}
+- {{ item.date|dateformat }}, {{ item.title }}{%- if item.institution %}, {{ item.institution}}{% endif %}{% if item.note %} [{{ item.note }}]{% endif %}
+
+{% endfor %}
+
+Funding
+-------
+
+{% for item in funding %}
+- {{ item.date|dateformat }}, {{ item.title }}{% if item.subtitle %}
+    {{ item.subtitle }}{% endif %}
+
+{% endfor %}
+
+Activities
+----------
+
+{% for item in activity %}
+- {{ item }}
+{% endfor %}
+
+Mentorship
+----------
+
+{% for item in mentorship %}
+- {{ item.date|dateformat }}, {{ item.who }}
+{% endfor %}
+
+Invited talks
+-------------
+
+{{ talk_block(presentations.invited, "cvblock wide") }}
+Publications
+------------
+
+Research articles
+
+{{ pub_block(["article-journal", "article"]) }}
+Book chapters
+
+{{ pub_block(["chapter"]) }}

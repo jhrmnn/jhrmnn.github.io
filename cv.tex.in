@@ -1,0 +1,359 @@
+% vim: set ft=tex
+\documentclass[10pt]{article}
+
+\usepackage[no-math]{fontspec}
+\usepackage[a4paper,left=0cm,right=2cm,top=3.75cm,bottom=1.5cm]{geometry}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{hanging}
+\usepackage{titlesec}
+\usepackage{everypage}
+\usepackage[normalem]{ulem}
+\usepackage{svg}
+\svgpath{{assets/}}
+
+\setmainfont{Baskerville10Pro}[
+  Path = fonts/Baskerville 10 Pro/,
+  Ligatures = TeX,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*-Medium},
+  FontFace = {sb}{it}{*-MediumItalic},
+]
+\newfontfamily\largefont{Baskerville120Pro}[
+  Path = fonts/Baskerville 120 Pro/,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*Medium},
+  FontFace = {sb}{it}{*Medium-Italic},
+]
+\setmonofont{iosevka-fixed-curly-slab}[
+  Path = fonts/Iosevka/,
+  Extension = .ttf,  % chktex 26
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Scale = MatchLowercase,
+]
+\DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
+\DeclareTextFontCommand{\textsb}{\sbseries}
+
+\setlist{nosep,leftmargin=0.5cm,labelsep=0.35cm}
+
+\pagestyle{empty}
+
+\setcounter{secnumdepth}{0}
+\titleformat{\section}{\largefont\fontsize{16pt}{20pt}%
+    \selectfont\color{black!65}\vspace{0.8em}}{\thesection}{}{}
+\titlespacing*{\section}{5cm}{0pt}{1em}
+\titleformat{\subsection}{\large\sbseries\vspace{0.4em}}{\thesubsection}{}{}
+\titlespacing*{\subsection}{5cm}{0pt}{0.3em}
+
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+
+\setlength{\ULdepth}{1.8pt}
+
+\makeatletter
+\def\SmallDotuline#1{\bgroup%
+  \UL@setULdepth%
+  \markoverwith{\begingroup
+     \advance\ULdepth0.08ex 
+     \lower\ULdepth\hbox{\scalebox{0.4}{.}\kern#1}%
+     \endgroup}%
+  \ULon}
+\makeatother
+
+\urlstyle{same}
+\newcommand{\udot}[1]{\SmallDotuline{0pt}{#1}}
+\let\oldurl\url%
+\renewcommand{\url}[1]{\udot{\oldurl{#1}}}
+\let\oldhref\href%
+\renewcommand{\href}[2]{\oldhref{#1}{\udot{#2}}}
+
+\newenvironment{cvblock}{%
+  \setlength{\tabcolsep}{0pt}
+  \begin{longtable}{p{4.5cm}p{0.5cm}p{14.5cm}}}{%
+  \end{longtable}}
+
+\newenvironment{cvblock2}{%
+  \setlength{\tabcolsep}{0pt}
+  \begin{longtable}{p{4.5cm}p{0.5cm}p{13.5cm}p{1.0cm}}}{%
+  \end{longtable}}
+
+\AddEverypageHook{
+\begin{tikzpicture}[overlay,remember picture]
+     \draw [draw=none, fill=black!30]
+    	(current page.north west)
+    	rectangle
+    	([xshift=4.5cm] current page.south west);
+\end{tikzpicture}
+}
+
+\renewcommand{\strong}[1]{\textsb{#1}}
+
+\hyphenation{Schrö-ding-er}
+
+<+ macro talk_block(talks) +>  % chktex 36
+{\footnotesize
+\begin{cvblock}
+<+ for year, items in talks|groupby("year")|sort(reverse=True) +>  % chktex 18 chktex 36
+<+ for item in items +>
+\hfill\color{white}<+ if loop.first +><< year|dateformat >><+ else +>$\bullet$\hspace{0.6em}<+ endif +> &&
+\hangpara{1.5em}{1}<+ if item.title +>``
+<+- if item.url +>\href{<< item.url >>}{<< item.title >>}<+ else +><< item.title >><+ endif +>''
+<+- endif -+>
+<+ if item.event +><+ if item.title +>, <+ endif +><+ if item.event_url +>\href{<< item.event_url >>}{<< item.event >>}<+ else +><< item.event >><+ endif +><+ endif +>
+<+- if item.where +><+ if item.title or item.event +>, <+ endif +><< item.where >><+ endif +>
+<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+<+ endmacro +>
+
+<+ macro link(data) +>\href{<< data[1] >>}{<< data[0] >>}<+ endmacro +>
+
+<+ macro pub_block(types, by_year=false) +>
+{\small
+\begin{cvblock2}
+<+ for item in references|selectattr("type", "in", types)|sortrefs +>
+<+ if not loop.first +>\\<+ endif +>
+\hfill\color{white}<+ if loop.first and false +><< year|dateformat >><+ else +><+ if settings.with_stars and item.star +>{\large$\mathbf{\bigwhitestar}$}<+ else +>$\bullet$<+ endif +>\hspace{0.6em}<+ endif +> &&
+\hangpara{1.5em}{1}<< item|reftomd >> &
+\hfill<+ if item.cited_by +><< item.cited_by >><+ endif +>
+<+ endfor +>
+\end{cvblock2}}
+<+ endmacro +>
+
+\begin{document}
+
+<+ if settings.with_pic +>
+\begin{tikzpicture}[overlay,remember picture]
+    \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{profile-pic.png}};
+\end{tikzpicture}
+<+ endif +>
+%
+\vspace{-2.25cm}
+{\raggedleft%
+ {\itshape\color{black!60}
+  Arnimallee 12, 141 95 Berlin, Germany \\
+  << link((links.email.items()|list)[0]) >> \\
+  << link((links.phone.items()|list)[0]) >> \\
+  \url{https://jan.hermann.name} \\
+  ORCID\@: \href{https://orcid.org/0000-0002-2779-0749}{0000-0002-2779-0749} \\  % chktex 8 chktex 6
+ \vspace{0.6cm}
+ {\footnotesize(\href{https://jan.hermann.name/cv.pdf}{generated} on \today)}
+} \\
+ %
+ \vspace{1.0cm}
+ %
+ {\sbseries\largefont\Huge
+  \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}} \\}
+%
+\vspace{0.8cm}
+
+<+ if settings.with_statement +>
+\begin{cvblock}%
+\hfill && << statement >>
+\end{cvblock}
+<+ endif +>
+
+\section{Employment}
+
+\begin{cvblock}
+<+ for item in employment +>
+  && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
+  <+ for position in item.positions +>
+  \raggedleft{\color{white}<< position.date|dateformat >>} &&
+  << position.title >><+ if not loop.last +>\\
+  <+ endif +>
+  <+ endfor +><+ if not loop.last +>\\[6pt]
+  <+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Education}
+
+\begin{cvblock}
+<+ for item in education +>
+  && \textsb{<< item.university >>}<+ if item.location +>, << item.location >><+ endif +> \\
+  <+ for degree in item.degrees +>
+    \raggedleft{\color{white}<< degree.date|dateformat >>} &&
+    \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.summa +>, \emph{summa cum laude}<+ endif +>
+    <+ if not loop.last +>\\
+    <+ endif +>
+  <+ endfor +><+ if not loop.last +>\\[6pt]
+  <+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Secondary appointments}
+
+\begin{cvblock}
+<+ for item in secondary +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\hangpara{1.5em}{1}<< item.title >>
+<+ if item.subtitle +>\newline
+<< item.subtitle >>
+<+ endif +><+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Awards}
+
+\begin{cvblock}
+<+ for item in awards +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\textsb{<< item.title >>}<+ if item.institution +>, << item.institution >><+ endif +>
+<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\newpage
+
+\section{Funding}
+
+\begin{cvblock}
+<+ for item in funding +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\hangpara{1.5em}{1}<< item.title >>
+<+ if item.subtitle +>\newline
+<< item.subtitle >>
+<+ endif +><+ if not loop.last +>\\<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Professional activities}
+
+\begin{cvblock}
+<+ for item in activity +>
+\hfill\color{white}$\bullet$\hspace{0.6em} &&
+\hangpara{1.5em}{1}<< item >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Teaching \& mentoring}
+
+\vspace{-0.4em}
+\subsection{Professional mentorship}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in mentorship +>
+\hfill\color{white}<< item.date|dateformat >> &&
+ << item.who >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\subsection{Lectures for students}
+
+<< talk_block(lectures) >>  % chktex 36
+
+\subsection{Doctoral examinations}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in defense +>
+\hfill\color{white}<< item.date|dateformat >> &&
+ << item.who >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\section{Public outreach}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in outreach +>
+\hfill\color{white}<< item.date|dateformat >> &&
+<< item.what >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\section{Software}
+
+\begin{cvblock}
+<+ for item in software +>
+\hfill\color{white}$\bullet$\hspace{0.6em} &&
+\textbf{<< item.name >>}, << item.role >>\hfill{\itshape\small\url{<< item.url >>}<+ if item.stars +> (<< item.stars >> stars)<+ endif +>}  % chktex 6
+<+ if item.description +>\newline
+<< item.description >><+ endif +>
+<+ if not loop.last +>\\[2pt]
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Presentations}
+
+\begin{cvblock}%
+\hfill && \vspace{-\baselineskip}\begin{itemize}%
+\item Includes future presentations
+\end{itemize}\vspace{-0.7\baselineskip}
+\end{cvblock}
+
+\vspace{-0.4em}
+\subsection{Invited conference talks}
+
+<< talk_block(presentations.invited) >>  % chktex 36
+
+\subsection{Contributed conference talks}
+
+<< talk_block(presentations.contributed) >>  % chktex 36
+
+\subsection{Conference poster presentations}
+
+<< talk_block(presentations.posters) >>  % chktex 36
+
+\subsection{Invited seminars}
+
+<< talk_block(presentations.seminars) >>  % chktex 36
+
+\newpage
+
+\section{Publications}
+
+\begin{cvblock}%
+\hfill && \vspace{-\baselineskip}\begin{itemize}%
+<+ if settings.with_stars +>
+\item Most important publications marked with a star
+<+ endif +>
+\item Citation numbers (on the right) from \href{https://scholar.google.com/citations?user=5TjVq0YAAAAJ}{Google Scholar}
+\end{itemize}\vspace{-\baselineskip}
+
+\end{cvblock}
+
+\subsection{Research articles}
+
+<< pub_block(["article-journal", "article"], by_year=true) >>
+
+\subsection{Book chapters}
+
+<< pub_block(["chapter"]) >>
+
+\subsection{Theses}
+
+<< pub_block(["thesis"]) >>
+
+\end{document}

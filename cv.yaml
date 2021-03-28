@@ -1,0 +1,385 @@
+statement: |
+  My research focuses on advancing quantum chemistry through tight integration of deep learning.
+  I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
+  The goal is to push through the existing scale–accuracy tradeoff offered by traditional methods of quantum chemistry.
+links:
+  email:
+    jan.hermann@fu-berlin.de: mailto:jan.hermann@fu-berlin.de
+  phone:
+    "+49 30 838-66432": tel:+493083866432
+  chat:
+    "[matrix]": https://matrix.to/#/@jhrmnn:matrix.org
+    Gitter: https://gitter.im/jhrmnn
+  research:
+    ORCID: https://orcid.org/0000-0002-2779-0749
+    Publons: https://publons.com/researcher/1347416/jan-hermann
+  code:
+    GitHub: https://github.com/jhrmnn
+  social:
+    Twitter: https://twitter.com/jhrmnn
+  chess:
+    Lichess: https://lichess.org/@/jhrmnn
+  cycling:
+    Strava: https://www.strava.com/athletes/jhrmnn
+  books:
+    Goodreads: https://www.goodreads.com/jhrmnn
+education:
+- university: Humboldt University of Berlin
+  degrees:
+  - date: Dec 2017
+    degree: Ph.D.
+    field: Physics
+    summa: true
+- university: Charles University
+  location: Prague
+  degrees:
+  - date: Sep 2013
+    degree: M.S.
+    field: Molecular Modeling
+  - date: Sep 2011
+    degree: B.S.
+    field: Physics
+  - date: Jun 2011
+    degree: B.S.
+    field: Chemistry
+employment:
+- institution: Free University of Berlin
+  positions:
+  - date: Nov 2020-
+    title: "[BIFOLD](https://bifold.berlin) [Junior Group Leader](https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci), Department of Mathematics"
+  - date: Jan 2019-Oct 2020
+    title: Postdoctoral researcher, [**Noé** group](https://www.mi.fu-berlin.de/en/math/groups/comp-mol-bio)
+- institution: University of Luxembourg
+  positions:
+  - date: Jan-Dec 2018
+    title: Postdoctoral researcher, [**Tkatchenko** group](https://www.tcpunilu.com/former-group-members)
+- institution: Fritz Haber Institute of the Max Planck Society
+  location: Berlin
+  positions:
+  - date: Oct 2013-Dec 2017
+    title: Graduate researcher, **Tkatchenko** group, [Theory Department](https://th.fhi.mpg.de/site/index.php?n=Members.PreviousMembersG-H)
+- institution: Institute of Organic Chemistry and Biochemistry
+  location: Prague
+  positions:
+  - date: Mar 2010-Sep 2013
+    title: Undergraduate researcher, [**Hobza** group](https://hobza.group.uochb.cz/)
+secondary:
+- date: Jul 2021-
+  title: Junior Fellow, [BIFOLD](https://bifold.berlin/person/dr-jan-hermann/), Berlin
+- date: Jun 2021-
+  title: Associated PI, [DAEDALUS](https://daedalus.berlin/people/), Berlin
+- date: Jan 2019-Oct 2020
+  title: Research fellow in [Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin
+- date: Sep-Dec 2016
+  title: Research fellow at [IPAM](http://www.ipam.ucla.edu), UCLA
+  subtitle: (long program “[Understanding Many-Particle Systems with Machine Learning](http://www.ipam.ucla.edu/programs/long-programs/understanding-many-particle-systems-with-machine-learning/)”)
+funding:
+- date: Apr 2021-Mar 2024
+  title: MATH+ AA2-8 (co-PI), "[Deep backflow for accurate solution of the electronic Schrödinger equation](https://mathplus.de/research-2/application-areas/aa2-materials-light-devices/aa2-8/)", **€160k**
+awards:
+- date: Feb 2021
+  title: Marie Skłodowska-Curie Individual Fellowship
+  note: relinquished
+- date: Jan 2014
+  title: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html) for the best science graduate"
+  institution: Charles University
+- date: Jul 2008
+  title: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual)"
+  institution: 39th International Physics Olympiad
+mentorship:
+- date: Mar 2022-
+  who: "[E. Trushin](https://orcid.org/0000-0003-1244-2984), Postdoc (with F. Noé)"
+- date: Sep 2021-
+  who: "[B. Szabó](https://www.linkedin.com/in/bernat97/), Phd student (with F. Noé)"
+- date: May 2021-
+  who: "[P. del Mazo](https://twitter.com/pablodelmazo), Postdoc"
+- date: Apr 2021-Apr 2022
+  who: M. Höfler, Master student
+- date: Jul 2019-Jul 2020
+  who: "[J. Lederer](https://www.researchgate.net/profile/Jonas-Lederer), Phd student, TU Berlin (with K.-R. Müller)"
+- date: Jan 2019-
+  who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), Master/Phd student (with F. Noé)"
+defense:
+- date: 2021
+  who: M. Wilson, University of Bristol, UK
+lectures:
+- title: Basic principles of application of machine learning in quantum chemistry
+  where: VŠCHT, Prague
+  year: 2022
+  pdf: https://pub.hrmnn.net/67/28a1b232/2022-06-02-prague-lecture.pdf
+- title: Message-passing neural networks for modeling many-particle systems
+  event: CECAM Summer School
+  where: Mainz, Germany
+  event_url: https://cecam-summerschool-2019.uni-mainz.de
+  year: 2019
+activity:
+- Peer-reviewed [NUMREV manuscripts](https://publons.com/researcher/1347416/jan-hermann/peer-review/) for *Phys. Rev. X*, *Nat. Commun.*, *Nat. Mach. Intell.*, *Phys. Rev. Lett.*, *J. Chem. Phys.*, and other journals
+- Reviewed 1 grant proposal for *U. S. Department of Energy*
+outreach:
+- date: Sep 2019
+  what: Public lecture in the [Six Minute Challenge](https://www.facebook.com/events/tschechisches-zentrum-berlin/2-czexperts-six-minute-challenge-berlin/338317880432496/) series, Czech Center, Berlin
+- date: 2018
+  what: Mentored a student in the [LEAF](https://www.leaf.sk) program, accepted to University of Edinburgh
+- date: Sep 2008-Jun 2010
+  what: Co-organized [FYKOS](https://fykos.org), physics competition for high school students
+software:
+- name: DeepQMC
+  role: creator
+  github: deepqmc/deepqmc
+- name: Libmbd
+  role: creator
+  github: libmbd/libmbd
+- name: Pyberny
+  role: creator
+  github: jhrmnn/pyberny
+- name: FHI-aims
+  role: core contributor
+  url: https://aimsclub.fhi-berlin.mpg.de
+  description: All-electron electronic structure theory (Fortran)
+- name: PySCF
+  url: https://pyscf.org
+  role: contributor
+- name: DFTB+
+  role: contributor
+  url: https://dftbplus.org
+- name: QCEngine
+  role: contributor
+  url: https://github.com/MolSSI/QCEngine
+presentations:
+  invited:
+  - title: Neural-network wave functions for quantum chemistry
+    pdf: https://pub.hrmnn.net/0e/4fde00f2/2022-05-25-ipam-talk.pdf
+    event: Monte Carlo and Machine Learning Approaches in Quantum Mechanics
+    where: IPAM, Los Angeles, USA
+    video: https://www.youtube.com/watch?v=O-wWPtpk5Jg
+    event_url: http://www.ipam.ucla.edu/programs/workshops/workshop-iv-monte-carlo-and-machine-learning-approaches-in-quantum-mechanics/
+    year: 2022
+  - title: Deep-learning solution to the electronic many-body problem
+    event: Non-Covalent Interactions in Large Molecules and Extended Materials
+    where: EPFL, Lausanne, Switzerland
+    event_url: https://www.cecam.org/workshop-details/29
+    video: https://drive.google.com/file/d/1FmN48Mr3ddZ4VWvN1_tnwZlLYHfwZj2Y/view?usp=sharing
+    pdf: https://pub.hrmnn.net/5c/7a56d474/2021-09-01-cecam-lausanne.pdf
+    year: 2021
+  - title: Solving the electronic Schrödinger equation with deep learning
+    url: https://www.morressier.com/o/event/611a5aa65faad60014d170a3/article/612e2d0acb003360fe3aaccb
+    event: ACS Fall Meeting
+    where: Atlanta, USA
+    year: 2021
+    note: virtual
+    pdf: https://pub.hrmnn.net/86/70eeb1c1/2021-08-26-acs-fall-meeting.pdf
+  - title: "Density-functional model for van der Waals interactions: Unifying atomic approaches with nonlocal functionals"
+    event: Electronic Structure Theory with Numeric Atom-Centered Basis Functions
+    event_url: https://th.fhi-berlin.mpg.de/meetings/FHI-aims-2020/
+    year: 2020
+    note: virtual
+    pdf: https://pub.hrmnn.net/46/cb155db9/2020-06-24-berln-fhi-aims-virtual.pdf
+  - title: Unifying density-functional and interatomic approaches to van der Waals interactions
+    event: Frontiers in Density Functional Theory and Beyond
+    where: Beijing, China
+    video: https://www.koushare.com/video/videodetail/2283
+    event_url: https://kits.ucas.ac.cn/index.php/events/workshop/146-2019-seminar-dftb
+    year: 2019
+  - title: Modeling van der Waals interactions in molecules and materials
+    event: Molecular Simulations Meets Machine Learning and Artificial Intelligence
+    where: Leiden, Netherlands
+    event_url: https://www.lorentzcenter.nl/molecular-simulations-meets-machine-learning-and-artificial-intelligence.html
+    year: 2018
+    pdf: https://pub.hrmnn.net/37/b6b74d7a/2018-10-11-leiden-talk.pdf
+  - title: Modeling van der Waals interactions in materials with many-body dispersion
+    event: Electronic Structure Theory with Numeric Atom-Centered Basis Functions
+    where: Munich, Germany
+    event_url: https://th.fhi-berlin.mpg.de/meetings/FHI-aims-2018/
+    year: 2018
+  - title: Modeling van der Waals interactions
+    event: Python for Quantum Chemistry and Materials Simulation Software
+    where: Pasadena, USA
+    event_url: https://molssi.org/2018/03/26/molssi-workshop-on-python-for-quantum-chemistry-and-materials-simulation/
+    year: 2018
+  contributed:
+  - title: Approaching exact solutions of the electronic Schrödinger equation with deep quantum Monte Carlo
+    event: APS March Meeting
+    note: virtual
+    url: https://meetings.aps.org/Meeting/MAR21/Event/398887
+    video: https://marchmeeting2021.onlineeventpro.freeman.com/live-stream/19765524/E21-Machine-Learning-for-Quantum-Matter-IV
+    year: 2021
+    pdf: https://pub.hrmnn.net/b8/91897a05/2021-03-16-aps-march-meeting.pdf
+  - title: Deep neural network solution of the electronic Schrödinger equation
+    event: APS March Meeting
+    where: Denver, USA
+    note: cancelled
+    url: https://meetings.aps.org/Meeting/MAR20/Session/R39.6
+    year: 2020
+  - title: Unified many-body approach to van der Waals interactions based on semilocal polarizability functional
+    event: APS March Meeting
+    where: Los Angeles, USA
+    url: https://meetings.aps.org/Meeting/MAR18/Session/V07.2
+    year: 2018
+  - title: What is the range of electron correlation in density functionals?
+    event: APS March Meeting
+    where: New Orleans, USA
+    url: https://meetings.aps.org/Meeting/MAR17/Session/P1.7
+    year: 2017
+    pdf: https://pub.hrmnn.net/72/813323fb/2017-03-16-aps-talk.pdf
+  - title: First-principles approaches to van der Waals interactions
+    event: Many-Body Interactions
+    where: Telluride, USA
+    event_url: https://www.telluridescience.org/meetings/workshop-details?wid=573
+    year: 2016
+  - title: Many-body dispersion meets non-local density functionals
+    event: Modeling Many-Body Interactions
+    event_url: https://th.fhi-berlin.mpg.de/meetings/MMBI2015/
+    where: Lake La Garda, Italy
+    year: 2015
+  - title: Many-body dispersion meets non-local density functionals
+    event: DPG March Meeting
+    where: Berlin, Germany
+    url: https://www.dpg-verhandlungen.de/year/2015/conference/berlin/part/o/session/85/contribution/4
+    year: 2015
+  - title: Many-body dispersion meets non-local density functionals
+    event: APS March Meeting
+    where: San Antonio, USA
+    url: https://meetings.aps.org/Meeting/MAR15/Session/F9.6
+    year: 2015
+  - title: Non-local density functionals meet many-body dispersion
+    event: DPG March Meeting
+    where: Dresden, Germany
+    url: https://www.dpg-verhandlungen.de/year/2014/conference/dresden/part/o/session/15/contribution/10
+    year: 2014
+  - title: Adsorption in zeolites investigated by dispersion-corrected DFT
+    event: Layered Materials
+    where: Liblice, Czechia
+    event_url: https://web.archive.org/web/20130513044241/http://www.jh-inst.cas.cz/~workshop/
+    year: 2013
+    pdf: https://pub.hrmnn.net/24/4230ed64/2013-10-01-liblice.pdf
+  - title: Modeling of surface properties of lamellar zeolites
+    event: Molecular Sieves
+    event_url: https://web.archive.org/web/20130512175338/http://www.jh-inst.cas.cz/~school2013/
+    where: Prague, Czechia
+    year: 2013
+    pdf: https://pub.hrmnn.net/a1/63abb037/2013-03-11-prague-sieves-slides.pdf
+  posters:
+  - title: Convergence to the fixed-node limit in deep variational Monte Carlo
+    event: NeurIPS workshop Machine Learning and the Physical Sciences
+    event_url: https://ml4physicalsciences.github.io/2020/
+    year: 2020
+    note: virtual
+    pdf: https://ml4physicalsciences.github.io/2020/files/NeurIPS_ML4PS_2020_108_poster.pdf
+  - title: Solving the electronic Schrödinger equation with deep learning
+    event: Stochastic Methods in Electronic Structure Theory
+    pdf: https://pub.hrmnn.net/f6/e099fa0a/2021-07-08-telluride-poster.pdf
+    where: Telluride, USA
+    note: virtual
+    event_url: https://www.telluridescience.org/meetings/workshop-details?wid=874
+    year: 2021
+  - title: Deep neural network solution of the electronic Schrödinger equation
+    event: NeurIPS workshop Machine Learning and the Physical Sciences
+    where: Vancouver, Canada
+    event_url: https://ml4physicalsciences.github.io/2019/
+    year: 2019
+    pdf: https://pub.hrmnn.net/9b/4f9e855f/2019-12-07-neurips-poster.pdf
+  - title: Balancing semilocal and nonlocal energy contributions in van der Waals systems
+    event: Intermolecular Interactions
+    where: Arenas de Cabrales, Spain
+    event_url: https://www.usc.gal/en/congresos/wintermol/program.html
+    year: 2017
+  - title: Non-local density functionals meet many-body dispersion
+    event: Psi-k Conference
+    where: San Sebastian, Spain
+    event_url: https://web.archive.org/web/20200214140528/http://nano-bio.ehu.es/psik2015/
+    year: 2015
+  - title: Python interface to FHI-aims
+    event: Electronic Structure Theory with Numeric Atom-Centered Basis Functions
+    where: Munich, Germany
+    event_url: https://th.fhi-berlin.mpg.de/meetings/FHI-aims-2016
+    year: 2016
+    pdf: https://pub.hrmnn.net/ee/64718478/2016-07-20-aims-meeting-poster.pdf
+  - title: Many-body dispersion meets non-local density functionals
+    event: Congress of Theoretical Chemists
+    where: Torino, Italy
+    event_url: https://web.archive.org/web/20160316120432/http://www.chitel2015.org/
+    year: 2015
+  - title: Non-local density functionals meet many-body dispersion
+    event: "Frontiers of First-Principles Simulations: Materials Design and Discovery"
+    where: Berlin, Germany
+    event_url: https://www.cecam.org/workshop-details/519
+    year: 2015
+  - title: Non-local density functionals meet many-body dispersion
+    event: Addressing Challenges for First-Principles Based Modeling of Molecular Materials
+    where: Lausanne, Switzerland
+    event_url: https://www.cecam.org/workshop-details/578
+    year: 2014
+  - title: Modeling of surface properties of lamellar zeolites
+    event: Molecular Sieves and Catalysis
+    where: Segovia, Spain
+    event_url: https://web.archive.org/web/20130825103931/http://cis5.es/
+    year: 2013
+    pdf: https://pub.hrmnn.net/c5/a7c1cf12/2013-06-11-segovia.pdf
+  - title: "Silver clusters in zeolites: Structure, stability and photoactivity"
+    event: British Zeolite Association Meeting
+    where: Chester, UK
+    event_url: https://web.archive.org/web/20130324085122/http://chemweb.bham.ac.uk/~hriljaja/bza2012/index.htm
+    year: 2012
+    pdf: https://pub.hrmnn.net/fc/2fc3d434/2012-05-01-chester-bza-poster.pdf
+  - title: "Silver clusters in faujasite: A theoretical investigation"
+    event: Molecular Sieves
+    event_url: https://web.archive.org/web/20130513011327/http://www.jh-inst.cas.cz/~school2012/
+    where: Prague, Czechia
+    year: 2012
+  seminars:
+  - event: UCT & IOCB Theoretical Chemistry Seminar
+    where: VŠCHT, Prague
+    year: 2022
+    pdf: https://pub.hrmnn.net/fc/0dbd1a2e/2022-06-03-prague-seminar.pdf
+  - event: Lennard-Jones Centre Discussion Group
+    event_url: https://talks.cam.ac.uk/talk/index/167270
+    video: https://www.youtube.com/watch?v=iFfIlzKpg6I&list=PL-RQ5CcRMcW408Fz1UDYxW9D1Qq9HwD77&index=6
+    where: University of Cambridge
+    year: 2022
+    note: virtual
+  - event: Molecular and Ultrafast Science Seminar
+    event_url: https://www.controlled-molecule-imaging.org/news/seminar/
+    where: Center for Free-Electron Laser Science, Hamburg
+    year: 2021
+    note: virtual
+    pdf: https://pub.hrmnn.net/b7/08d1246c/2021-12-02-hamburg-cfel.pdf
+  - event: Machine Learning seminar
+    where: Chalmers University of Technology
+    note: virtual
+    year: 2021
+  - where: Grüneis group, TU Wien
+    note: virtual
+    year: 2021
+  - event: (Nano)Materials Modeling Seminar
+    where: Charles University
+    note: virtual
+    year: 2021
+  - where: Institute of Physics, University of Szczecin
+    note: virtual
+    year: 2021
+  - title: Solving the electronic Schrödinger equation with deep learning
+    event: Scientific Machine Learning Mini-Course
+    where: Carnegie Mellon University
+    note: virtual
+    event_url: https://www.cmu.edu/aced/sciML.html
+    pdf: https://pub.hrmnn.net/3b/1cadca10/2020-10-29-sciml-seminar.pdf
+    video: https://ece.hosted.panopto.com/Panopto/Pages/Viewer.aspx?id=6937fe6c-c549-422e-ada8-ac6301432341
+    year: 2020
+  - event_url: https://talks.cam.ac.uk/talk/index/151687
+    event: Machine Learning in Physics, Chemistry and Materials
+    where: University of Cambridge
+    note: virtual
+    year: 2020
+  - where: Jordan group, University of Pittsburgh
+    note: virtual
+    year: 2020
+  - title: "Mona: Calculation framework for reproducible science"
+    where: Theory department, Fritz Haber Institute
+    year: 2018
+    pdf: https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf
+  - title: Nanoscale π–π stacked molecules bound by collective charge fluctuations
+    where: Aspuru-Guzik group, Harvard University
+    year: 2016
+    pdf: https://pub.hrmnn.net/7e/c344abff/2016-11-17-charge-fluctuations.pdf
+  - where: DiStasio group, Cornell University
+    year: 2015

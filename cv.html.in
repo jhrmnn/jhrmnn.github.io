@@ -1,0 +1,243 @@
+<!-- vim: set sts=2 sw=2: -->
+<!doctype html>
+<html lang="en" class="no-js">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Jan Hermann</title>
+
+<script type="module">
+  document.documentElement.classList.replace('no-js', 'js');
+  Array.from(document.getElementsByClassName('article')).forEach((article) => {
+    const notice = article.getElementsByClassName('notice')[0];
+    if (notice) {
+      article.getElementsByClassName('pdf')[0].dataset.tooltip = notice.textContent.trim().slice(1);
+      article.removeChild(notice);
+      const notice_star = article.getElementsByClassName('notice-star')[0];
+      article.removeChild(notice_star);
+    }
+  });
+  // document.querySelector('#dark-toggle').addEventListener('click', function() {
+  //   document.body.classList.toggle('dark-theme');
+  // });
+</script>
+
+<style>
+  {% include "styles.css" %}
+</style>
+
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAALiMAAC4jAXilP3YAAABFUExURSQkJBQUFE9PTzc3N0JCQmFhYYSEhB0dHQoKCi4uLllZWdDQ0GhoaI6OjnNzc3x8fOnp6djY2MjIyODg4Jubm6ysrLu7u/RGr04AAAH6SURBVDjLXZKNdqwgDIRDIPxEAtVF3/9R70RtT3tnD+Kaj0kg0My2zst1HMe2fb6+PhjQZ9+O47poOADdwLHt+77tD/LB63YQ4jaUVYadl3v42H9MLrK1BhWi1rivC8GbcJf9TkJwnx6OKbFteXkiRD9gbj+6zqwcY2JVtlmDbduTwktARWQaoyIuXXRwrbZ5rQ4A+doPMtHUHRBRy6zntwGAzbdpWCnRK2Dus7Q57NquExVsx7nsJF8qkUopDaoVD1kj9ivbid9FUUV7aiUUCqHWGkKJHIli5JyxRUqcoiZ/kscLvGLzg8HW01xGbtzKPQEIMUUU1BAunjWyR4ju/1RAtNhSEibYNGcaof7G6stSirUO6zlL7mw4GJFuhO8oFEkSuwMLykm9y+h9iJwdQPQ+4KjYq4R9H0CwNx68FtPonAQr+hiKFF7BnE51HbqWkOWczSxPTN2PAQeic+Y5+7yB7JpjDNw9ra8i8DymrNXJ4a4quFGLn3CoYfwGBtoFYppJ+LYQd30AhLs7uGmm7xTjTisGQL2bqn1MyLuJFGmgRgDqQHL5KbgIzQiV1IXrkWwmuuXN8q6UGtCy0B5Jy0J/9QN4s4kBePvLEysPcI9HMU19gfLoP4DS5PqufBVuoN6fnOD8vngHXqC8wBMYds8lhAf5DTxE+gex2yJr5qOYvwAAAFd6VFh0UmF3IHByb2ZpbGUgdHlwZSBpcHRjAAB4nOPyDAhxVigoyk/LzEnlUgADIwsuYwsTIxNLkxQDEyBEgDTDZAMjs1Qgy9jUyMTMxBzEB8uASKBKLgDqFxF08kI1lQAAAABJRU5ErkJggg==">
+<link rel="canonical" href="https://jan.hermann.name">
+
+{% macro talk_block(talks, class) %}
+<table class="{{ class }} small">
+{% for year, items in talks|groupby("year")|sort(reverse=True) %}
+{% for item in items %}
+<tr>
+<td>{% if loop.first %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
+<td>
+{% if item.title %}“{%- if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}”
+{%- endif -%}
+{% if item.event %}{% if item.title %}, {% endif %}{% if item.event_url %}<a href="{{ item.event_url }}">{{ item.event }}</a>{% else %}{{ item.event }}{% endif %}{% endif %}
+{%- if item.where %}{% if item.title or item.event %}, {% endif %}{{ item.where }}{% endif %}
+{% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
+{% if item.pdf %}&nbsp;<a href="{{ item.pdf }}">{% include "assets/file-pdf-solid.svg" %}</a>{% endif %}
+{% if item.video %}&nbsp;<a href="{{ item.video }}">{% include "assets/video-solid.svg" %}</a>{% endif %}
+</td>
+</tr>
+{% endfor %}
+{% endfor %}
+</table>
+{% endmacro %}
+
+{% macro pub_block(types, by_year=false) %}
+<table class="cvblock wider pub">
+{% for item in references|selectattr("type", "in", types)|sortrefs %}
+<tr>
+    <td>{% if loop.first and false %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
+    <td class="article">
+        {{ item|reftomd }}
+        {%- if item.pdf_url -%}
+        &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a><span class="notice-star">{%- if item.pdf_notice %}*{% endif -%}</span>
+        {% if item.pdf_notice %}
+        <p class="notice">*{{ item.pdf_notice }}
+        {% endif %}
+        {% endif %}
+    </td>
+    <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
+{% endfor %}
+</table>
+{% endmacro %}
+
+<p id="nav">↓
+    <a href="#Publications">Publications</a>
+    <span class="nav-item">&middot; <a href="#Software">Software</a></span>
+    <span class="nav-item">&middot; <a href="#Presentations">Presentations</a></span>
+    <span class="nav-item">&middot; <a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)</span>
+    <!-- <span class="nav-item"><span class="before-toggle">&middot; </span><span id="dark-toggle">{% include "assets/adjust-solid.svg" %}</span></span> -->
+
+<h1><span id="firstname">Jan</span> Hermann</h1>
+
+<div id="top">
+
+<p>I'm a <a href="https://bifold.berlin">BIFOLD</a> <a href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group leader</a> at FU Berlin.
+
+<p>{{ statement }}
+
+<p id="profile-pic">{% include "profile-pic.svg" %}
+
+<dl>
+  {% for category, items in links.items() %}
+    <dt>{{ category }}</dt>
+    <dd>
+    {% for item, url in items.items() %}
+      {% if not loop.first %}&middot;{% endif %}
+      <a href="{{ url }}">{{ item }}</a>
+    {% endfor %}
+  {% endfor %}
+</dl>
+
+</div>
+
+<h2 id="Publications">Publications</h2>
+
+<ul>
+    <li>Citation numbers (→) from <a href="https://scholar.google.com/citations?user=5TjVq0YAAAAJ">Google Scholar</a>
+</ul>
+
+<h3>Research articles</h3>
+
+{{ pub_block(["article-journal", "article"], by_year=true) }}
+
+<h3>Book chapters</h3>
+
+{{ pub_block(["chapter"]) }}
+
+<h3>Theses</h3>
+
+{{ pub_block(["thesis"]) }}
+
+<h2 id="Software">Software</h2>
+
+<table class="cvblock wide">
+{% for item in software %}
+<tr><td><span class="bullet">&bull;</span></td>
+  <td><strong><a href="{{ item.url }}">{{ item.name }}</a></strong>, {{ item.role }}{% if item.stars %}, <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+{% if item.description %}</br>{{ item.description}}{% endif %}
+    </td>
+</tr>
+{% endfor %}
+</table>
+
+<h2 id="Presentations">Presentations</h2>
+
+<ul>
+    <li>Includes future presentations
+</ul>
+
+<h3>Invited conference talks</h3>
+
+{{ talk_block(presentations.invited, "cvblock wide") }}
+
+<h3>Contributed conference talks</h3>
+
+{{ talk_block(presentations.contributed, "cvblock wide") }}
+
+<h3>Conference poster presentations</h3>
+
+{{ talk_block(presentations.posters, "cvblock wide") }}
+
+<h3>Invited seminars</h3>
+
+{{ talk_block(presentations.seminars, "cvblock wide") }}
+
+<h2 id="CV">Employment</h2>
+
+<table class="cvblock">
+{% for item in employment %}
+<tr class="heading"><td></td><td><strong>{{ item.institution }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td></tr>
+{% for position in item.positions %}
+<tr><td>{{ position.date|dateformat }}</td><td>{{ position.title }}</td></tr>
+{% endfor %}
+{% endfor %}
+</table>
+
+<h2>Education</h2>
+
+<table class="cvblock">
+{% for item in education %}
+<tr class="heading"><td></td><td><strong>{{ item.university }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td></tr>
+{% for degree in item.degrees %}
+<tr><td>{{ degree.date|dateformat }}</td><td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.summa %}, <em>summa cum laude</em>{% endif %}</td></tr>
+{% endfor %}
+{% endfor %}
+</table>
+
+<h2>Secondary appointments</h2>
+
+<table class="cvblock">
+{% for item in secondary %}
+<tr><td>{{ item.date|dateformat }}</td><td>{{ item.title }}
+        {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}</td></tr>
+{% endfor %}
+</table>
+
+<h2>Awards</h2>
+
+<table class="cvblock">
+{% for item in awards %}
+  <tr><td>{{ item.date|dateformat }}</td>
+    <td><strong>{{ item.title }}</strong>
+      {%- if item.institution %}, {{ item.institution}}{% endif %}
+      {% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
+    </td>
+{% endfor %}
+</table>
+
+<h2>Funding</h2>
+
+<table class="cvblock">
+{% for item in funding %}
+<tr><td>{{ item.date|dateformat }}</td><td>{{ item.title }}
+        {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}</td></tr>
+{% endfor %}
+</table>
+
+<h2>Professional activities</h2>
+
+<table class="cvblock wide">
+{% for item in activity %}
+<tr><td><span class="bullet">&bull;</span></td><td>{{ item }}</td></tr>
+{% endfor %}
+</table>
+
+<h2>Teaching & mentoring</h2>
+
+<h3>Professional mentorship</h3>
+
+<table class="cvblock small">
+{% for item in mentorship %}
+<tr><td>{{ item.date|dateformat }}</td><td>{{ item.who }}</td></tr>
+{% endfor %}
+</table>
+
+<h3>Lectures for students</h3>
+
+{{ talk_block(lectures, "cvblock") }}
+
+<h3>Doctoral examinations</h3>
+
+<table class="cvblock small">
+{% for item in defense %}
+<tr><td>{{ item.date }}</td><td>{{ item.who }}</td></tr>
+{% endfor %}
+</table>
+
+<h2>Public outreach</h2>
+
+<table class="cvblock small">
+{% for item in outreach %}
+<tr><td>{{ item.date|dateformat }}</td><td>{{ item.what }}</td></tr>
+{% endfor %}
+</table>
+

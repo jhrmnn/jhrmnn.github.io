@@ -1,0 +1,80 @@
+name: build
+on:
+  push:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+          echo $HOME/.local/bin >>$GITHUB_PATH
+          $HOME/.local/bin/poetry config virtualenvs.create false
+          $HOME/.local/bin/poetry config --list
+      - name: Install dependencies
+        run: sudo apt-get install -yq --no-install-suggests --no-install-recommends texlive-base texlive-xetex texlive-plain-generic texlive-fonts-recommended latexmk
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/fonts.tar.gz
+            ~/.cache/pypoetry
+          key: ${{ hashFiles('poetry.lock') }}
+      - name: Get fonts
+        run: |
+          [ -f ~/fonts.tar.gz ] || wget -nv -P ~ ${{ secrets.FONTS_URL }}
+          tar -xvf ~/fonts.tar.gz
+      - run: poetry install --no-dev
+      - run: make
+        env:
+          PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
+      - name: Install
+        run: |
+          mkdir _site
+          cp cv.html _site/index.html
+          cp cv.yaml cv.pdf cv.txt _site/
+      - uses: actions/upload-pages-artifact@v1
+  deploy-github:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v1
+  deploy-fu:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: fu-pages
+      url: https://page.mi.fu-berlin.de/jhermann/
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: github-pages
+      - run: mkdir _site
+      - run: tar -xvf artifact.tar -C _site
+      - name: Deploy to FU Berlin
+        run: |
+          sshpass -p ${{ secrets.FU_PASSWORD }} \
+            rsync -av -e 'ssh -o StrictHostKeyChecking=no' \
+            _site/ \
+            ${{ secrets.FU_USER }}@login.mi.fu-berlin.de:/web/page.mi.fu-berlin.de/web-home/${{ secrets.FU_USER }}/public_html/

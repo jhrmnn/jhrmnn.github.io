@@ -1,0 +1,99 @@
+ref_extras:
+  KulikES22:
+    PDF: https://pub.hrmnn.net/a5/4893c1a0/Kulik%2Bet%2Bal_2022_Electron._Struct._10.1088_2516-1075_ac572f.pdf
+  Entwistle22:
+    PDF: https://pub.hrmnn.net/31/1f62d3cc/2203.09472.pdf
+  StohrNC21:
+    PDF: https://pub.hrmnn.net/a5/d95c90c0/s41467-020-20473-w.pdf
+  SchatzleJCP21:
+    PDF: https://pub.hrmnn.net/8e/c5e13dc6/JCP20-AR-FROST2020-04042.pdf
+  HermannNC20:
+    PDF: https://pub.hrmnn.net/3b/76f996c2/preprint.pdf
+  HermannPRL20:
+    PDF: https://pub.hrmnn.net/69/1867a12e/PhysRevLett.124.146401.pdf
+  HermannJCP13:
+    PDF: https://pub.hrmnn.net/b3/abd9fc4e/1.4813826.pdf
+    notice: |
+      This article may be downloaded for personal use only. Any other use
+      requires prior permission of the author and AIP Publishing.
+  LiuJCP16:
+    PDF: https://pub.hrmnn.net/b9/4a7a3134/1.4972810.pdf
+    notice: |
+      This article may be downloaded for personal use only. Any other use
+      requires prior permission of the author and AIP Publishing.
+  HermannCR17:
+    PDF: https://pub.hrmnn.net/9c/a1e2ca5c/preprint.pdf
+    notice: |
+      This document is the unedited Author’s version of a Submitted Work that was
+      subsequently accepted for publication in Chemical Reviews, copyright ©
+      American Chemical Society after peer review. To access the final edited and
+      published work follow this link.
+  VenkataramPRL17:
+    PDF: https://pub.hrmnn.net/51/625aeb03/PhysRevLett.118.266802.pdf
+    notice: |
+      Copyright 2017 by the American Physical Society
+  Hermann18:
+    PDF: https://pub.hrmnn.net/30/5f1310e7/dissertation_hermann_jan.pdf
+  Hermann13:
+    PDF: https://pub.hrmnn.net/a0/b020f0f3/DPTX_2011_1_11310_0_362552_0_118279.pdf
+  HermannJCTC18:
+    PDF: https://pub.hrmnn.net/83/f31d79d8/preprint.pdf
+    notice: |
+      This document is the unedited Author’s version of a Submitted Work that was
+      subsequently accepted for publication in Journal of Chemical Theory and
+      Computation, copyright © American Chemical Society after peer review. To
+      access the final edited and published work follow this link.
+  ChattopadhyayaCM17:
+    PDF: https://pub.hrmnn.net/26/1f09e38b/preprint.pdf
+    notice: |
+      This document is the unedited Author’s version of a Submitted Work that was
+      subsequently accepted for publication in Chemistry of Materials, copyright
+      © American Chemical Society after peer review. To access the final edited
+      and published work follow this link.
+  HermannNC17:
+    PDF: https://pub.hrmnn.net/9c/6872e7d1/ncomms14052.pdf
+  VenkataramPRL18:
+    PDF: https://pub.hrmnn.net/48/be258fc4/PhysRevLett.121.045901.pdf
+    notice: |
+      Copyright 2018 by the American Physical Society
+  Hermann20:
+    PDF: https://pub.hrmnn.net/9a/bd44e834/1909.08423-7.pdf
+  VenkataramSA19:
+    PDF: https://pub.hrmnn.net/53/644d76c0/eaaw0456.full.pdf
+  CuiJPCL20:
+    PDF: https://pub.hrmnn.net/33/aba88bf5/preprint.pdf
+    notice: |
+      This document is the unedited Author’s version of a Submitted Work that was
+      subsequently accepted for publication in The Journal of Physical Chemistry
+      Letters, copyright © American Chemical Society after peer review. To access
+      the final edited and published work follow this link.
+  HourahineJCP20:
+    PDF: https://pub.hrmnn.net/51/b55c959c/JCP19-AR-ESS2020-05219.pdf
+    notice: |
+      This article may be downloaded for personal use only. Any other use
+      requires prior permission of the author and AIP Publishing.
+  Stohr20:
+    PDF: https://pub.hrmnn.net/4b/30385447/2007.12505.pdf
+  SunJCP20:
+    PDF: https://pub.hrmnn.net/fd/9edc2077/JCP20-AR-ESS2020-00671.pdf
+    notice: |
+      This article may be downloaded for personal use only. Any other use
+      requires prior permission of the author and AIP Publishing.
+  VenkataramPRB20:
+    PDF: https://pub.hrmnn.net/b5/4d42db87/PhysRevB.102.085403.pdf
+    notice: |
+      Copyright 2020 by the American Physical Society
+  SmithJCP21:
+    PDF: https://pub.hrmnn.net/34/0db03fb9/1081169_1_art_file_18173763_r0tq9b.pdf
+    notice: |
+      This article may be downloaded for personal use only. Any other use
+      requires prior permission of the author and AIP Publishing. This article
+      appeared in Journal of Chemical Physics and may be found at this link.
+  OuyangJCTC21:
+    PDF: https://pub.hrmnn.net/63/38feae25/acs.jctc.1c00782.pdf
+keypubs:
+  - HermannNC20
+  - HermannNC17
+  - HermannPRL20
+  - HermannCR17
+  - HermannJCTC18
