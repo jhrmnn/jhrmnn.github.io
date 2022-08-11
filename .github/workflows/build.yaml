@@ -50,6 +50,7 @@ jobs:
           cp cv.yaml cv.pdf cv.txt _site/
       - uses: actions/upload-pages-artifact@v1
   deploy-github:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -59,6 +60,7 @@ jobs:
       - id: deployment
         uses: actions/deploy-pages@v1
   deploy-fu:
+    if: github.ref == 'refs/heads/main'
     environment:
       name: fu-pages
       url: https://page.mi.fu-berlin.de/jhermann/
