@@ -352,7 +352,14 @@ def main(args):
     p.add_argument('--no-pic', action='store_false', dest='with_pic')
     p.add_argument('--no-statement', action='store_false', dest='with_statement')
     p.add_argument('--stars', action='store_true', dest='with_stars')
-    sys.stdout.buffer.write(render(**vars(p.parse_args(args))))
+    p.add_argument('-o', dest='output')
+    kwargs = vars(p.parse_args(args))
+    output = kwargs.pop('output')
+    if output:
+        with open(output, 'wb') as f:
+            f.write(render(**kwargs))
+    else:
+        sys.stdout.buffer.write(render(**kwargs))
 
 
 if __name__ == '__main__':

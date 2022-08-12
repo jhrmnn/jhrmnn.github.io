@@ -10,13 +10,13 @@ $(BLDDIR)/%.pdf $(BLDDIR)/%.bbl: %.tex FORCE
 $(BLDDIR)/cv.pdf: profile-pic.png
 
 cv.tex: render.py cv.tex.in cv.yaml refs.json extras.yaml
-	python3 $^ $(FLAGS) >$@
+	python3 $^ $(FLAGS) -o $@
 
 cv.html: render.py cv.html.in cv.yaml refs.json extras.yaml styles.css $(wildcard *.svg)
-	python3 $(wordlist 1,5,$^) $(FLAGS) >$@
+	python3 $(wordlist 1,5,$^) $(FLAGS) -o $@
 
 cv.txt: render.py cv.txt.in cv.yaml refs.json extras.yaml
-	python3 $^ $(FLAGS) >$@
+	python3 $^ $(FLAGS) -o $@
 
 profile-pic.png:
 	cp profile-pic-public.png $@
@@ -26,7 +26,10 @@ profile-pic.png:
 
 clean:
 	rm -rf $(BLDDIR)
-	rm -f cv.pdf cv.tex cv.html cv.txt .cache.json
+	rm -f cv.pdf cv.tex cv.html cv.txt
+
+distclean: clean
+	rm -f .cache.json
 
 FORCE:
 
