@@ -89,7 +89,9 @@ def ref_to_md(item):
     if s[-1] != '.':
         s += '.'
     url = f'https://doi.org/{item["DOI"]}' if 'DOI' in item else item['URL']
-    s += f' [{strip_html(item["title"])}]({url})'
+    title = item['title']
+    title = re.sub(r': ([a-z])', lambda m: f': {m.group(1).upper()}', title)
+    s += f' [{strip_html(title)}]({url})'
     year = item['issued']['date-parts'][0][0]
     if item['type'] == 'article-journal':
         s += (

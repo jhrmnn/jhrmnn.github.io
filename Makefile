@@ -21,9 +21,6 @@ cv.txt: render.py cv.txt.in cv.yaml refs.json extras.yaml
 profile-pic.png:
 	cp profile-pic-public.png $@
 
-refs.json:
-	-curl -sf "http://localhost:23119/better-bibtex/collection?/1/ZMy%20Publications.csljson" >$@
-
 %: $(BLDDIR)/%
 	cp $^ $@
 
