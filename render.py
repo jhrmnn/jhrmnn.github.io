@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import concurrent.futures
 import json
@@ -179,8 +180,9 @@ def update_from_web(ctx, cache):  # noqa: C901
             item.update(
                 {
                     'url': f'https://github.com/{item["github"]}',
-                    'description': f'{norm_desc(info["description"])}'
-                    f' ({info["language"]})',
+                    'description': (
+                        f'{norm_desc(info["description"])} ({info["language"]})'
+                    ),
                     'stars': info['stargazers_count'],
                 }
             )

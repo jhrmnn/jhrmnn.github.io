@@ -1,32 +1,38 @@
 BLDDIR = build
+OUTDIR = _site
 
 default: cv
 
-cv: cv.pdf cv.html cv.txt
+cv: $(OUTDIR)/index.html $(OUTDIR)/cv.pdf $(OUTDIR)/cv.txt $(OUTDIR)/cv.yaml
 
-$(BLDDIR)/%.pdf $(BLDDIR)/%.bbl: %.tex FORCE
-	latexmk -shell-escape -f -pdfxe -outdir=$(BLDDIR) -interaction=nonstopmode $<
-
-$(BLDDIR)/cv.pdf: profile-pic.png
-
-cv.tex: render.py cv.tex.in cv.yaml refs.json extras.yaml
-	python3 $^ $(FLAGS) -o $@
-
-cv.html: render.py cv.html.in cv.yaml refs.json extras.yaml styles.css $(wildcard *.svg)
-	python3 $(wordlist 1,5,$^) $(FLAGS) -o $@
-
-cv.txt: render.py cv.txt.in cv.yaml refs.json extras.yaml
-	python3 $^ $(FLAGS) -o $@
-
-profile-pic.png:
-	cp profile-pic-public.png $@
-
-%: $(BLDDIR)/%
+$(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 	cp $^ $@
 
+$(OUTDIR)/%: data/% | $(OUTDIR)
+	cp $^ $@
+
+$(OUTDIR)/index.html: render.py templates/cv.html.in $(wildcard data/*) templates/styles.css $(wildcard assets/*.svg) | $(OUTDIR)
+	./$(wordlist 1,5,$^) $(FLAGS) -o $@
+
+$(OUTDIR)/cv.txt: render.py templates/cv.txt.in $(wildcard data/*) | $(OUTDIR)
+	./$^ $(FLAGS) -o $@
+
+$(BLDDIR)/%.pdf $(BLDDIR)/%.bbl: $(BLDDIR)/%.tex FORCE
+	latexmk -shell-escape -f -pdfxe -outdir=$(BLDDIR) -interaction=nonstopmode $<
+
+$(BLDDIR)/cv.pdf: assets/profile-pic.png
+
+$(BLDDIR)/cv.tex: render.py templates/cv.tex.in $(wildcard data/*) | $(BLDDIR)
+	./$^ $(FLAGS) -o $@
+
+assets/profile-pic.png:
+	cp assets/profile-pic-public.png $@
+
+$(OUTDIR) $(BLDDIR):
+	mkdir $@
+
 clean:
-	rm -rf $(BLDDIR)
-	rm -f cv.pdf cv.tex cv.html cv.txt
+	rm -rf $(BLDDIR) $(OUTDIR)
 
 distclean: clean
 	rm -f .cache.json

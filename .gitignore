@@ -1,9 +1,6 @@
 /.cache.json
 /build/
-/cv.pdf
-/cv.tex
-/cv.html
-/cv.txt
+/_site/
 /fonts
-/profile-pic.png
+/assets/profile-pic.png
 /scholar.log

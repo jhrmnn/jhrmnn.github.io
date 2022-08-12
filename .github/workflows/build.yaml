@@ -43,11 +43,6 @@ jobs:
       - run: make
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
-      - name: Install
-        run: |
-          mkdir _site
-          cp cv.html _site/index.html
-          cp cv.yaml cv.pdf cv.txt _site/
       - uses: actions/upload-pages-artifact@v1
   deploy-github:
     if: github.ref == 'refs/heads/main'
@@ -70,8 +65,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: github-pages
-      - run: mkdir _site
-      - run: tar -xvf artifact.tar -C _site
+      - run: "mkdir _site && tar -xvf artifact.tar -C _site"
       - name: Deploy to FU Berlin
         run: |
           sshpass -p ${{ secrets.FU_PASSWORD }} \
