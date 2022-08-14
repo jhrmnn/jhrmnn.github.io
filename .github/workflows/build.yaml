@@ -22,9 +22,11 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python -
           echo $HOME/.local/bin >>$GITHUB_PATH
-          $HOME/.local/bin/poetry config virtualenvs.create false
-          $HOME/.local/bin/poetry config --list
-      - name: Install dependencies
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.create false
+          poetry config --list
+      - name: Install TeX
         run: sudo apt-get install -yq --no-install-suggests --no-install-recommends texlive-base texlive-xetex texlive-plain-generic texlive-fonts-recommended latexmk
       - uses: actions/checkout@v2
         with:
@@ -32,13 +34,11 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: |
-            ~/fonts.tar.gz
+            fonts
             ~/.cache/pypoetry
           key: ${{ hashFiles('poetry.lock') }}
       - name: Get fonts
-        run: |
-          [ -f ~/fonts.tar.gz ] || wget -nv -P ~ ${{ secrets.FONTS_URL }}
-          tar -xvf ~/fonts.tar.gz
+        run: "[ -d fonts ] || { wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv; }"
       - run: poetry install --no-dev
       - run: make
         env:
@@ -65,10 +65,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: github-pages
-      - run: "mkdir _site && tar -xvf artifact.tar -C _site"
-      - name: Deploy to FU Berlin
+      - run: mkdir _site && tar -xvf artifact.tar -C _site
+      - name: Deploy
         run: |
-          sshpass -p ${{ secrets.FU_PASSWORD }} \
-            rsync -av -e 'ssh -o StrictHostKeyChecking=no' \
-            _site/ \
-            ${{ secrets.FU_USER }}@login.mi.fu-berlin.de:/web/page.mi.fu-berlin.de/web-home/${{ secrets.FU_USER }}/public_html/
+            eval $(ssh-agent -s)
+            ssh-add - <<EOF
+            ${{ secrets.PRIVATE_KEY }}
+            EOF
+            rsync -av -e 'ssh -o StrictHostKeyChecking=no' _site/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}
