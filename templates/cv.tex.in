@@ -139,9 +139,9 @@
 
 \begin{document}
 
-<+ if settings.with_pic +>
+<+ if settings.pic +>
 \begin{tikzpicture}[overlay,remember picture]
-    \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{assets/profile-pic.png}};
+    \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{<< settings.pic >>}};
 \end{tikzpicture}
 <+ endif +>
 %

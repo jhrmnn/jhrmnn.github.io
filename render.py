@@ -351,7 +351,7 @@ def main(args):
     p = argparse.ArgumentParser()
     p.add_argument('template', type=Path)
     p.add_argument('ctx', nargs='+', type=Path)
-    p.add_argument('--no-pic', action='store_false', dest='with_pic')
+    p.add_argument('--pic', default='assets/profile-pic.png')
     p.add_argument('--no-statement', action='store_false', dest='with_statement')
     p.add_argument('--stars', action='store_true', dest='with_stars')
     p.add_argument('-o', dest='output')

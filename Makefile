@@ -20,13 +20,8 @@ $(OUTDIR)/cv.txt: render.py templates/cv.txt.in $(wildcard data/*) | $(OUTDIR)
 $(BLDDIR)/%.pdf $(BLDDIR)/%.bbl: $(BLDDIR)/%.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(BLDDIR) -interaction=nonstopmode $<
 
-$(BLDDIR)/cv.pdf: assets/profile-pic.png
-
 $(BLDDIR)/cv.tex: render.py templates/cv.tex.in $(wildcard data/*) | $(BLDDIR)
 	./$^ $(FLAGS) -o $@
-
-assets/profile-pic.png:
-	cp assets/profile-pic-public.png $@
 
 $(OUTDIR) $(BLDDIR):
 	mkdir $@
