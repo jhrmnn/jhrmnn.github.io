@@ -1,6 +1,8 @@
 BLDDIR = build
 OUTDIR = _site
 
+.PRECIOUS: $(BLDDIR)/cv.pdf
+
 default: cv
 
 cv: $(OUTDIR)/index.html $(OUTDIR)/cv.pdf $(OUTDIR)/cv.txt $(OUTDIR)/cv.yaml
