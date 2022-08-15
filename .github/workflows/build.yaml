@@ -66,10 +66,10 @@ jobs:
         with:
           name: github-pages
       - run: mkdir _site && tar -xvf artifact.tar -C _site
-      - name: Deploy
+      - name: Upload with Rsync
         run: |
             eval $(ssh-agent -s)
-            ssh-add - <<EOF
-            ${{ secrets.PRIVATE_KEY }}
-            EOF
+            ssh-add - <<<"$PRIVATE_KEY"
             rsync -av -e 'ssh -o StrictHostKeyChecking=no' _site/ ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.PATH }}
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
