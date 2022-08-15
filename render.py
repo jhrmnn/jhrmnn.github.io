@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import time
+from datetime import datetime
 from itertools import chain
 from pathlib import Path
 
@@ -264,6 +265,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
     )
     with Cache() as cache:
         update_from_web(ctx, cache)
+    kwargs['now'] = datetime.now().replace(microsecond=0).astimezone().isoformat()
     ctx['settings'] = kwargs
     for item in ctx['references']:
         extras = ctx['ref_extras'].get(item['id'])
@@ -354,6 +356,7 @@ def main(args):
     p.add_argument('--pic', default='assets/profile-pic.png')
     p.add_argument('--no-statement', action='store_false', dest='with_statement')
     p.add_argument('--stars', action='store_true', dest='with_stars')
+    p.add_argument('--generated')
     p.add_argument('-o', dest='output')
     kwargs = vars(p.parse_args(args))
     output = kwargs.pop('output')

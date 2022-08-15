@@ -17,9 +17,6 @@
       article.removeChild(notice_star);
     }
   });
-  // document.querySelector('#dark-toggle').addEventListener('click', function() {
-  //   document.body.classList.toggle('dark-theme');
-  // });
 </script>
 
 <style>
@@ -69,12 +66,16 @@
 </table>
 {% endmacro %}
 
-<p id="nav">↓
+<header>
+  <nav>↓
     <a href="#Publications">Publications</a>
     <span class="nav-item">&middot; <a href="#Software">Software</a></span>
     <span class="nav-item">&middot; <a href="#Presentations">Presentations</a></span>
     <span class="nav-item">&middot; <a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)</span>
-    <!-- <span class="nav-item"><span class="before-toggle">&middot; </span><span id="dark-toggle">{% include "assets/adjust-solid.svg" %}</span></span> -->
+  </nav>
+</header>
+
+<main>
 
 <h1><span id="firstname">Jan</span> Hermann</h1>
 
@@ -86,6 +87,7 @@
 
 <p id="profile-pic">{% include "assets/profile-pic.svg" %}
 
+<address>
 <dl>
   {% for category, items in links.items() %}
     <dt>{{ category }}</dt>
@@ -96,6 +98,7 @@
     {% endfor %}
   {% endfor %}
 </dl>
+</address>
 
 </div>
 
@@ -241,3 +244,6 @@
 {% endfor %}
 </table>
 
+</main>
+
+<footer>generated on {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %}</footer>

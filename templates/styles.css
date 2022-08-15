@@ -91,14 +91,22 @@ tr.heading:not(:first-child) td { padding-top: 9px; }
     top: 0;
     margin: -1em 1em 0 0;
 }
-#nav {
+header, footer {
     padding-left: 1em;
     text-indent: -1em;
+    margin: 1em 0;
 }
 #top > * {
     margin-right: 14em;
 }
-#nav { position: relative; }
+header { position: relative; }
+footer {
+    font-size: 80%;
+    font-style: italic;
+    text-align: center;
+    margin-top: 2em;
+}
+address { font-style: normal; }
 #dark-toggle {
     position: absolute;
     right: 0;
