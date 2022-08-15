@@ -144,7 +144,7 @@
     \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{<< settings.pic >>}};
 \end{tikzpicture}
 <+ endif +>
-%
+
 \vspace{-2.25cm}
 {\raggedleft%
  {\itshape\color{black!60}
