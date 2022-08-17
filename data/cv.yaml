@@ -100,9 +100,15 @@ mentorship:
 - date: Jan 2019-
   who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), Master/Phd student (with F. Noé)"
 defense:
+- date: 2022-
+  who: B. Ames, University of Luxembourg
 - date: 2021
   who: M. Wilson, University of Bristol, UK
 lectures:
+- title: Machine Learning in Quantum Chemistry
+  event: IMPRS Summer School
+  where: Berlin, Germany
+  year: 2022
 - title: Basic principles of application of machine learning in quantum chemistry
   where: VŠCHT, Prague
   year: 2022
@@ -147,6 +153,11 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
+  - title: Neural-network wave functions for quantum chemistry
+    event: MLQC4DYN
+    where: Paris, France
+    event_url: https://www.institut-pascal.universite-paris-saclay.fr/en/scientific-programs/mlqc4dyn
+    year: 2022
   - title: Neural-network wave functions for quantum chemistry
     pdf: https://pub.hrmnn.net/0e/4fde00f2/2022-05-25-ipam-talk.pdf
     event: Monte Carlo and Machine Learning Approaches in Quantum Mechanics

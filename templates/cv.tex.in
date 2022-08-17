@@ -224,8 +224,6 @@
 <+ endfor +>
 \end{cvblock}
 
-\newpage
-
 \section{Funding}
 
 \begin{cvblock}
@@ -268,7 +266,7 @@
 
 << talk_block(lectures) >>  % chktex 36
 
-\subsection{Doctoral examinations}
+\subsection{Doctoral committees}
 
 {\footnotesize
 \begin{cvblock}
@@ -305,6 +303,8 @@
 <+ endfor +>
 \end{cvblock}
 
+\newpage
+
 \section{Presentations}
 
 \begin{cvblock}%
@@ -329,8 +329,6 @@
 \subsection{Invited seminars}
 
 << talk_block(presentations.seminars) >>  % chktex 36
-
-\newpage
 
 \section{Publications}
 

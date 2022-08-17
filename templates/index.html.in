@@ -228,11 +228,11 @@
 
 {{ talk_block(lectures, "cvblock") }}
 
-<h3>Doctoral examinations</h3>
+<h3>Doctoral committees</h3>
 
 <table class="cvblock small">
 {% for item in defense %}
-<tr><td>{{ item.date }}</td><td>{{ item.who }}</td></tr>
+<tr><td>{{ item.date|dateformat }}</td><td>{{ item.who }}</td></tr>
 {% endfor %}
 </table>
 

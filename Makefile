@@ -1,29 +1,31 @@
 BLDDIR = build
 OUTDIR = _site
 
-.PRECIOUS: $(BLDDIR)/cv.pdf
+vpath %.in templates
+vpath %.css templates
+vpath %.yaml data
+vpath %.json data
 
-default: cv
+.PRECIOUS: %.pdf $(BLDDIR)/%
 
-cv: $(OUTDIR)/index.html $(OUTDIR)/cv.pdf $(OUTDIR)/cv.txt $(OUTDIR)/cv.yaml
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml)
+
+$(OUTDIR)/%: % | $(OUTDIR)
+	cp $^ $@
 
 $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 	cp $^ $@
 
-$(OUTDIR)/%: data/% | $(OUTDIR)
-	cp $^ $@
-
-$(OUTDIR)/index.html: render.py templates/cv.html.in $(wildcard data/*) templates/styles.css $(wildcard assets/*.svg) | $(OUTDIR)
+$(OUTDIR)/%: render.py %.in $(wildcard data/*) | $(OUTDIR)
 	./$(wordlist 1,5,$^) $(FLAGS) -o $@
 
-$(OUTDIR)/cv.txt: render.py templates/cv.txt.in $(wildcard data/*) | $(OUTDIR)
-	./$^ $(FLAGS) -o $@
+$(BLDDIR)/%: render.py %.in $(wildcard data/*) | $(BLDDIR)
+	./$(wordlist 1,5,$^) $(FLAGS) -o $@
 
-$(BLDDIR)/%.pdf $(BLDDIR)/%.bbl: $(BLDDIR)/%.tex FORCE
-	latexmk -shell-escape -f -pdfxe -outdir=$(BLDDIR) -interaction=nonstopmode $<
+$(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg)
 
-$(BLDDIR)/cv.tex: render.py templates/cv.tex.in $(wildcard data/*) | $(BLDDIR)
-	./$^ $(FLAGS) -o $@
+%.pdf: %.tex FORCE
+	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
 
 $(OUTDIR) $(BLDDIR):
 	mkdir -p $@
