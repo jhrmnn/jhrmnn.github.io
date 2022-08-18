@@ -35,7 +35,13 @@ dt {
 }
 dt::after { content: ":"; }
 
-.nav-item { white-space: nowrap; }
+nav ul { padding-left: 0; }
+nav ul::before { content: "↓ "; }
+nav ul li {
+    display: inline-block;
+    text-indent: 0;
+}
+nav ul li:not(:first-child)::before { content: "\00a0·\00a0"; }
 .pub { font-size: 0.95em; }
 .small { font-size: 0.85em; }
 .svg-icon {
@@ -82,7 +88,7 @@ table.pub td:nth-child(3) { width: 2.5em; }
 tr.heading:not(:first-child) td { padding-top: 9px; }
 
 #firstname { color: #AAA; }
-#top { position: relative; }
+section:first-of-type { position: relative; }
 #profile-pic svg {
     padding: 1em;
     height: 10em;
@@ -96,7 +102,7 @@ header, footer {
     text-indent: -1em;
     margin: 1em 0;
 }
-#top > * {
+section:first-of-type > * {
     margin-right: 14em;
 }
 header { position: relative; }
@@ -121,7 +127,7 @@ address { font-style: normal; }
         position: static;
         margin: 0;
     }
-    #top > * {
+    section:first-of-type > * {
         margin-right: 0;
     }
     #dark-toggle {

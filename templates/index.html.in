@@ -27,223 +27,247 @@
 <link rel="canonical" href="https://jan.hermann.name">
 
 {% macro talk_block(talks, class) %}
-<table class="{{ class }} small">
-{% for year, items in talks|groupby("year")|sort(reverse=True) %}
-{% for item in items %}
-<tr>
-<td>{% if loop.first %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
-<td>
-{% if item.title %}“{%- if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}”
-{%- endif -%}
-{% if item.event %}{% if item.title %}, {% endif %}{% if item.event_url %}<a href="{{ item.event_url }}">{{ item.event }}</a>{% else %}{{ item.event }}{% endif %}{% endif %}
-{%- if item.where %}{% if item.title or item.event %}, {% endif %}{{ item.where }}{% endif %}
-{% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
-{% if item.pdf %}&nbsp;<a href="{{ item.pdf }}">{% include "assets/file-pdf-solid.svg" %}</a>{% endif %}
-{% if item.video %}&nbsp;<a href="{{ item.video }}">{% include "assets/video-solid.svg" %}</a>{% endif %}
-</td>
-</tr>
-{% endfor %}
-{% endfor %}
-</table>
+  <table class="{{ class }} small">
+    {% for year, items in talks|groupby("year")|sort(reverse=True) %}
+      {% for item in items %}
+        <tr>
+          <td>{% if loop.first %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
+          <td>
+            {% if item.title %}
+              “{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}”
+            {%- endif %}
+            {%- if item.event %}
+              {%- if item.title %}, {% endif %}
+              {%- if item.event_url %}<a href="{{ item.event_url }}">{{ item.event }}</a>{% else %}{{ item.event }}{% endif %}
+            {%- endif %}
+            {%- if item.where %}
+              {%- if item.title or item.event %}, {% endif %}{{ item.where }}
+            {%- endif %}
+            {%- if item.note %} <em>[{{ item.note }}]</em>{% endif %}
+            {%- if item.pdf %}&nbsp;<a href="{{ item.pdf }}">{% include "assets/file-pdf-solid.svg" %}</a>{% endif %}
+            {%- if item.video %}&nbsp;<a href="{{ item.video }}">{% include "assets/video-solid.svg" %}</a>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  </table>
 {% endmacro %}
 
 {% macro pub_block(types, by_year=false) %}
-<table class="cvblock wider pub">
-{% for item in references|selectattr("type", "in", types)|sortrefs %}
-<tr>
-    <td>{% if loop.first and false %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
-    <td class="article">
-        {{ item|reftomd }}
-        {%- if item.pdf_url -%}
-        &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a><span class="notice-star">{%- if item.pdf_notice %}*{% endif -%}</span>
-        {% if item.pdf_notice %}
-        <p class="notice">*{{ item.pdf_notice }}
-        {% endif %}
-        {% endif %}
-    </td>
-    <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
-{% endfor %}
-</table>
+  <table class="cvblock wider pub">
+    {% for item in references|selectattr("type", "in", types)|sortrefs %}
+      <tr>
+        <td>{% if loop.first and false %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
+        <td class="article">
+          {{ item|reftomd }}
+          {%- if item.pdf_url -%}
+            &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
+            {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
+          {%- endif %}
+        </td>
+        <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
 {% endmacro %}
 
-<header>
-  <nav>↓
-    <a href="#Publications">Publications</a>
-    <span class="nav-item">&middot; <a href="#Software">Software</a></span>
-    <span class="nav-item">&middot; <a href="#Presentations">Presentations</a></span>
-    <span class="nav-item">&middot; <a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)</span>
-  </nav>
-</header>
+<nav>
+  <ul>
+    <li><a href="#Publications">Publications</a>
+    <li><a href="#Software">Software</a>
+    <li><a href="#Presentations">Presentations</a>
+    <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
+  </ul>
+</nav>
 
 <main>
+  <h1><span id="firstname">Jan</span> Hermann</h1>
 
-<h1><span id="firstname">Jan</span> Hermann</h1>
+  <section>
+    <p>I'm a <a href="https://bifold.berlin">BIFOLD</a> <a href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group leader</a> at FU Berlin.
+    <p>{{ statement }}
+    <p id="profile-pic">{% include "assets/profile-pic.svg" %}
+    <address>
+      <dl>
+        {% for category, items in links.items() %}
+          <dt>{{ category }}</dt>
+          <dd>
+          {% for item, url in items.items() %}
+            {% if not loop.first %}&middot;{% endif %}
+            <a href="{{ url }}">{{ item }}</a>
+          {% endfor %}
+        {% endfor %}
+      </dl>
+    </address>
+  </section>
 
-<div id="top">
+  <section id="Publications">
+    <h2>Publications</h2>
 
-<p>I'm a <a href="https://bifold.berlin">BIFOLD</a> <a href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group leader</a> at FU Berlin.
+    <ul><li>Citation numbers (→) from <a href="https://scholar.google.com/citations?user=5TjVq0YAAAAJ">Google Scholar</a></ul>
 
-<p>{{ statement }}
+    <h3>Research articles</h3>
+    {{ pub_block(["article-journal", "article"], by_year=true) }}
 
-<p id="profile-pic">{% include "assets/profile-pic.svg" %}
+    <h3>Book chapters</h3>
+    {{ pub_block(["chapter"]) }}
 
-<address>
-<dl>
-  {% for category, items in links.items() %}
-    <dt>{{ category }}</dt>
-    <dd>
-    {% for item, url in items.items() %}
-      {% if not loop.first %}&middot;{% endif %}
-      <a href="{{ url }}">{{ item }}</a>
-    {% endfor %}
-  {% endfor %}
-</dl>
-</address>
+    <h3>Theses</h3>
+    {{ pub_block(["thesis"]) }}
+  </section>
 
-</div>
+  <section id="Software">
+    <h2>Software</h2>
 
-<h2 id="Publications">Publications</h2>
+    <table class="cvblock wide">
+      {% for item in software %}
+        <tr>
+          <td><span class="bullet">&bull;</span></td>
+          <td>
+            <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>,
+            {{ item.role }}{% if item.stars %}, <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+            {% if item.description %}</br>{{ item.description}}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  </section>
 
-<ul>
-    <li>Citation numbers (→) from <a href="https://scholar.google.com/citations?user=5TjVq0YAAAAJ">Google Scholar</a>
-</ul>
+  <section id="Presentations">
+    <h2>Presentations</h2>
 
-<h3>Research articles</h3>
+    <ul><li>Includes future presentations</ul>
 
-{{ pub_block(["article-journal", "article"], by_year=true) }}
+    <h3>Invited conference talks</h3>
+    {{ talk_block(presentations.invited, "cvblock wide") }}
 
-<h3>Book chapters</h3>
+    <h3>Contributed conference talks</h3>
+    {{ talk_block(presentations.contributed, "cvblock wide") }}
 
-{{ pub_block(["chapter"]) }}
+    <h3>Conference poster presentations</h3>
+    {{ talk_block(presentations.posters, "cvblock wide") }}
 
-<h3>Theses</h3>
+    <h3>Invited seminars</h3>
+    {{ talk_block(presentations.seminars, "cvblock wide") }}
+  </section>
 
-{{ pub_block(["thesis"]) }}
+  <section id="CV">
+    <h2>Employment</h2>
+    <table class="cvblock">
+      {% for item in employment %}
+        <tr class="heading">
+          <td></td>
+          <td><strong>{{ item.institution }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td>
+        </tr>
+        {% for position in item.positions %}
+          <tr>
+            <td>{{ position.date|dateformat }}</td>
+            <td>{{ position.title }}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
 
-<h2 id="Software">Software</h2>
+    <h2>Education</h2>
+      <table class="cvblock">
+      {% for item in education %}
+        <tr class="heading">
+          <td></td>
+          <td><strong>{{ item.university }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td>
+        </tr>
+        {% for degree in item.degrees %}
+          <tr>
+            <td>{{ degree.date|dateformat }}</td>
+            <td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.summa %}, <em>summa cum laude</em>{% endif %}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
+    </table>
 
-<table class="cvblock wide">
-{% for item in software %}
-<tr><td><span class="bullet">&bull;</span></td>
-  <td><strong><a href="{{ item.url }}">{{ item.name }}</a></strong>, {{ item.role }}{% if item.stars %}, <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
-{% if item.description %}</br>{{ item.description}}{% endif %}
-    </td>
-</tr>
-{% endfor %}
-</table>
+    <h2>Secondary appointments</h2>
+    <table class="cvblock">
+      {% for item in secondary %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>
+            {{ item.title }}
+            {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
 
-<h2 id="Presentations">Presentations</h2>
+    <h2>Awards</h2>
+    <table class="cvblock">
+      {% for item in awards %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>
+            <strong>{{ item.title }}</strong>
+            {%- if item.institution %}, {{ item.institution}}{% endif %}
+            {% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
+          </td>
+      {% endfor %}
+    </table>
 
-<ul>
-    <li>Includes future presentations
-</ul>
+    <h2>Funding</h2>
+    <table class="cvblock">
+      {% for item in funding %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>
+            {{ item.title }}
+            {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
 
-<h3>Invited conference talks</h3>
+    <h2>Professional activities</h2>
+    <table class="cvblock wide">
+      {% for item in activity %}
+        <tr>
+          <td><span class="bullet">&bull;</span></td>
+          <td>{{ item }}</td>
+        </tr>
+      {% endfor %}
+    </table>
 
-{{ talk_block(presentations.invited, "cvblock wide") }}
+    <h2>Teaching & mentoring</h2>
 
-<h3>Contributed conference talks</h3>
+    <h3>Professional mentorship</h3>
+    <table class="cvblock small">
+      {% for item in mentorship %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>{{ item.who }}</td>
+        </tr>
+      {% endfor %}
+    </table>
 
-{{ talk_block(presentations.contributed, "cvblock wide") }}
+    <h3>Lectures for students</h3>
+    {{ talk_block(lectures, "cvblock") }}
 
-<h3>Conference poster presentations</h3>
+    <h3>Doctoral committees</h3>
+    <table class="cvblock small">
+      {% for item in defense %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>{{ item.who }}</td>
+        </tr>
+      {% endfor %}
+    </table>
 
-{{ talk_block(presentations.posters, "cvblock wide") }}
-
-<h3>Invited seminars</h3>
-
-{{ talk_block(presentations.seminars, "cvblock wide") }}
-
-<h2 id="CV">Employment</h2>
-
-<table class="cvblock">
-{% for item in employment %}
-<tr class="heading"><td></td><td><strong>{{ item.institution }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td></tr>
-{% for position in item.positions %}
-<tr><td>{{ position.date|dateformat }}</td><td>{{ position.title }}</td></tr>
-{% endfor %}
-{% endfor %}
-</table>
-
-<h2>Education</h2>
-
-<table class="cvblock">
-{% for item in education %}
-<tr class="heading"><td></td><td><strong>{{ item.university }}</strong>{% if item.location %}, {{ item.location }}{% endif %}</td></tr>
-{% for degree in item.degrees %}
-<tr><td>{{ degree.date|dateformat }}</td><td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.summa %}, <em>summa cum laude</em>{% endif %}</td></tr>
-{% endfor %}
-{% endfor %}
-</table>
-
-<h2>Secondary appointments</h2>
-
-<table class="cvblock">
-{% for item in secondary %}
-<tr><td>{{ item.date|dateformat }}</td><td>{{ item.title }}
-        {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}</td></tr>
-{% endfor %}
-</table>
-
-<h2>Awards</h2>
-
-<table class="cvblock">
-{% for item in awards %}
-  <tr><td>{{ item.date|dateformat }}</td>
-    <td><strong>{{ item.title }}</strong>
-      {%- if item.institution %}, {{ item.institution}}{% endif %}
-      {% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
-    </td>
-{% endfor %}
-</table>
-
-<h2>Funding</h2>
-
-<table class="cvblock">
-{% for item in funding %}
-<tr><td>{{ item.date|dateformat }}</td><td>{{ item.title }}
-        {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}</td></tr>
-{% endfor %}
-</table>
-
-<h2>Professional activities</h2>
-
-<table class="cvblock wide">
-{% for item in activity %}
-<tr><td><span class="bullet">&bull;</span></td><td>{{ item }}</td></tr>
-{% endfor %}
-</table>
-
-<h2>Teaching & mentoring</h2>
-
-<h3>Professional mentorship</h3>
-
-<table class="cvblock small">
-{% for item in mentorship %}
-<tr><td>{{ item.date|dateformat }}</td><td>{{ item.who }}</td></tr>
-{% endfor %}
-</table>
-
-<h3>Lectures for students</h3>
-
-{{ talk_block(lectures, "cvblock") }}
-
-<h3>Doctoral committees</h3>
-
-<table class="cvblock small">
-{% for item in defense %}
-<tr><td>{{ item.date|dateformat }}</td><td>{{ item.who }}</td></tr>
-{% endfor %}
-</table>
-
-<h2>Public outreach</h2>
-
-<table class="cvblock small">
-{% for item in outreach %}
-<tr><td>{{ item.date|dateformat }}</td><td>{{ item.what }}</td></tr>
-{% endfor %}
-</table>
-
+    <h2>Public outreach</h2>
+    <table class="cvblock small">
+      {% for item in outreach %}
+        <tr>
+          <td>{{ item.date|dateformat }}</td>
+          <td>{{ item.what }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </section>
 </main>
 
 <footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %}</footer>
