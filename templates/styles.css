@@ -24,16 +24,15 @@ a:hover {
     color: #2D6A9F;
     text-decoration: underline;
 }
-dl, ul {
+ul {
     list-style-type: circle;
-    padding-left: 2em;
 }
 dt {
     float: left;
-    margin-right: 0.4em;
-    display: list-item;
+    text-align: right;
+    width: 6em;
 }
-dt::after { content: ":"; }
+dt::after { content: ":\00a0"; }
 
 nav ul { padding-left: 0; }
 nav ul::before { content: "↓ "; }
