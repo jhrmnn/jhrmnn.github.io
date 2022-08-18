@@ -5,7 +5,7 @@ body {
     font-family: sans-serif;
     -webkit-text-size-adjust: 100%;
 }
-h1 { color: #777; }
+h1 { color: #666; }
 h2 {
     font-weight: normal;
     font-size: 1.7em;
@@ -87,7 +87,7 @@ table.cvblock td:nth-child(3) { text-align: right; }
 table.pub td:nth-child(3) { width: 2.5em; }
 tr.heading:not(:first-child) td { padding-top: 9px; }
 
-#firstname { color: #AAA; }
+#firstname { color: #949494; }
 section:first-of-type { position: relative; }
 #profile-pic svg {
     padding: 1em;
@@ -162,7 +162,7 @@ address { font-style: normal; }
     }
     h1 { color: #999; }
     h2 { color: #999; }
-    #firstname { color: #666; }
+    #firstname { color: #6E6E6E; }
     a { color: #609dd2; }
     a:hover { color: #74a9d8; }
 }
