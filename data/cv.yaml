@@ -1,5 +1,5 @@
 statement: |
-  My research focuses on advancing quantum chemistry through tight integration of deep learning.
+  My work focuses on advancing quantum chemistry through tight integration of deep learning.
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
   The goal is to push through the existing scale–accuracy tradeoff offered by traditional methods of quantum chemistry.
 links:
