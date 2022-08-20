@@ -1,4 +1,4 @@
-<!-- vim: set sts=2 sw=2: -->
+<!-- vim: set ft=jinja sts=2 sw=2: -->
 <!doctype html>
 <html lang="en" class="no-js">
 <meta charset="utf-8">
@@ -31,8 +31,8 @@
     {% for year, items in talks|groupby("year")|sort(reverse=True) %}
       {% for item in items %}
         <tr>
-          <td>{% if loop.first %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
-          <td>
+          <td>{% if loop.first %}{{ year }}{% endif %}</td>
+          <td class="{% if not loop.first %}continued{% endif %}">
             {% if item.title %}
               “{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}”
             {%- endif %}
@@ -54,10 +54,9 @@
 {% endmacro %}
 
 {% macro pub_block(types, by_year=false) %}
-  <table class="cvblock wider pub">
+  <table class="pub">
     {% for item in references|selectattr("type", "in", types)|sortrefs %}
       <tr>
-        <td>{% if loop.first and false %}{{ year }}{% else %}<span class="bullet">&bull;</span>{% endif %}</td>
         <td class="article">
           {{ item|reftomd }}
           {%- if item.pdf_url -%}
@@ -119,18 +118,14 @@
   <section id="Software">
     <h2>Software</h2>
 
-    <table class="cvblock wide">
+    <ul>
       {% for item in software %}
-        <tr>
-          <td><span class="bullet">&bull;</span></td>
-          <td>
+        <li>
             <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>,
             {{ item.role }}{% if item.stars %}, <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
             {% if item.description %}</br>{{ item.description}}{% endif %}
-          </td>
-        </tr>
       {% endfor %}
-    </table>
+    </ul>
   </section>
 
   <section id="Presentations">
@@ -139,16 +134,16 @@
     <ul><li>Includes future presentations</ul>
 
     <h3>Invited conference talks</h3>
-    {{ talk_block(presentations.invited, "cvblock wide") }}
+    {{ talk_block(presentations.invited, "talks") }}
 
     <h3>Contributed conference talks</h3>
-    {{ talk_block(presentations.contributed, "cvblock wide") }}
+    {{ talk_block(presentations.contributed, "talks") }}
 
     <h3>Conference poster presentations</h3>
-    {{ talk_block(presentations.posters, "cvblock wide") }}
+    {{ talk_block(presentations.posters, "talks") }}
 
     <h3>Invited seminars</h3>
-    {{ talk_block(presentations.seminars, "cvblock wide") }}
+    {{ talk_block(presentations.seminars, "talks") }}
   </section>
 
   <section id="CV">
@@ -224,14 +219,9 @@
     </table>
 
     <h2>Professional activities</h2>
-    <table class="cvblock wide">
-      {% for item in activity %}
-        <tr>
-          <td><span class="bullet">&bull;</span></td>
-          <td>{{ item }}</td>
-        </tr>
-      {% endfor %}
-    </table>
+    <ul>
+      {% for item in activity %}<li>{{ item }}{% endfor %}
+    </ul>
 
     <h2>Teaching & mentoring</h2>
 
@@ -246,7 +236,7 @@
     </table>
 
     <h3>Lectures for students</h3>
-    {{ talk_block(lectures, "cvblock") }}
+    {{ talk_block(lectures, "talks small") }}
 
     <h3>Doctoral committees</h3>
     <table class="cvblock small">
