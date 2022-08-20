@@ -44,7 +44,7 @@ employment:
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-
-    title: "[BIFOLD](https://bifold.berlin) [Junior Group Leader](https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci), Department of Mathematics"
+    title: "[BIFOLD](https://bifold.berlin) [junior group leader](https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci), Department of Mathematics"
   - date: Jan 2019-Oct 2020
     title: Postdoctoral researcher, [**Noé** group](https://www.mi.fu-berlin.de/en/math/groups/comp-mol-bio)
 - institution: University of Luxembourg
@@ -67,9 +67,9 @@ secondary:
 - date: Jun 2021-
   title: Associated PI, [DAEDALUS](https://daedalus.berlin/people/), Berlin
 - date: Jan 2019-Oct 2020
-  title: Research fellow in [Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin
+  title: Postdoctoral research fellow in [Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin
 - date: Sep-Dec 2016
-  title: Research fellow at [IPAM](http://www.ipam.ucla.edu), UCLA
+  title: Visiting graduate researcher at [IPAM](http://www.ipam.ucla.edu), UCLA
   subtitle: (long program “[Understanding Many-Particle Systems with Machine Learning](http://www.ipam.ucla.edu/programs/long-programs/understanding-many-particle-systems-with-machine-learning/)”)
 funding:
 - date: Apr 2021-Mar 2024

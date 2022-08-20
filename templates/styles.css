@@ -35,7 +35,6 @@ dt {
 dt::after { content: ":\00a0"; }
 address { font-style: normal; }
 
-nav ul { padding-left: 0; }
 nav ul::before { content: "↓ "; }
 nav ul li {
     display: inline-block;
@@ -43,7 +42,7 @@ nav ul li {
 }
 nav ul li:not(:first-child)::before { content: "\00a0·\00a0"; }
 
-section ul li {
+section ul li, nav ul {
     text-indent: -1em;
     padding-left: 1em;
 }
