@@ -23,7 +23,7 @@
   {% include "templates/styles.css" %}
 </style>
 
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAALiMAAC4jAXilP3YAAABFUExURSQkJBQUFE9PTzc3N0JCQmFhYYSEhB0dHQoKCi4uLllZWdDQ0GhoaI6OjnNzc3x8fOnp6djY2MjIyODg4Jubm6ysrLu7u/RGr04AAAH6SURBVDjLXZKNdqwgDIRDIPxEAtVF3/9R70RtT3tnD+Kaj0kg0My2zst1HMe2fb6+PhjQZ9+O47poOADdwLHt+77tD/LB63YQ4jaUVYadl3v42H9MLrK1BhWi1rivC8GbcJf9TkJwnx6OKbFteXkiRD9gbj+6zqwcY2JVtlmDbduTwktARWQaoyIuXXRwrbZ5rQ4A+doPMtHUHRBRy6zntwGAzbdpWCnRK2Dus7Q57NquExVsx7nsJF8qkUopDaoVD1kj9ivbid9FUUV7aiUUCqHWGkKJHIli5JyxRUqcoiZ/kscLvGLzg8HW01xGbtzKPQEIMUUU1BAunjWyR4ju/1RAtNhSEibYNGcaof7G6stSirUO6zlL7mw4GJFuhO8oFEkSuwMLykm9y+h9iJwdQPQ+4KjYq4R9H0CwNx68FtPonAQr+hiKFF7BnE51HbqWkOWczSxPTN2PAQeic+Y5+7yB7JpjDNw9ra8i8DymrNXJ4a4quFGLn3CoYfwGBtoFYppJ+LYQd30AhLs7uGmm7xTjTisGQL2bqn1MyLuJFGmgRgDqQHL5KbgIzQiV1IXrkWwmuuXN8q6UGtCy0B5Jy0J/9QN4s4kBePvLEysPcI9HMU19gfLoP4DS5PqufBVuoN6fnOD8vngHXqC8wBMYds8lhAf5DTxE+gex2yJr5qOYvwAAAFd6VFh0UmF3IHByb2ZpbGUgdHlwZSBpcHRjAAB4nOPyDAhxVigoyk/LzEnlUgADIwsuYwsTIxNLkxQDEyBEgDTDZAMjs1Qgy9jUyMTMxBzEB8uASKBKLgDqFxF08kI1lQAAAABJRU5ErkJg">
+<link rel="icon" type="image/png" href="data:image/png;base64,{% include "build/favicon.png.b64" %}">
 <link rel="canonical" href="https://jan.hermann.name">
 
 {% macro talk_block(talks, class) %}

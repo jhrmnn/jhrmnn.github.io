@@ -5,8 +5,10 @@ vpath %.in templates
 vpath %.css templates
 vpath %.yaml data
 vpath %.json data
+vpath %.png assets
 
 .PRECIOUS: %.pdf $(BLDDIR)/%
+.DELETE_ON_ERROR:
 
 cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml)
 
@@ -16,19 +18,22 @@ $(OUTDIR)/%: % | $(OUTDIR)
 $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 	cp $^ $@
 
+$(BLDDIR)/%.b64: % | $(BLDDIR)
+	base64 $^ >$@
+
 $(OUTDIR)/%: render.py %.in $(wildcard data/*) | $(OUTDIR)
 	./$(wordlist 1,5,$^) $(FLAGS) -o $@
 
 $(BLDDIR)/%: render.py %.in $(wildcard data/*) | $(BLDDIR)
 	./$(wordlist 1,5,$^) $(FLAGS) -o $@
 
-$(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg)
+$(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64
 
 %.pdf: %.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
 
 $(OUTDIR) $(BLDDIR):
-	mkdir -p $@
+	mkdir $@
 
 clean:
 	rm -rf $(BLDDIR) $(OUTDIR)
