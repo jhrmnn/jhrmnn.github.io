@@ -2,13 +2,14 @@ statement: |
   My work focuses on advancing quantum chemistry through tight integration of deep learning.
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
   The goal is to push through the simulation scale–accuracy trade-off offered by traditional methods of quantum chemistry.
-links:
+contact:
   email:
     jan.hermann@fu-berlin.de: mailto:jan.hermann@fu-berlin.de
   phone:
     "+49 30 838-66432": tel:+493083866432
-  chat:
-    "[matrix]": https://matrix.to/#/@jhrmnn:matrix.org
+  "[matrix]":
+    "@jhrmnn:matrix.org": https://matrix.to/#/@jhrmnn:matrix.org
+links:
   research:
     ORCID: https://orcid.org/0000-0002-2779-0749
   code:

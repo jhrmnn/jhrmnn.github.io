@@ -70,6 +70,19 @@
   </table>
 {% endmacro %}
 
+{% macro dl_block(items) %}
+  <dl>
+    {% for group, items in items.items() %}
+      <dt>{{ group }}</dt>
+      <dd>
+      {% for item, url in items.items() %}
+        {% if not loop.first %}&middot;{% endif %}
+        <a href="{{ url }}">{{ item }}</a>
+      {% endfor %}
+    {% endfor %}
+  </dl>
+{% endmacro %}
+
 <nav>
   <ul>
     <li><a href="#Publications">Publications</a>
@@ -87,17 +100,9 @@
     <p>{{ statement }}
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
     <address>
-      <dl>
-        {% for category, items in links.items() %}
-          <dt>{{ category }}</dt>
-          <dd>
-          {% for item, url in items.items() %}
-            {% if not loop.first %}&middot;{% endif %}
-            <a href="{{ url }}">{{ item }}</a>
-          {% endfor %}
-        {% endfor %}
-      </dl>
+      {{ dl_block(contact)  }}
     </address>
+    {{ dl_block(links)  }}
   </section>
 
   <section id="Publications">
