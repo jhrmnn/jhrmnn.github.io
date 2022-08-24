@@ -23,7 +23,7 @@
   {% include "templates/styles.css" %}
 </style>
 
-<link rel="icon" type="image/png" href="data:image/png;base64,{% include "build/favicon.png.b64" %}">
+<link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
 <link rel="canonical" href="https://jan.hermann.name">
 
 {% macro talk_block(talks, class) %}

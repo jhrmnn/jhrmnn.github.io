@@ -276,6 +276,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
             item['pdf_notice'] = extras['notice']
         if item['id'] in ctx['keypubs']:
             item['star'] = True
+    extra_kwargs = {}
     if '.tex' in template.name:
 
         def finalize(x):
@@ -283,18 +284,15 @@ def render(template, ctx, **kwargs):  # noqa: C901
                 return x
             return md_to_tex(x)
 
-        env = Environment(
-            loader=FileSystemLoader('.'),
-            variable_start_string=r'<<',
-            variable_end_string='>>',
-            block_start_string='<+',
-            block_end_string='+>',
-            comment_start_string='<#',
-            comment_end_string='#>',
-            trim_blocks=True,
-            autoescape=False,
-            finalize=finalize,
-        )
+        extra_kwargs = {
+            'variable_start_string': r'<<',
+            'variable_end_string': '>>',
+            'block_start_string': '<+',
+            'block_end_string': '+>',
+            'comment_start_string': '<#',
+            'comment_end_string': '#>',
+        }
+
     elif '.html' in template.name:
 
         def finalize(x):
@@ -302,19 +300,15 @@ def render(template, ctx, **kwargs):  # noqa: C901
                 return x
             return md_to_html(x)
 
-        env = Environment(
-            loader=FileSystemLoader('.'),
-            trim_blocks=True,
-            autoescape=False,
-            finalize=finalize,
-        )
     elif '.txt' in template.name:
-        env = Environment(
-            loader=FileSystemLoader('.'),
-            trim_blocks=True,
-            autoescape=False,
-            finalize=md_to_txt,
-        )
+        finalize = md_to_tex
+    env = Environment(
+        loader=FileSystemLoader(['.', os.getenv('BLDDIR')]),
+        trim_blocks=True,
+        autoescape=False,
+        finalize=finalize,
+        **extra_kwargs,
+    )
     env.filters['dateformat'] = date_format
     env.filters['sortrefs'] = sort_refs
     env.filters['reftomd'] = ref_to_md

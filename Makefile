@@ -1,4 +1,4 @@
-BLDDIR = build
+export BLDDIR = build
 OUTDIR = _site
 
 vpath %.in templates
