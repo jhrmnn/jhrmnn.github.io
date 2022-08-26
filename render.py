@@ -93,21 +93,24 @@ def ref_to_md(item):
     url = f'https://doi.org/{item["DOI"]}' if 'DOI' in item else item['URL']
     title = item['title']
     title = re.sub(r': ([a-z])', lambda m: f': {m.group(1).upper()}', title)
-    s += f' [{strip_html(title)}]({url})'
+    if item['type'] in ['article-journal', 'article']:
+        s += f' {strip_html(title)}'
+    else:
+        s += f' [{strip_html(title)}]({url})'
     year = item['issued']['date-parts'][0][0]
     if item['type'] == 'article-journal':
         s += (
-            f'. *{item["container-title-short"]}*'
+            f'. [*{item["container-title-short"]}*'
             + (f' **{item["volume"]}**' if 'volume' in item else '')
             + (f', {item["page"].replace("-", "–")}' if 'page' in item else '')
-            + f' ({year})'
+            + f']({url}) ({year})'
         )
     elif item['type'] == 'article':
         archive, iden = re.match(
             r'http://(arxiv).org/abs/([\d.]+)', item['URL']
         ).groups()
         if archive == 'arxiv':
-            s += f'. `arXiv:{iden}` ({year})'
+            s += f'. [`arXiv:{iden}`]({url}) ({year})'
     elif item['type'] == 'chapter':
         s += (
             f'. In: {author_list(item["editor"], 3)} (eds)'
