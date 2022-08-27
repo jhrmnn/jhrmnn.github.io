@@ -93,11 +93,13 @@ def ref_to_md(item):
     url = f'https://doi.org/{item["DOI"]}' if 'DOI' in item else item['URL']
     title = item['title']
     title = re.sub(r': ([a-z])', lambda m: f': {m.group(1).upper()}', title)
-    if item['type'] in ['article-journal', 'article']:
-        s += f' "{strip_html(title)}"'
-    else:
-        s += f' "[{strip_html(title)}]({url})"'
     year = item['issued']['date-parts'][0][0]
+    if item['type'] in ['article-journal', 'article']:
+        s += f' {strip_html(title)}'
+    elif item['type'] == 'chapter':
+        s += f' [{strip_html(title)}]({url})'
+    elif item['type'] == 'thesis':
+        s += f' [*{strip_html(title)}*]({url})'
     if item['type'] == 'article-journal':
         s += (
             f'. [*{item["container-title-short"]}*'
@@ -110,15 +112,15 @@ def ref_to_md(item):
             r'http://(arxiv).org/abs/([\d.]+)', item['URL']
         ).groups()
         if archive == 'arxiv':
-            s += f'. [`arXiv:{iden}`]({url}) ({year})'
+            s += f'. Preprint at [`arXiv:{iden}`]({url}) ({year})'
     elif item['type'] == 'chapter':
         s += (
-            f'. In: {author_list(item["editor"], 3)} (eds)'
-            f', *{item["container-title"]}*'
-            f' ({item["publisher"]}, {item["publisher-place"]}, {year})'
+            f'. In *{item["container-title"]}* (eds {author_list(item["editor"], 3)})'
+            f' {item["page"].replace("-", "–")}'
+            f' ({item["publisher"]}, {year})'
         )
     elif item['type'] == 'thesis':
-        s += f' ({item["publisher"]}, {year})'
+        s += f'. {item["publisher"]} ({year})'
     s = re.sub(r'"([.,])', r'\1"', s)
     return s
 
