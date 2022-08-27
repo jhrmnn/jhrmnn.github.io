@@ -94,9 +94,9 @@ def ref_to_md(item):
     title = item['title']
     title = re.sub(r': ([a-z])', lambda m: f': {m.group(1).upper()}', title)
     if item['type'] in ['article-journal', 'article']:
-        s += f' {strip_html(title)}'
+        s += f' "{strip_html(title)}"'
     else:
-        s += f' [{strip_html(title)}]({url})'
+        s += f' "[{strip_html(title)}]({url})"'
     year = item['issued']['date-parts'][0][0]
     if item['type'] == 'article-journal':
         s += (
@@ -114,11 +114,12 @@ def ref_to_md(item):
     elif item['type'] == 'chapter':
         s += (
             f'. In: {author_list(item["editor"], 3)} (eds)'
-            f', {item["container-title"]}'
+            f', *{item["container-title"]}*'
             f' ({item["publisher"]}, {item["publisher-place"]}, {year})'
         )
     elif item['type'] == 'thesis':
         s += f' ({item["publisher"]}, {year})'
+    s = re.sub(r'"([.,])', r'\1"', s)
     return s
 
 
