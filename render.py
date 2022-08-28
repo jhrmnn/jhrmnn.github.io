@@ -45,7 +45,6 @@ def md_to_tex(x):
     x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)', r'\\href{\2}{\1}', x)
     x = re.sub(r'\. (?=[A-Z]|\\&)', r'.\ ', x)
     x = re.sub(r'`([^`]*)`', r'\\emph{\1}', x)
-    x = x.replace(' ·', r'~$\cdot$')
     return x
 
 
@@ -57,7 +56,6 @@ def md_to_html(x):
     x = re.sub(r'\*\*([^*]*)\*\*', r'<strong>\1</strong>', x)
     x = re.sub(r'\*([^*]*)\*', r'<em>\1</em>', x)
     x = re.sub(r'`([^`]*)`', r'<code>\1</code>', x)
-    x = x.replace(' ·', r'&nbsp;·')
     return x
 
 
@@ -122,8 +120,7 @@ def ref_to_md(item):
         )
     elif item['type'] == 'thesis':
         ref = f'{item["publisher"]} ({year})'
-    ref = f'{title} · {authors} · {ref}'
-    return ref
+    return title, authors, ref
 
 
 def strip_html(str):
@@ -346,7 +343,6 @@ def render(template, ctx, **kwargs):  # noqa: C901
             .replace('è', 'e')
             .replace('ý', 'y')
             .replace('ó', 'o')
-            .replace('·', '-')
         )
         doc = reduce_sc(doc)
         doc = doc.encode('ascii')

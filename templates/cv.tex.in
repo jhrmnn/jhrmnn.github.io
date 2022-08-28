@@ -111,8 +111,8 @@
 \hangpara{1.5em}{1}<+ if item.title +>``
 <+- if item.url +>\href{<< item.url >>}{<< item.title >>}<+ else +><< item.title >><+ endif +>''
 <+- endif -+>
-<+ if item.event +><+ if item.title +>, <+ endif +><+ if item.event_url +>\href{<< item.event_url >>}{<< item.event >>}<+ else +><< item.event >><+ endif +><+ endif +>
-<+- if item.where +><+ if item.title or item.event +>, <+ endif +><< item.where >><+ endif +>
+<+ if item.event +><+ if item.title +>~$\cdot$ <+ endif +><+ if item.event_url +>\href{<< item.event_url >>}{<< item.event >>}<+ else +><< item.event >><+ endif +><+ endif +>
+<+- if item.where +><+ if item.title or item.event +> (<+ endif +><< item.where >>)<+ endif +>
 <+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
 <+ if not loop.last +>\\
 <+ endif +>
@@ -129,9 +129,10 @@
 {\small
 \begin{cvblock2}
 <+ for item in references|selectattr("type", "in", types)|sortrefs +>
+<+ set title, authors, ref = item|reftomd +>
 <+ if not loop.first +>\\<+ endif +>
 \hfill\color{white}<+ if loop.first and false +><< year|dateformat >><+ else +><+ if settings.with_stars and item.star +>{\large$\mathbf{\bigwhitestar}$}<+ else +>$\bullet$<+ endif +>\hspace{0.6em}<+ endif +> &&
-\hangpara{1.5em}{1}<< item|reftomd >> &
+\hangpara{1.5em}{1}<< title >>~$\cdot$ << authors >>~$\cdot$ << ref >> &
 \hfill<+ if item.cited_by +><< item.cited_by >><+ endif +>
 <+ endfor +>
 \end{cvblock2}}
@@ -177,7 +178,7 @@
   && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
   <+ for position in item.positions +>
   \raggedleft{\color{white}<< position.date|dateformat >>} &&
-  << position.title >><+ if not loop.last +>\\
+  << position.role >>~$\cdot$ << position.dept >><+ if not loop.last +>\\
   <+ endif +>
   <+ endfor +><+ if not loop.last +>\\[6pt]
   <+ endif +>
@@ -191,7 +192,7 @@
   && \textsb{<< item.university >>}<+ if item.location +>, << item.location >><+ endif +> \\
   <+ for degree in item.degrees +>
     \raggedleft{\color{white}<< degree.date|dateformat >>} &&
-    \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.summa +>, \emph{summa cum laude}<+ endif +>
+    \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.note +>~$\cdot$ \emph{<< degree.note >>}<+ endif +>
     <+ if not loop.last +>\\
     <+ endif +>
   <+ endfor +><+ if not loop.last +>\\[6pt]
@@ -204,7 +205,7 @@
 \begin{cvblock}
 <+ for item in secondary +>
 \hfill\color{white}<< item.date|dateformat >> &&
-\hangpara{1.5em}{1}<< item.title >>
+\hangpara{1.5em}{1}<< item.role >>~$\cdot$ << item.where >>
 <+ if item.subtitle +>\newline
 << item.subtitle >>
 <+ endif +><+ if not loop.last +>\\
@@ -217,7 +218,7 @@
 \begin{cvblock}
 <+ for item in awards +>
 \hfill\color{white}<< item.date|dateformat >> &&
-\textsb{<< item.title >>}<+ if item.institution +>, << item.institution >><+ endif +>
+\textsb{<< item.title >>}<+ if item.institution +>~$\cdot$ << item.institution >><+ endif +>
 <+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
 <+ if not loop.last +>\\
 <+ endif +>
@@ -229,7 +230,7 @@
 \begin{cvblock}
 <+ for item in funding +>
 \hfill\color{white}<< item.date|dateformat >> &&
-\hangpara{1.5em}{1}<< item.title >>
+\hangpara{1.5em}{1}<< item.label >>~$\cdot$ ``<< item.title >>''~$\cdot$ \textbf{<< item.sum >>}
 <+ if item.subtitle +>\newline
 << item.subtitle >>
 <+ endif +><+ if not loop.last +>\\<+ endif +>
@@ -295,7 +296,7 @@
 \begin{cvblock}
 <+ for item in software +>
 \hfill\color{white}$\bullet$\hspace{0.6em} &&
-\textbf{<< item.name >>}, << item.role >>\hfill{\itshape\small\url{<< item.url >>}<+ if item.stars +> (<< item.stars >> stars)<+ endif +>}  % chktex 6
+\textbf{<< item.name >>}~$\cdot$ << item.role >>\hfill{\itshape\small\url{<< item.url >>}<+ if item.stars +> (<< item.stars >> stars)<+ endif +>}  % chktex 6
 <+ if item.description +>\newline
 << item.description >><+ endif +>
 <+ if not loop.last +>\\[2pt]

@@ -37,11 +37,11 @@
               “{% if item.url %}<a href="{{ item.url }}">{{ item.title }}</a>{% else %}{{ item.title }}{% endif %}”
             {%- endif %}
             {%- if item.event %}
-              {%- if item.title %}, {% endif %}
+              {%- if item.title %}&nbsp;&middot; {% endif %}
               {%- if item.event_url %}<a href="{{ item.event_url }}">{{ item.event }}</a>{% else %}{{ item.event }}{% endif %}
             {%- endif %}
             {%- if item.where %}
-              {%- if item.title or item.event %}, {% endif %}{{ item.where }}
+              {%- if item.title or item.event %} {% endif %}({{ item.where }})
             {%- endif %}
             {%- if item.note %} <em>[{{ item.note }}]</em>{% endif %}
             {%- if item.pdf %}&nbsp;<a href="{{ item.pdf }}">{% include "assets/file-pdf-solid.svg" %}</a>{% endif %}
@@ -56,9 +56,10 @@
 {% macro pub_block(types, by_year=false) %}
   <table class="pub">
     {% for item in references|selectattr("type", "in", types)|sortrefs %}
+      {% set title, authors, ref = item|reftomd %}
       <tr>
         <td class="article">
-          {{ item|reftomd }}
+          {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
           {%- if item.pdf_url -%}
             &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
             {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
@@ -126,8 +127,8 @@
     <ul>
       {% for item in software %}
         <li>
-            <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>,
-            {{ item.role }}{% if item.stars %}, <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+            <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>&nbsp;&middot;
+            {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
             {% if item.description %}</br>{{ item.description}}{% endif %}
       {% endfor %}
     </ul>
@@ -162,7 +163,7 @@
         {% for position in item.positions %}
           <tr>
             <td>{{ position.date|dateformat }}</td>
-            <td>{{ position.title }}</td>
+            <td>{{ position.role }}&nbsp;&middot; {{ position.dept }}</td>
           </tr>
         {% endfor %}
       {% endfor %}
@@ -178,7 +179,7 @@
         {% for degree in item.degrees %}
           <tr>
             <td>{{ degree.date|dateformat }}</td>
-            <td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.summa %}, <em>summa cum laude</em>{% endif %}</td>
+            <td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.note %}&nbsp;&middot; <em>{{ degree.note }}</em>{% endif %}</td>
           </tr>
         {% endfor %}
       {% endfor %}
@@ -190,7 +191,7 @@
         <tr>
           <td>{{ item.date|dateformat }}</td>
           <td>
-            {{ item.title }}
+            {{ item.role }}&nbsp;&middot; {{ item.where }}
             {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
           </td>
         </tr>
@@ -204,7 +205,7 @@
           <td>{{ item.date|dateformat }}</td>
           <td>
             <strong>{{ item.title }}</strong>
-            {%- if item.institution %}, {{ item.institution}}{% endif %}
+            {%- if item.institution %}&nbsp;&middot; {{ item.institution}}{% endif %}
             {% if item.note %} <em>[{{ item.note }}]</em>{% endif %}
           </td>
       {% endfor %}
@@ -216,7 +217,7 @@
         <tr>
           <td>{{ item.date|dateformat }}</td>
           <td>
-            {{ item.title }}
+            {{ item.label }}&nbsp;&middot; “{{ item.title }}”&nbsp;&middot; <strong>{{ item.sum }}</strong>
             {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
           </td>
         </tr>

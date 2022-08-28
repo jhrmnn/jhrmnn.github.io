@@ -2,7 +2,7 @@
 {% for item in talks %}
 - {{ item.year }}{% if item.title %}, “{{ item.title }}”{%- endif -%}
 {%- if item.event %}, {{ item.event }}{% endif -%}
-{%- if item.where %}, {{ item.where }}{% endif -%}
+{%- if item.where %} ({{ item.where }}){% endif -%}
 {%- if item.note %} [{{ item.note }}]{% endif %}
 
 {% endfor %}
@@ -10,7 +10,8 @@
 
 {%- macro pub_block(types) -%}
 {%- for item in references|selectattr("type", "in", types)|sortrefs -%}
-- {{ item|reftomd }}{% if item.DOI %}, doi:{{ item.DOI }}{% endif %}
+{% set title, authors, ref = item|reftomd %}
+- {{ title }} - {{ authors }} - {{ ref }}{% if item.DOI %}, doi:{{ item.DOI }}{% endif %}
 
 {% endfor -%}
 {%- endmacro -%}
@@ -23,7 +24,7 @@ Employment
 
 {% for item in employment %}
 {% for position in item.positions %}
-- {{ position.date|dateformat }}, {{ position.title }}, {{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}
+- {{ position.date|dateformat }}, {{ position.role }}, {{ position.dept }}, {{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}
 
 {% endfor %}
 {% endfor %}
@@ -33,7 +34,7 @@ Education
 
 {% for item in education %}
 {% for degree in item.degrees %}
-- {{ degree.date|dateformat }}, {{ degree.degree }}, {{ degree.field }}{% if degree.summa %}, summa cum laude{% endif %}, {{ item.university }}{% if item.location %}, {{ item.location }}{% endif %}
+- {{ degree.date|dateformat }}, {{ degree.degree }}, {{ degree.field }}{% if degree.note %}, {{ degree.note }}{% endif %}, {{ item.university }}{% if item.location %}, {{ item.location }}{% endif %}
 
 {% endfor %}
 {% endfor %}
@@ -50,7 +51,7 @@ Funding
 -------
 
 {% for item in funding %}
-- {{ item.date|dateformat }}, {{ item.title }}{% if item.subtitle %}
+- {{ item.date|dateformat }}, {{ item.label }}, "{{ item.title }}," {{ item.sum }}{% if item.subtitle %}
     {{ item.subtitle }}{% endif %}
 
 {% endfor %}

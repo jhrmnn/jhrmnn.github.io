@@ -28,7 +28,7 @@ education:
   - date: Dec 2017
     degree: Ph.D.
     field: Physics
-    summa: true
+    note: summa cum laude
 - university: Charles University
   location: Prague
   degrees:
@@ -45,36 +45,47 @@ employment:
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-
-    title: "[BIFOLD](https://bifold.berlin) [junior group leader](https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci), Department of Mathematics"
+    role: "[BIFOLD](https://bifold.berlin) [junior group leader](https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci)"
+    dept: Department of Mathematics
   - date: Jan 2019-Oct 2020
-    title: Postdoctoral researcher, [**Noé** group](https://www.mi.fu-berlin.de/en/math/groups/comp-mol-bio)
+    role: Postdoctoral researcher
+    dept: "[**Noé** group](https://www.mi.fu-berlin.de/en/math/groups/comp-mol-bio)"
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
-    title: Postdoctoral researcher, [**Tkatchenko** group](https://www.tcpunilu.com/former-group-members)
+    role: Postdoctoral researcher
+    dept: "[**Tkatchenko** group](https://www.tcpunilu.com/former-group-members)"
 - institution: Fritz Haber Institute of the Max Planck Society
   location: Berlin
   positions:
   - date: Oct 2013-Dec 2017
-    title: Graduate researcher, **Tkatchenko** group, [Theory Department](https://th.fhi.mpg.de/site/index.php?n=Members.PreviousMembersG-H)
+    role: Graduate researcher
+    dept: "**Tkatchenko** group, [Theory Department](https://th.fhi.mpg.de/site/index.php?n=Members.PreviousMembersG-H)"
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
   - date: Mar 2010-Sep 2013
-    title: Undergraduate researcher, [**Hobza** group](https://hobza.group.uochb.cz/)
+    role: Undergraduate researcher
+    dept: "[**Hobza** group](https://hobza.group.uochb.cz/)"
 secondary:
 - date: Jul 2021-
-  title: Junior Fellow, [BIFOLD](https://bifold.berlin/person/dr-jan-hermann/), Berlin
+  role: Junior Fellow
+  where: "[BIFOLD](https://bifold.berlin/person/dr-jan-hermann/), Berlin"
 - date: Jun 2021-
-  title: Associated PI, [DAEDALUS](https://daedalus.berlin/people/), Berlin
+  role: Associated PI
+  where: "[DAEDALUS](https://daedalus.berlin/people/), Berlin"
 - date: Jan 2019-Oct 2020
-  title: Postdoctoral research fellow in [Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin
+  role: Postdoctoral research fellow
+  where: "[Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin"
 - date: Sep-Dec 2016
-  title: Visiting graduate researcher at [IPAM](http://www.ipam.ucla.edu), UCLA
+  role: Visiting graduate researcher
+  where: "[IPAM](http://www.ipam.ucla.edu), UCLA"
   subtitle: (long program “[Understanding Many-Particle Systems with Machine Learning](http://www.ipam.ucla.edu/programs/long-programs/understanding-many-particle-systems-with-machine-learning/)”)
 funding:
 - date: Apr 2021-Mar 2024
-  title: MATH+ AA2-8 (co-PI), "[Deep backflow for accurate solution of the electronic Schrödinger equation](https://mathplus.de/research-2/application-areas/aa2-materials-light-devices/aa2-8/)", **€160k**
+  label: MATH+ AA2-8 (co-PI)
+  title: "[Deep backflow for accurate solution of the electronic Schrödinger equation](https://mathplus.de/research-2/application-areas/aa2-materials-light-devices/aa2-8/)"
+  sum: €160k
 awards:
 - date: Feb 2021
   title: Marie Skłodowska-Curie Individual Fellowship
@@ -357,7 +368,8 @@ presentations:
     where: Chalmers University of Technology
     note: virtual
     year: 2021
-  - where: Grüneis group, TU Wien
+  - event: Grüneis group seminar
+    where: TU Wien
     note: virtual
     year: 2021
   - event: (Nano)Materials Modeling Seminar
@@ -365,6 +377,7 @@ presentations:
     note: virtual
     year: 2021
   - where: Institute of Physics, University of Szczecin
+    event: Cosmology Seminar
     note: virtual
     year: 2021
   - title: Solving the electronic Schrödinger equation with deep learning
@@ -380,16 +393,20 @@ presentations:
     where: University of Cambridge
     note: virtual
     year: 2020
-  - where: Jordan group, University of Pittsburgh
+  - event: Jordan group seminar
+    where: University of Pittsburgh
     note: virtual
     year: 2020
   - title: "Mona: Calculation framework for reproducible science"
-    where: Theory department, Fritz Haber Institute
+    event: Theory Department seminar
+    where: Fritz Haber Institute
     year: 2018
     pdf: https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf
   - title: Nanoscale π–π stacked molecules bound by collective charge fluctuations
-    where: Aspuru-Guzik group, Harvard University
+    event: Aspuru-Guzik group seminar
+    where: Harvard University
     year: 2016
     pdf: https://pub.hrmnn.net/7e/c344abff/2016-11-17-charge-fluctuations.pdf
-  - where: DiStasio group, Cornell University
+  - event: DiStasio group seminar
+    where: Cornell University
     year: 2015
