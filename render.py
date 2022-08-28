@@ -45,6 +45,7 @@ def md_to_tex(x):
     x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)', r'\\href{\2}{\1}', x)
     x = re.sub(r'\. (?=[A-Z]|\\&)', r'.\ ', x)
     x = re.sub(r'`([^`]*)`', r'\\emph{\1}', x)
+    x = x.replace(' ·', r'~$\cdot$')
     return x
 
 
@@ -56,6 +57,7 @@ def md_to_html(x):
     x = re.sub(r'\*\*([^*]*)\*\*', r'<strong>\1</strong>', x)
     x = re.sub(r'\*([^*]*)\*', r'<em>\1</em>', x)
     x = re.sub(r'`([^`]*)`', r'<code>\1</code>', x)
+    x = x.replace(' ·', r'&nbsp;·')
     return x
 
 
@@ -87,22 +89,21 @@ def ref_to_md(item):
             else f'{auth_lst[0]} et al.'
         )
 
-    s = author_list(item['author'], 10)
-    if s[-1] != '.':
-        s += '.'
+    authors = author_list(item['author'], 10)
     url = f'https://doi.org/{item["DOI"]}' if 'DOI' in item else item['URL']
     title = item['title']
     title = re.sub(r': ([a-z])', lambda m: f': {m.group(1).upper()}', title)
+    title = strip_html(title)
     year = item['issued']['date-parts'][0][0]
     if item['type'] in ['article-journal', 'article']:
-        s += f' {strip_html(title)}'
+        title = f'{title}'
     elif item['type'] == 'chapter':
-        s += f' [{strip_html(title)}]({url})'
+        title = f'[{title}]({url})'
     elif item['type'] == 'thesis':
-        s += f' [*{strip_html(title)}*]({url})'
+        title = f'[*{title}*]({url})'
     if item['type'] == 'article-journal':
-        s += (
-            f'. [*{item["container-title-short"]}*'
+        ref = (
+            f'[*{item["container-title-short"]}*'
             + (f' **{item["volume"]}**' if 'volume' in item else '')
             + (f', {item["page"].replace("-", "–")}' if 'page' in item else '')
             + f']({url}) ({year})'
@@ -112,17 +113,17 @@ def ref_to_md(item):
             r'http://(arxiv).org/abs/([\d.]+)', item['URL']
         ).groups()
         if archive == 'arxiv':
-            s += f'. Preprint at [`arXiv:{iden}`]({url}) ({year})'
+            ref = f'Preprint at [`arXiv:{iden}`]({url}) ({year})'
     elif item['type'] == 'chapter':
-        s += (
-            f'. In *{item["container-title"]}* (eds {author_list(item["editor"], 3)})'
+        ref = (
+            f'In *{item["container-title"]}* (eds {author_list(item["editor"], 3)})'
             f' {item["page"].replace("-", "–")}'
             f' ({item["publisher"]}, {year})'
         )
     elif item['type'] == 'thesis':
-        s += f'. {item["publisher"]} ({year})'
-    s = re.sub(r'"([.,])', r'\1"', s)
-    return s
+        ref = f'{item["publisher"]} ({year})'
+    ref = f'{title} · {authors} · {ref}'
+    return ref
 
 
 def strip_html(str):
@@ -307,7 +308,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
             return md_to_html(x)
 
     elif '.txt' in template.name:
-        finalize = md_to_tex
+        finalize = md_to_txt
     env = Environment(
         loader=FileSystemLoader(['.', os.getenv('BLDDIR')]),
         trim_blocks=True,
@@ -321,6 +322,10 @@ def render(template, ctx, **kwargs):  # noqa: C901
     env.filters['initials'] = lambda x: [f'{x[0]}.' for x in x.split()]
     template = env.get_template(str(template))
     doc = template.render(ctx)
+    doc = re.sub(r'(?<!\?</a>)”([.,])', r'\1”', doc)
+    doc = re.sub(r'”[.,]', r'”', doc)
+    doc = re.sub(r"(?<!\?})''([.,])", r"\1''", doc)
+    doc = re.sub(r"''([.,])", r"''", doc)
     if '.txt' in template.name:
         doc = re.sub(r'€(\d+[kM])', r'\1 EUR', doc)
         doc = (
@@ -341,6 +346,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
             .replace('è', 'e')
             .replace('ý', 'y')
             .replace('ó', 'o')
+            .replace('·', '-')
         )
         doc = reduce_sc(doc)
         doc = doc.encode('ascii')
