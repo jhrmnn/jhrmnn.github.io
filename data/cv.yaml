@@ -165,7 +165,7 @@ presentations:
   invited:
   - title: Neural-network wave functions for quantum chemistry
     event: MLQC4DYN
-    where: Paris, France
+    where: Institut Pascal, Paris, France
     event_url: https://www.institut-pascal.universite-paris-saclay.fr/en/scientific-programs/mlqc4dyn
     year: 2022
   - title: Neural-network wave functions for quantum chemistry
@@ -197,24 +197,24 @@ presentations:
     pdf: https://pub.hrmnn.net/46/cb155db9/2020-06-24-berln-fhi-aims-virtual.pdf
   - title: Unifying density-functional and interatomic approaches to van der Waals interactions
     event: Frontiers in Density Functional Theory and Beyond
-    where: Beijing, China
+    where: Kavli ITS, Beijing, China
     video: https://www.koushare.com/video/videodetail/2283
     event_url: https://kits.ucas.ac.cn/index.php/events/workshop/146-2019-seminar-dftb
     year: 2019
   - title: Modeling van der Waals interactions in molecules and materials
     event: Molecular Simulations Meets Machine Learning and Artificial Intelligence
-    where: Leiden, Netherlands
+    where: Lorentz Center, Leiden, Netherlands
     event_url: https://www.lorentzcenter.nl/molecular-simulations-meets-machine-learning-and-artificial-intelligence.html
     year: 2018
     pdf: https://pub.hrmnn.net/37/b6b74d7a/2018-10-11-leiden-talk.pdf
   - title: Modeling van der Waals interactions in materials with many-body dispersion
     event: Electronic Structure Theory with Numeric Atom-Centered Basis Functions
-    where: Munich, Germany
+    where: TU Munich, Germany
     event_url: https://th.fhi-berlin.mpg.de/meetings/FHI-aims-2018/
     year: 2018
   - title: Modeling van der Waals interactions
     event: Python for Quantum Chemistry and Materials Simulation Software
-    where: Pasadena, USA
+    where: Caltech, Pasadena, USA
     event_url: https://molssi.org/2018/03/26/molssi-workshop-on-python-for-quantum-chemistry-and-materials-simulation/
     year: 2018
   contributed:
@@ -276,7 +276,7 @@ presentations:
   - title: Modeling of surface properties of lamellar zeolites
     event: Molecular Sieves
     event_url: https://web.archive.org/web/20130512175338/http://www.jh-inst.cas.cz/~school2013/
-    where: Prague, Czechia
+    where: Heyrovsky Institute, Prague, Czechia
     year: 2013
     pdf: https://pub.hrmnn.net/a1/63abb037/2013-03-11-prague-sieves-slides.pdf
   posters:
