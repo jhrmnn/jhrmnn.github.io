@@ -185,7 +185,6 @@ presentations:
   - title: Solving the electronic Schrödinger equation with deep learning
     url: https://www.morressier.com/o/event/611a5aa65faad60014d170a3/article/612e2d0acb003360fe3aaccb
     event: ACS Fall Meeting
-    where: Atlanta, USA
     year: 2021
     note: virtual
     pdf: https://pub.hrmnn.net/86/70eeb1c1/2021-08-26-acs-fall-meeting.pdf
@@ -289,7 +288,6 @@ presentations:
   - title: Solving the electronic Schrödinger equation with deep learning
     event: Stochastic Methods in Electronic Structure Theory
     pdf: https://pub.hrmnn.net/f6/e099fa0a/2021-07-08-telluride-poster.pdf
-    where: Telluride, USA
     note: virtual
     event_url: https://www.telluridescience.org/meetings/workshop-details?wid=874
     year: 2021
@@ -349,7 +347,7 @@ presentations:
     year: 2012
   seminars:
   - event: UCT & IOCB Theoretical Chemistry Seminar
-    where: VŠCHT, Prague
+    where: VŠCHT, Prague, Czechia
     year: 2022
     pdf: https://pub.hrmnn.net/fc/0dbd1a2e/2022-06-03-prague-seminar.pdf
   - event: Lennard-Jones Centre Discussion Group
@@ -360,7 +358,7 @@ presentations:
     note: virtual
   - event: Molecular and Ultrafast Science Seminar
     event_url: https://www.controlled-molecule-imaging.org/news/seminar/
-    where: Center for Free-Electron Laser Science, Hamburg
+    where: Center for Free-Electron Laser Science
     year: 2021
     note: virtual
     pdf: https://pub.hrmnn.net/b7/08d1246c/2021-12-02-hamburg-cfel.pdf
@@ -376,7 +374,7 @@ presentations:
     where: Charles University
     note: virtual
     year: 2021
-  - where: Institute of Physics, University of Szczecin
+  - where: University of Szczecin
     event: Cosmology Seminar
     note: virtual
     year: 2021
@@ -399,14 +397,14 @@ presentations:
     year: 2020
   - title: "Mona: Calculation framework for reproducible science"
     event: Theory Department seminar
-    where: Fritz Haber Institute
+    where: Fritz Haber Institute, Berlin, Germany
     year: 2018
     pdf: https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf
   - title: Nanoscale π–π stacked molecules bound by collective charge fluctuations
     event: Aspuru-Guzik group seminar
-    where: Harvard University
+    where: Harvard University, Cambridge, USA
     year: 2016
     pdf: https://pub.hrmnn.net/7e/c344abff/2016-11-17-charge-fluctuations.pdf
   - event: DiStasio group seminar
-    where: Cornell University
+    where: Cornell University, Ithaca, USA
     year: 2015
