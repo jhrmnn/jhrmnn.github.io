@@ -151,7 +151,7 @@ software:
 - name: FHI-aims
   role: core contributor
   url: https://aimsclub.fhi-berlin.mpg.de
-  description: All-electron electronic structure theory (Fortran)
+  description: All-electron electronic-structure calculations (Fortran)
 - name: PySCF
   url: https://pyscf.org
   role: contributor
