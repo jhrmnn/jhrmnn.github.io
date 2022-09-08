@@ -32,6 +32,16 @@ def date_format(x):
     return x
 
 
+def process_href(m):
+    s = m.group(1)
+    s = re.sub(
+        r'\\emph{([^}]*)}',
+        lambda m: r'\emph{' + r'}\ \emph{'.join(m.group(1).split(r'\ ')) + '}',
+        s,
+    )
+    return f'\\href{{{m.group(2)}}}{{{s}}}'
+
+
 def md_to_tex(x):
     x = str(x)
     x = x.replace('&', r'\&')
@@ -42,9 +52,9 @@ def md_to_tex(x):
     x = re.sub(r'\*\*([^*]*)\*\*', r'\\strong{\1}', x)
     x = re.sub(r'__([^_]*)__', r'\\textbf{\1}', x)
     x = re.sub(r'\*([^*]*)\*', r'\\emph{\1}', x)
-    x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)', r'\\href{\2}{\1}', x)
-    x = re.sub(r'\. (?=[A-Z]|\\&)', r'.\ ', x)
     x = re.sub(r'`([^`]*)`', r'\\emph{\1}', x)
+    x = re.sub(r'\.(}?) (?=[A-Z]|\\)', r'.\1\ ', x)
+    x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)', process_href, x)
     return x
 
 
