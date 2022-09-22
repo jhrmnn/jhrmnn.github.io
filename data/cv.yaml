@@ -71,9 +71,9 @@ secondary:
 - date: Jul 2021-
   role: Junior Fellow
   where: "[BIFOLD](https://bifold.berlin/person/dr-jan-hermann/), Berlin"
-- date: Jun 2021-
-  role: Associated PI
-  where: "[DAEDALUS](https://daedalus.berlin/people/), Berlin"
+# - date: Jun 2021-
+#   role: Associated PI
+#   where: "[DAEDALUS](https://daedalus.berlin/people/), Berlin"
 - date: Jan 2019-Oct 2020
   role: Postdoctoral research fellow
   where: "[Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin"

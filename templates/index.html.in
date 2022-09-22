@@ -211,18 +211,18 @@
       {% endfor %}
     </table>
 
-    <h2>Funding</h2>
-    <table class="cvblock">
-      {% for item in funding %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>
-            {{ item.label }}&nbsp;&middot; “{{ item.title }}”&nbsp;&middot; <strong>{{ item.sum }}</strong>
-            {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </table>
+    <!-- <h2>Funding</h2> -->
+    <!-- <table class="cvblock"> -->
+    <!--   {% for item in funding %} -->
+    <!--     <tr> -->
+    <!--       <td>{{ item.date|dateformat }}</td> -->
+    <!--       <td> -->
+    <!--         {{ item.label }}&#38;nbsp;&#38;middot; “{{ item.title }}”&#38;nbsp;&#38;middot; <strong>{{ item.sum }}</strong> -->
+    <!--         {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %} -->
+    <!--       </td> -->
+    <!--     </tr> -->
+    <!--   {% endfor %} -->
+    <!-- </table> -->
 
     <h2>Professional activities</h2>
     <ul>
