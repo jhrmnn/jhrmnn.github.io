@@ -165,6 +165,13 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
+  - title: Libmbd: A general-purpose package for scalable many-body dispersion calculations
+    event: Electronic Structure Software Development
+    where: Lausane, Switzerland
+    note: virtual
+    event_url: https://www.cecam.org/workshop-details/1121
+    pdf: http://pub.hrmnn.net/dc/61d7af9d/2022-10-10-cecam-lausanne.pdf
+    year: 2022
   - title: Neural-network wave functions for quantum chemistry
     event: MLQC4DYN
     where: Institut Pascal, Paris, France
