@@ -165,7 +165,7 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
-  - title: Libmbd: A general-purpose package for scalable many-body dispersion calculations
+  - title: "Libmbd: A general-purpose package for scalable many-body dispersion calculations"
     event: Electronic Structure Software Development
     where: Lausane, Switzerland
     note: virtual
