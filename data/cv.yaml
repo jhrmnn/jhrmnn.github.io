@@ -4,9 +4,7 @@ statement: |
   The goal is to push through the simulation scale–accuracy trade-off offered by traditional methods of quantum chemistry.
 contact:
   email:
-    jan.hermann@fu-berlin.de: mailto:jan.hermann@fu-berlin.de
-  phone:
-    "+49 30 838-66432": tel:+493083866432
+    info@jan.hermann.name: mailto:info@jan.hermann.name
   "[matrix]":
     "@jhrmnn:matrix.org": https://matrix.to/#/@jhrmnn:matrix.org
 links:
@@ -16,6 +14,7 @@ links:
     GitHub: https://github.com/jhrmnn
   social:
     Twitter: https://twitter.com/jhrmnn
+    LinkedIn: https://www.linkedin.com/in/jhrmnn
   cycling:
     Strava: https://www.strava.com/athletes/jhrmnn
   books:
