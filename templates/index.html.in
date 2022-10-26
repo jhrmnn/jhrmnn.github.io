@@ -97,13 +97,19 @@
   <h1><span id="firstname">Jan</span> Hermann</h1>
 
   <section>
-    <p>I’m a computational chemist and a physicist by training️, who got
-    later hooked on machine learning, and now enjoys integrating deep
-    learning into quantum chemistry.
-    I was born and raised in Český Krumlov, moved for university to Prague,
-    and later for a Phd to Berlin, where I now live with my wife and a 2
+    <p>I’m a computational chemist and a physicist by <a
+    href="#Education">training️</a>, who got later hooked on machine learning,
+    and now enjoys <a
+    href="https://chemistrycommunity.nature.com/posts/deep-neural-electronic-wave-functions">integrating</a>
+    deep learning into quantum chemistry.
+    <p>I was born and raised in <a
+    href="https://en.wikipedia.org/wiki/Český_Krumlov">Český Krumlov</a>, moved
+    for university to <a href="https://en.wikipedia.org/wiki/Prague">Prague</a>,
+    and later for a Phd to <a
+    href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
+    with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and a 2
     years old kid.
-    I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
+    <p>I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
     href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group
     leader</a> at FU Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
@@ -176,7 +182,7 @@
       {% endfor %}
     </table>
 
-    <h2>Education</h2>
+    <h2 id="Education">Education</h2>
       <table class="cvblock">
       {% for item in education %}
         <tr class="heading">
