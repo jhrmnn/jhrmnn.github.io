@@ -97,8 +97,15 @@
   <h1><span id="firstname">Jan</span> Hermann</h1>
 
   <section>
-    <p>I'm a <a href="https://bifold.berlin">BIFOLD</a> <a href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group leader</a> at FU Berlin.
-    <p>{{ statement }}
+    <p>I am a computational chemist and a physicist by training️, who got
+    later hooked on machine learning, and now enjoys integrating deep
+    learning into quantum chemistry.
+    I was born and raised in Český Krumlov 🇨🇿, moved for university to Prague,
+    and later for a Phd to Berlin 🇩🇪, where I now live with my wife and a 2
+    years old kid.
+    I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
+    href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group
+    leader</a> at FU Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
     <address>
       {{ dl_block(contact)  }}
@@ -109,7 +116,7 @@
   <section id="Publications">
     <h2>Publications</h2>
 
-    <ul><li>Citation numbers (→) from <a href="https://scholar.google.com/citations?user=5TjVq0YAAAAJ">Google Scholar</a></ul>
+    <ul><li>Citation numbers (→) from Google Scholar</ul>
 
     <h3>Research articles</h3>
     {{ pub_block(["article-journal", "article"], by_year=true) }}
