@@ -109,9 +109,6 @@
     href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
     with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and a 2
     years old kid.
-    I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
-    href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group
-    leader</a> at FU Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
     <address>
       {{ dl_block(contact)  }}
