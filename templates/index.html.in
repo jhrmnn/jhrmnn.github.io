@@ -102,14 +102,14 @@
     and now enjoys <a
     href="https://chemistrycommunity.nature.com/posts/deep-neural-electronic-wave-functions">integrating</a>
     deep learning into quantum chemistry.
-    <p>I was born and raised in <a
+    I was born and raised in <a
     href="https://en.wikipedia.org/wiki/Český_Krumlov">Český Krumlov</a>, moved
     for university to <a href="https://en.wikipedia.org/wiki/Prague">Prague</a>,
     and later for a Phd to <a
     href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
     with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and a 2
     years old kid.
-    <p>I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
+    I currently work as a <a href="https://bifold.berlin">BIFOLD</a> <a
     href="https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci">junior group
     leader</a> at FU Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
@@ -149,8 +149,6 @@
 
   <section id="Presentations">
     <h2>Presentations</h2>
-
-    <ul><li>Includes future presentations</ul>
 
     <h3>Invited conference talks</h3>
     {{ talk_block(presentations.invited, "talks") }}
