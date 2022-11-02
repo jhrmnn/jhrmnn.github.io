@@ -42,6 +42,12 @@ education:
     degree: B.S.
     field: Chemistry
 employment:
+- institution: Microsoft Research
+  location: Berlin
+  positions:
+  - date: Nov 2022–
+    role: Principal researcher
+    dept: AI4Science
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
