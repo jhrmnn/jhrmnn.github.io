@@ -109,7 +109,7 @@
     href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
     with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and a 2
     years old kid.
-    Currently I'm a quantum chemistry <a href="https://www.microsoft.com/en-us/research/people/janhermann/">team lead</a>
+    Currently I'm a quantum chemistry <a href="https://www.microsoft.com/en-us/research/people/janhermann/">lead</a>
     at <a href="https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science/">Microsoft Research AI4Science</a> in Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
     <address>
