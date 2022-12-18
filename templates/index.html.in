@@ -107,8 +107,7 @@
     for university to <a href="https://en.wikipedia.org/wiki/Prague">Prague</a>,
     and later for a Phd to <a
     href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
-    with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and a 2
-    years old kid.
+    with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and our little kid.
     Currently I'm a quantum chemistry <a href="https://www.microsoft.com/en-us/research/people/janhermann/">lead</a>
     at <a href="https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science/">Microsoft Research AI4Science</a> in Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
