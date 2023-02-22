@@ -156,7 +156,7 @@
  {\footnotesize(\href{https://jan.hermann.name/cv.pdf}{generated} on <+ if settings.generated +>\href{<< settings.generated >>}{\today}<+ else +>\today<+ endif +>)}
 } \\
  %
- \vspace{1.0cm}
+ \vspace{1.5cm}
  %
  {\sbseries\largefont\Huge
   \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}} \\}
