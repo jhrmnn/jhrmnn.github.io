@@ -111,9 +111,6 @@
     Currently I'm a quantum chemistry <a href="https://www.microsoft.com/en-us/research/people/janhermann/">lead</a>
     at <a href="https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science/">Microsoft Research AI4Science</a> in Berlin.
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
-    <address>
-      {{ dl_block(contact)  }}
-    </address>
     {{ dl_block(links)  }}
   </section>
 
