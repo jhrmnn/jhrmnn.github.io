@@ -149,7 +149,7 @@
 \vspace{-2.25cm}
 {\raggedleft%
  {\itshape\color{black!60}
-  << link((contact.email.items()|list)[0]) >> \\
+ <# << link((contact.email.items()|list)[0]) >> \\ #>
   \url{https://jan.hermann.name} \\
   ORCID\@: \href{https://orcid.org/0000-0002-2779-0749}{0000-0002-2779-0749} \\  % chktex 8 chktex 6
  \vspace{0.6cm}
