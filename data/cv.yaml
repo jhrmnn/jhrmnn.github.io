@@ -171,6 +171,11 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
+  - title: Solving the Electronic Schrödinger Equation with Deep Learning
+    event: SIAM Conference on Computational Science and Engineering
+    where: Amsterdam, Netherlands
+    url: https://meetings.siam.org/sess/dsp_talk.cfm?p=124223
+    year: 2023
   - title: "Libmbd: A general-purpose package for scalable many-body dispersion calculations"
     event: Electronic Structure Software Development
     where: Lausane, Switzerland
