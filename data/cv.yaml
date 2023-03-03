@@ -171,7 +171,7 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
-  - title: Solving the Electronic Schrödinger Equation with Deep Learning
+  - title: Solving the electronic Schrödinger equation with deep learning
     event: SIAM Conference on Computational Science and Engineering
     where: Amsterdam, Netherlands
     url: https://meetings.siam.org/sess/dsp_talk.cfm?p=124223
