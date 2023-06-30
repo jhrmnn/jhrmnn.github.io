@@ -150,7 +150,7 @@ software:
 - name: DeepQMC
   role: creator
   github: deepqmc/deepqmc
-- name: Libmbd
+- name: libMBD
   role: creator
   github: libmbd/libmbd
 - name: Pyberny
