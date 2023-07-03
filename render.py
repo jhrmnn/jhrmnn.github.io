@@ -366,7 +366,7 @@ def main(args):
     p.add_argument('template', type=Path)
     p.add_argument('ctx', nargs='+', type=Path)
     p.add_argument('--pic', default='assets/profile-pic.png')
-    p.add_argument('--no-statement', action='store_false', dest='with_statement')
+    p.add_argument('--statement', action='store_true', dest='with_statement')
     p.add_argument('--stars', action='store_true', dest='with_stars')
     p.add_argument('--generated')
     p.add_argument('-o', dest='output')
