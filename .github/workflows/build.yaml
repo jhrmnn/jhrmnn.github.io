@@ -40,8 +40,8 @@ jobs:
           key: ${{ hashFiles('poetry.lock') }}
       - name: Get fonts
         run: "[ -d fonts ] || { wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv; }"
-      - run: poetry install --no-dev
-      - run: make
+      - run: poetry install --only main
+      - run: poetry run make
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
