@@ -12,9 +12,28 @@ concurrency:
   group: pages
   cancel-in-progress: true
 jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/cache@v2
+        with:
+          path: docker-tag
+          key: ${{ hashFiles('Dockerfile') }}
+      - name: Ensure Docker tag
+        run: "[ -f docker-tag ] || date +'%Y%m%d-%H%M%S' >docker-tag"
+      - name: Load Docker tag
+        run: echo DOCKER_TAG=$(cat docker-tag) >>$GITHUB_ENV
+      - uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ env.DOCKER_TAG }}
   build:
     runs-on: ubuntu-latest
-    container: texlive/texlive
     steps:
       # - uses: actions/setup-python@v2
       #   with:
