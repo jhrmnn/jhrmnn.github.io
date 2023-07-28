@@ -14,7 +14,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: texlive/texlive:latest-medium
+    container: texlive/texlive
     steps:
       # - uses: actions/setup-python@v2
       #   with:
