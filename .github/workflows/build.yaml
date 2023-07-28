@@ -1,7 +1,6 @@
 name: build
 on:
   push:
-  pr:
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch:
