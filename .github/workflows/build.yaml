@@ -14,10 +14,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: texlive/texlive:latest-minimal
     steps:
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
+      # - uses: actions/setup-python@v2
+      #   with:
+      #     python-version: 3.x
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python -
@@ -26,8 +27,8 @@ jobs:
         run: |
           poetry config virtualenvs.create false
           poetry config --list
-      - name: Install TeX
-        run: sudo apt-get install -yq --no-install-suggests --no-install-recommends texlive-base texlive-xetex texlive-plain-generic texlive-fonts-recommended latexmk
+      # - name: Install TeX
+      #   run: sudo apt-get install -yq --no-install-suggests --no-install-recommends texlive-base texlive-xetex texlive-plain-generic texlive-fonts-recommended latexmk
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
