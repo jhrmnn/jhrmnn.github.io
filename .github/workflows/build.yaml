@@ -14,38 +14,53 @@ concurrency:
 jobs:
   build-image:
     runs-on: ubuntu-latest
+    outputs:
+      docker-tag: ${{ steps.docker-tag.outputs.docker-tag }}
     steps:
       - uses: actions/cache@v2
+        id: cache
         with:
           path: docker-tag
           key: ${{ hashFiles('Dockerfile') }}
-      - name: Ensure Docker tag
-        run: "[ -f docker-tag ] || date +'%Y%m%d-%H%M%S' >docker-tag"
-      - name: Load Docker tag
-        run: echo DOCKER_TAG=$(cat docker-tag) >>$GITHUB_ENV
+      - name: Create Docker tag
+        if: "!steps.cache.outputs.cache-hit"
+        run: date +'%Y%m%d.${{ github.run_number }}' >docker-tag
+      - name: Set Docker tag
+        id: docker-tag
+        run: echo docker-tag=$(cat docker-tag) >>$GITHUB_OUTPUT
       - uses: docker/login-action@v2
+        if: "!steps.cache.outputs.cache-hit"
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v4
+        if: "!steps.cache.outputs.cache-hit"
         with:
           push: true
-          tags: ${{ github.repository }}:latest,${{ github.repository }}:${{ env.DOCKER_TAG }}
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.docker-tag.outputs.docker-tag }}
   build:
     runs-on: ubuntu-latest
+    needs: build-image
+    container:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
     steps:
       # - uses: actions/setup-python@v2
       #   with:
       #     python-version: 3.x
-      - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python -
-          echo $HOME/.local/bin >>$GITHUB_PATH
-      - name: Configure Poetry
-        run: |
-          # poetry config virtualenvs.create false
-          poetry config --list
+      # - name: Install Poetry
+      #   run: |
+      #     curl -sSL https://install.python-poetry.org | python -
+      #    echo $HOME/.local/bin >>$GITHUB_PATH
+      # - name: Configure Poetry
+      #   run: |
+      #     # poetry config virtualenvs.create false
+      #     poetry config --list
       # - name: Install TeX
       #   run: sudo apt-get install -yq --no-install-suggests --no-install-recommends texlive-base texlive-xetex texlive-plain-generic texlive-fonts-recommended latexmk
       - uses: actions/checkout@v2
