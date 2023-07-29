@@ -17,6 +17,9 @@ jobs:
     outputs:
       docker-tag: ${{ steps.docker-tag.outputs.docker-tag }}
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: actions/cache@v2
         id: cache
         with:
