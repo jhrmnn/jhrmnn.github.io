@@ -53,7 +53,7 @@ jobs:
       image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
         with:
