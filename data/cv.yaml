@@ -1,27 +1,35 @@
+bio: |
+  Computational chemist and physicist by [training️](#Education),
+  who got later hooked on machine learning,
+  and now enjoys [integrating](https://chemistrycommunity.nature.com/posts/deep-neural-electronic-wave-functions) deep learning into quantum chemistry.
+  I was born and raised in [Český Krumlov](https://en.wikipedia.org/wiki/Český_Krumlov),
+  moved for university to [Prague](https://en.wikipedia.org/wiki/Prague),
+  and later for a Phd to [Berlin](https://en.wikipedia.org/wiki/Berlin),
+  where I now live with [my wife](https://scd.sk/autor/simona-beresova/) and our little kid.
+  Currently I'm a quantum chemistry [lead](https://www.microsoft.com/en-us/research/people/janhermann/) at [Microsoft Research AI4Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science/) in Berlin.
 statement: |
   My work focuses on advancing quantum chemistry through tight integration of deep learning.
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
   The goal is to push through the simulation scale–accuracy trade-off offered by traditional methods of quantum chemistry.
 contact:
-  email:
-    info@jan.hermann.name: mailto:info@jan.hermann.name
-  "[matrix]":
-    "@jhrmnn:matrix.org": https://matrix.to/#/@jhrmnn:matrix.org
+  URL: [jan.hermann.name, https://]
+  email: [info@jan.hermann.name, mailto:]
+  "[matrix]": ["@jhrmnn:matrix.org", https://matrix.to/#/]
+  ORCID: [0000-0002-2779-0749, https://orcid.org/]
+  Google Scholar: [5TjVq0YAAAAJ, "https://scholar.google.com/citations?user="]
+  GitHub: [jhrmnn, https://github.com/]
+  Twitter: [jhrmnn, https://twitter.com/]
+  LinkedIn: [jhrmnn, https://www.linkedin.com/in/]
+  Strava: [jhrmnn, https://www.strava.com/athletes/]
+  Goodreads: [jhrmnn, https://www.goodreads.com/]
+  Lichess: [jhrmnn, https://lichess.org/@/]
 links:
-  research:
-    Google Scholar: "https://scholar.google.com/citations?user=5TjVq0YAAAAJ"
-    ORCID: https://orcid.org/0000-0002-2779-0749
-  code:
-    GitHub: https://github.com/jhrmnn
-  social:
-    Twitter: https://twitter.com/jhrmnn
-    LinkedIn: https://www.linkedin.com/in/jhrmnn
-  cycling:
-    Strava: https://www.strava.com/athletes/jhrmnn
-  books:
-    Goodreads: https://www.goodreads.com/jhrmnn
-  chess:
-    Lichess: https://lichess.org/@/jhrmnn
+  research: [Google Scholar, ORCID]
+  code: [GitHub]
+  social: [Twitter, LinkedIn]
+  cycling: [Strava]
+  books: [Goodreads]
+  chess: [Lichess]
 education:
 - university: Humboldt University of Berlin
   degrees:
@@ -77,9 +85,6 @@ secondary:
 - date: Jul 2021-Oct 2022
   role: Junior Fellow
   where: "[BIFOLD](https://bifold.berlin/person/dr-jan-hermann/), Berlin"
-# - date: Jun 2021-
-#   role: Associated PI
-#   where: "[DAEDALUS](https://daedalus.berlin/people/), Berlin"
 - date: Jan 2019-Oct 2020
   role: Postdoctoral research fellow
   where: "[Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin"
