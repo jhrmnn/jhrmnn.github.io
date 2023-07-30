@@ -71,14 +71,14 @@
   </table>
 {% endmacro %}
 
-{% macro dl_block(items) %}
+{% macro dl_block(items, defs) %}
   <dl>
     {% for group, items in items.items() %}
       <dt>{{ group }}</dt>
       <dd>
-      {% for item, url in items.items() %}
+      {% for item in items %}
         {% if not loop.first %}&middot;{% endif %}
-        <a href="{{ url }}">{{ item }}</a>
+        <a href="{{ defs[item][1] }}{{ defs[item][0] }}">{{ item }}</a>
       {% endfor %}
     {% endfor %}
   </dl>
@@ -97,24 +97,9 @@
   <h1><span id="firstname">Jan</span> Hermann</h1>
 
   <section>
-    <p>Computational chemist and physicist by <a
-    href="#Education">training️</a>, who got later hooked on machine learning,
-    and now enjoys <a
-    href="https://chemistrycommunity.nature.com/posts/deep-neural-electronic-wave-functions">integrating</a>
-    deep learning into quantum chemistry.
-    I was born and raised in <a
-    href="https://en.wikipedia.org/wiki/Český_Krumlov">Český Krumlov</a>, moved
-    for university to <a href="https://en.wikipedia.org/wiki/Prague">Prague</a>,
-    and later for a Phd to <a
-    href="https://en.wikipedia.org/wiki/Berlin">Berlin</a>, where I now live
-    with <a href="https://scd.sk/autor/simona-beresova/">my wife</a> and our little kid.
-    Currently I'm a quantum chemistry <a href="https://www.microsoft.com/en-us/research/people/janhermann/">lead</a>
-    at <a href="https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science/">Microsoft Research AI4Science</a> in Berlin.
+    <p>{{ bio }}
     <p id="profile-pic">{% include "assets/profile-pic.svg" %}
-   {# <address>
-       {{ dl_block(contact)  }}
-     </address> #}
-    {{ dl_block(links)  }}
+    {{ dl_block(links, contact) }}
   </section>
 
   <section id="Publications">

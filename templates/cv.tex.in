@@ -149,9 +149,9 @@
 \vspace{-2.25cm}
 {\raggedleft%
  {\itshape\color{black!60}
- <# << link((contact.email.items()|list)[0]) >> \\ #>
-  \url{https://jan.hermann.name} \\
-  ORCID\@: \href{https://orcid.org/0000-0002-2779-0749}{0000-0002-2779-0749} \\  % chktex 8 chktex 6
+  <+ for item in ["URL", "ORCID"] +>
+  << item >>\@: \href{<< contact[item][1] >><< contact[item][0] >>}{<< contact[item][0] >>} \\
+  <+ endfor +>
  \vspace{0.6cm}
  {\footnotesize(\href{https://jan.hermann.name/cv.pdf}{generated} on <+ if settings.generated +>\href{<< settings.generated >>}{\today}<+ else +>\today<+ endif +>)}
 } \\
