@@ -1,6 +1,7 @@
 FROM ubuntu
 RUN --mount=type=cache,target=/var/lib/apt/lists apt update && \
     DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y --no-install-recommends \
+        entr \
         make \
         latexmk \
         python3-pip \
