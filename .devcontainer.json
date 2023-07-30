@@ -7,6 +7,6 @@
             "upgradePackages": false
         }
     },
-    "onCreateCommand": "wget -O - $FONTS_URL | tar -xzv",
+    "onCreateCommand": "wget -nv -O - $FONTS_URL | tar -xzv",
     "updateContentCommand": "poetry install"
 }
