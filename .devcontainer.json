@@ -1,0 +1,12 @@
+{
+    "image": "ghcr.io/jhrmnn/jhrmnn.github.io",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": false,
+            "installOhMyZsh": false,
+            "upgradePackages": false
+        }
+    },
+    "onCreateCommand": "wget -O - $FONTS_URL | tar -xzv",
+    "updateContentCommand": "poetry install"
+}
