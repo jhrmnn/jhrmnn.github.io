@@ -63,31 +63,31 @@ employment:
     dept: Department of Mathematics
   - date: Jan 2019-Oct 2020
     role: Postdoctoral researcher
-    dept: "[**Noé** group](https://www.mi.fu-berlin.de/en/math/groups/comp-mol-bio)"
+    dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s)"
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
     role: Postdoctoral researcher
-    dept: "[**Tkatchenko** group](https://www.tcpunilu.com/former-group-members)"
+    dept: "[Theoretical Chemical Physics group](https://www.tcpunilu.com)"
 - institution: Fritz Haber Institute
   location: Berlin
   positions:
   - date: Oct 2013-Dec 2017
     role: Graduate researcher
-    dept: "[Theory Department](https://th.fhi.mpg.de/site/index.php?n=Members.PreviousMembersG-H)"
+    dept: "[Theory department](https://www.fhi.mpg.de/th-department)"
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
   - date: Mar 2010-Sep 2013
     role: Undergraduate researcher
-    dept: "[**Hobza** group](https://hobza.group.uochb.cz/)"
+    dept: "[Non-Covalent Interactions group](https://hobza.group.uochb.cz)"
 secondary:
 - date: Jul 2021-Oct 2022
   role: "[Junior Fellow](https://web.archive.org/web/20220704234058/https://www.bifold.berlin/person/dr-jan-hermann/)"
-  where: "[BIFOLD](https://www.bifold.berlin/), Berlin"
+  where: "[BIFOLD](https://www.bifold.berlin), Berlin"
 - date: Jan 2019-Oct 2020
   role: Postdoctoral research fellow
-  where: "[Müller group](https://www.ml.tu-berlin.de/menue/machine_learning/), TU Berlin"
+  where: "[Machine Learning group](https://www.ml.tu-berlin.de/menue/machine_learning), TU Berlin"
 - date: Sep-Dec 2016
   role: Visiting graduate researcher
   where: "[IPAM](http://www.ipam.ucla.edu), UCLA"
