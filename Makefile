@@ -6,6 +6,7 @@ vpath %.css templates
 vpath %.yaml data
 vpath %.json data
 vpath %.png assets
+vpath %.jpeg assets
 
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
