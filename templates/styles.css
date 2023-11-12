@@ -165,7 +165,7 @@ section:first-of-type>* {
     margin-right: 14em;
 }
 
-#profile-pic img {
+#profile-pic>* {
     padding: 1em;
     height: 10em;
     position: absolute;
@@ -179,7 +179,7 @@ section:first-of-type>* {
         text-align: center;
     }
 
-    #profile-pic svg {
+    #profile-pic>* {
         position: static;
         margin: 0;
     }
