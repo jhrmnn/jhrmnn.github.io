@@ -98,7 +98,7 @@
 
   <section>
     <p>{{ bio }}
-    <p id="profile-pic"><img src="assets/profile-pic.jpeg" height=256 width=256>
+    <p id="profile-pic"><img src="profile-pic.jpeg" height=256 width=256>
     {{ dl_block(links, contact) }}
   </section>
 
