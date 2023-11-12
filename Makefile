@@ -10,7 +10,7 @@ vpath %.png assets
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
