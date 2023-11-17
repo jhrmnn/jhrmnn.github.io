@@ -84,7 +84,7 @@ def md_to_txt(x):
 def ref_to_md(item):
     def author_list(authors, max_len):
         auth_lst = [
-            ' '.join([*(f'{n[0]}.' for n in a['given'].split()), a['family']])
+            ' '.join([*(f'{n[0]}.' for n in a['given'].split()), *((a['non-dropping-particle'],) if 'non-dropping-particle' in a else ()), a['family']])
             + (f', {a["suffix"]}' if 'suffix' in a else '')
             for a in authors
         ]
