@@ -53,8 +53,11 @@ employment:
 - institution: Microsoft
   location: Berlin
   positions:
-  - date: Nov 2022–
-    role: "[Principal researcher](https://www.microsoft.com/en-us/research/people/janhermann/)"
+  - date: Jan 2024–
+    role: "[Principal research manager](https://www.microsoft.com/en-us/research/people/janhermann/)"
+    dept: "[MSR AI4Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science)"
+  - date: Nov 2022–Jan 2024
+    role: Principal researcher
     dept: "[MSR AI4Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science)"
 - institution: Free University of Berlin
   positions:
