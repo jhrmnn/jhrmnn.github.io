@@ -54,7 +54,7 @@ employment:
   location: Berlin
   positions:
   - date: Nov 2022–
-    role: Research scientist
+    role: Lead research scientist
     dept: "[MSR AI4Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science)"
 - institution: Free University of Berlin
   positions:
@@ -79,7 +79,7 @@ employment:
   location: Prague
   positions:
   - date: Mar 2010-Sep 2013
-    role: Undergraduate researcher
+    role: Undergraduate research assistant
     dept: "[Non-Covalent Interactions group](https://hobza.group.uochb.cz)"
 secondary:
 - date: Jul 2021-Oct 2022
