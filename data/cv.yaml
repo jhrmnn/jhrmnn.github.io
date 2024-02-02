@@ -54,12 +54,12 @@ employment:
   location: Berlin
   positions:
   - date: Nov 2022–
-    role: Lead research scientist
+    role: Principal research scientist
     dept: "[MSR AI4Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai4science)"
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
-    role: "[Junior group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) leader"
+    role: "[Junior research group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) leader"
     dept: Department of Mathematics
   - date: Jan 2019-Oct 2020
     role: Postdoctoral researcher
@@ -73,7 +73,7 @@ employment:
   location: Berlin
   positions:
   - date: Oct 2013-Dec 2017
-    role: Graduate researcher
+    role: Graduate research assistant
     dept: "[Theory department](https://www.fhi.mpg.de/th-department)"
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
