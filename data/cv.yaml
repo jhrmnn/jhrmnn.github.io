@@ -6,7 +6,7 @@ bio: |
   moved for university to [Prague](https://en.wikipedia.org/wiki/Prague),
   and later for a Phd to [Berlin](https://en.wikipedia.org/wiki/Berlin),
   where I now live with [my wife](https://hu-berlin.academia.edu/SimonaBeresova) and our two little kids.
-  Currently I [work](https://www.microsoft.com/en-us/research/people/janhermann/) at Microsoft in [AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science/).
+  I [work](https://www.microsoft.com/en-us/research/people/janhermann/) at Microsoft in [AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science/).
 statement: |
   My work focuses on advancing quantum chemistry through tight integration of deep learning.
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
