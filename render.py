@@ -235,7 +235,7 @@ def update_from_web(ctx, cache):  # noqa: C901
 
         ctx['scholar'] = cache.get_custom('scholar', func)
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as pool:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(func, x)
             for func, x in [
