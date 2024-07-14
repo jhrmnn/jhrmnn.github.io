@@ -176,6 +176,11 @@ software:
   url: https://github.com/MolSSI/QCEngine
 presentations:
   invited:
+  - title: Neural-network wave functions for quantum chemistry
+    event: European Seminar on Computational Methods in Quantum Chemistry
+    where: Copenhagen, Denmark
+    event_url: https://www.escmqc2024.com
+    year: 2024
   - title: Solving the electronic Schrödinger equation with deep learning
     event: SIAM Conference on Computational Science and Engineering
     where: Amsterdam, Netherlands
