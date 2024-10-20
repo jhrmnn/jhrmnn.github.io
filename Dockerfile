@@ -4,13 +4,13 @@ RUN --mount=type=cache,target=/var/lib/apt/lists apt update && \
         entr \
         make \
         latexmk \
+        pipx \
         python3-pip \
         python3-venv \
         texlive-base \
         texlive-fonts-recommended \
         texlive-plain-generic \
         texlive-xetex
-        pipx
 RUN --mount=type=cache,target=/root/.cache export PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin && \
     pipx ensurepath && \
     pipx install poetry
