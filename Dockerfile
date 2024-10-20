@@ -1,6 +1,6 @@
 FROM ubuntu
-RUN --mount=type=cache,target=/var/lib/apt/lists apt update && \
-    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
+    DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends \
         entr \
         make \
         latexmk \
@@ -10,7 +10,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists apt update && \
         texlive-base \
         texlive-fonts-recommended \
         texlive-plain-generic \
-        texlive-xetex
+        texlive-xetex \
+        wget
 RUN --mount=type=cache,target=/root/.cache export PIPX_HOME=/opt/pipx PIPX_BIN_DIR=/usr/local/bin && \
-    pipx ensurepath && \
     pipx install poetry
