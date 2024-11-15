@@ -18,7 +18,7 @@ contact:
   ORCID: [0000-0002-2779-0749, https://orcid.org/]
   Google Scholar: [5TjVq0YAAAAJ, "https://scholar.google.com/citations?user="]
   GitHub: [jhrmnn, https://github.com/]
-  Twitter: [jhrmnn, https://twitter.com/]
+  Bluesky: [jhrmnn.bsky.social, https://bsky.app/profile/]
   LinkedIn: [jhrmnn, https://www.linkedin.com/in/]
   Strava: [jhrmnn, https://www.strava.com/athletes/]
   Goodreads: [jhrmnn, https://www.goodreads.com/]
@@ -26,7 +26,7 @@ contact:
 links:
   research: [Google Scholar, ORCID]
   code: [GitHub]
-  social: [Twitter, LinkedIn]
+  social: [Bluesky, LinkedIn]
   cycling: [Strava]
   books: [Goodreads]
   chess: [Lichess]
