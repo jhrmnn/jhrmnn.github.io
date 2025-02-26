@@ -15,5 +15,5 @@
         }
     },
     "onCreateCommand": "wget -nv -O - $FONTS_URL | tar -xzv",
-    "updateContentCommand": "poetry install"
+    "updateContentCommand": "poetry install --with dev"
 }
