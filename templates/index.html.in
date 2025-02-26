@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Jan Hermann</title>
+<title class="h-card">Jan Hermann</title>
 
 <script type="module">
   document.documentElement.classList.replace('no-js', 'js');
