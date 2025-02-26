@@ -78,7 +78,7 @@
       <dd>
       {% for item in items %}
         {% if not loop.first %}&middot;{% endif %}
-        <a href="{{ defs[item][1] }}{{ defs[item][0] }}">{{ item }}</a>
+        <a href="{{ defs[item][1] }}{{ defs[item][0] }}" rel="me">{{ item }}</a>
       {% endfor %}
     {% endfor %}
   </dl>
