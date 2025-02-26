@@ -8,7 +8,7 @@ Jinja2 = "^3"
 requests = "^2.25.1"
 scholarly = "^1.2.0"
 
-[tool.poetry.dev.dependencies]
+[tool.poetry.group.dev.dependencies]
 flake8 = "^3.5"
 flake8-bugbear = ">=19"
 flake8-comprehensions = ">=3"
