@@ -74,7 +74,7 @@ jobs:
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      - uses: actions/upload-pages-artifact@v1
+      - uses: actions/upload-pages-artifact@v3
   deploy-github:
     if: github.ref == 'refs/heads/main'
     environment:
