@@ -32,6 +32,12 @@ a:hover {
     text-decoration: underline;
 }
 
+h1 a,
+h1 a:hover {
+    color: unset;
+}
+
+
 ul {
     list-style-type: circle;
 }

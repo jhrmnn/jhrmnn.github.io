@@ -97,10 +97,10 @@
 
   <div class="h-card">
 
-  <h1 class="p-name"><span id="firstname">Jan</span> Hermann</h1>
+  <h1 class="p-name"><a rel="me" class="u-url" href="https://jan.hermann.name"><span id="firstname">Jan</span> Hermann</a></h1>
   
   <section>  
-    <p>{{ bio }}
+    <p class="p-note">{{ bio }}
     
     <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg">
     
