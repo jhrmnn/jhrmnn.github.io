@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title class="h-card">Jan Hermann</title>
+<title>Jan Hermann</title>
 
 <script type="module">
   document.documentElement.classList.replace('no-js', 'js');
@@ -94,13 +94,17 @@
 </nav>
 
 <main>
-  <h1><span id="firstname">Jan</span> Hermann</h1>
+  <div class="h-card">
+  
+  <h1 class="p-name"><span id="firstname">Jan</span> Hermann</h1>
 
   <section>
     <p>{{ bio }}
     <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg">
     {{ dl_block(links, contact) }}
   </section>
+  
+  </div>
 
   <section id="Publications">
     <h2>Publications</h2>
