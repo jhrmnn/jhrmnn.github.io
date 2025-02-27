@@ -157,11 +157,11 @@ tr.heading:not(:first-child) td {
     color: #949494;
 }
 
-section:first-of-type {
+.h-card section {
     position: relative;
 }
 
-section:first-of-type>* {
+.h-card section>* {
     margin-right: 14em;
 }
 
@@ -184,7 +184,7 @@ section:first-of-type>* {
         margin: 0;
     }
 
-    section:first-of-type>* {
+    .h-card section>* {
         margin-right: 0;
     }
 }

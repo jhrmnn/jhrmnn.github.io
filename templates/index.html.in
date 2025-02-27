@@ -95,7 +95,9 @@
 
 <main>
 
-  <h1 class="h-card"><span id="firstname">Jan</span> Hermann</h1>
+  <div class="h-card">
+
+  <h1 class="p-name"><span id="firstname">Jan</span> Hermann</h1>
   
   <section>  
     <p>{{ bio }}
@@ -104,6 +106,8 @@
     
     {{ dl_block(links, contact) }}
   </section>
+
+  </div>
 
   <section id="Publications">
     <h2>Publications</h2>
