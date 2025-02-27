@@ -24,7 +24,7 @@
 </style>
 
 <link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
-<link rel="canonical me" class="u-url" href="https://jan.hermann.name">
+<link rel="canonical" href="https://jan.hermann.name">
 
 {% macro talk_block(talks, class) %}
   <table class="{{ class }} small">
@@ -94,17 +94,14 @@
 </nav>
 
 <main>
-  <div class="h-card">
   
-  <h1 class="p-name"><span id="firstname">Jan</span> Hermann</h1>
+  <h1 class="h-card"><span id="firstname">Jan</span> Hermann</h1>
 
-  <section>
+  <section class="h-card">
     <p>{{ bio }}
     <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg">
     {{ dl_block(links, contact) }}
   </section>
-  
-  </div>
 
   <section id="Publications">
     <h2>Publications</h2>
