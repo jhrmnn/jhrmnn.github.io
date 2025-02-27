@@ -94,10 +94,10 @@
 </nav>
 
 <main>
+
+  <h1 class="h-card"><span id="firstname">Jan</span> Hermann</h1>
   
-  <section class="h-card">
-    <h1 class="p-name"><span id="firstname">Jan</span> Hermann</h1>
-    
+  <section>  
     <p>{{ bio }}
     
     <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg">
