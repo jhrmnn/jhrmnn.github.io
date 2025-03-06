@@ -62,7 +62,7 @@ def md_to_html(x):
     x = str(x)
     x = re.sub(r'"([^"]*)"', r'“\1”', x)
     x = re.sub(r'__([^_]*)__', r'<strong>\1</strong>', x)
-    x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)', r'<a href="\2">\1</a>', x)
+    x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)(?:\{: (^[}]*)\})?', r'<a href="\2" \3>\1</a>', x)
     x = re.sub(r'\*\*([^*]*)\*\*', r'<strong>\1</strong>', x)
     x = re.sub(r'\*([^*]*)\*', r'<em>\1</em>', x)
     x = re.sub(r'`([^`]*)`', r'<code>\1</code>', x)
