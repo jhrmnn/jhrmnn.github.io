@@ -164,7 +164,7 @@ software:
   github: jhrmnn/pyberny
 - name: FHI-aims
   role: core contributor
-  url: https://aimsclub.fhi-berlin.mpg.de
+  url: https://fhi-aims.org
   description: All-electron electronic-structure calculations (Fortran)
 - name: PySCF
   url: https://pyscf.org
