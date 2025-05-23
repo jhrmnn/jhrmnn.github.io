@@ -9,6 +9,7 @@ import time
 from datetime import datetime
 from itertools import chain
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import requests
 import yaml
@@ -279,7 +280,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
     )
     with Cache() as cache:
         update_from_web(ctx, cache)
-    kwargs['now'] = datetime.now().replace(microsecond=0).astimezone().isoformat()
+    kwargs['now'] = datetime.now().replace(microsecond=0).astimezone(ZoneInfo("Europe/Berlin")).isoformat()
     ctx['settings'] = kwargs
     for item in ctx['references']:
         extras = ctx['ref_extras'].get(item['id'])
