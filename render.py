@@ -15,6 +15,7 @@ import requests
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from scholarly import scholarly
+from feedgen.feed import FeedGenerator
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
 MAX_RETRIES = 10
@@ -315,7 +316,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
                 return x
             return md_to_html(x)
 
-    elif '.txt' in template.name:
+    elif '.txt' in template name:
         finalize = md_to_txt
     env = Environment(
         loader=FileSystemLoader(['.', os.getenv('BLDDIR')]),
@@ -362,6 +363,33 @@ def render(template, ctx, **kwargs):  # noqa: C901
     return doc
 
 
+def generate_feed(posts_dir, output_file):
+    fg = FeedGenerator()
+    fg.id('https://example.com/')
+    fg.title('My Blog')
+    fg.author({'name': 'Jan Hermann', 'email': 'info@jan.hermann.name'})
+    fg.link(href='https://example.com/', rel='alternate')
+    fg.logo('https://example.com/logo.png')
+    fg.subtitle('This is a blog about my thoughts and experiences.')
+    fg.link(href='https://example.com/feed.xml', rel='self')
+    fg.language('en')
+
+    for post_file in sorted(Path(posts_dir).glob('*.md')):
+        post_content = post_file.read_text()
+        post_title = post_content.split('\n')[0]
+        post_date = datetime.strptime(post_file.stem.split('-')[0], '%Y-%m-%d')
+        post_link = f'https://example.com/posts/{post_file.stem}.html'
+
+        fe = fg.add_entry()
+        fe.id(post_link)
+        fe.title(post_title)
+        fe.link(href=post_link)
+        fe.description(post_content)
+        fe.pubDate(post_date)
+
+    fg.rss_file(output_file)
+
+
 def main(args):
     p = argparse.ArgumentParser()
     p.add_argument('template', type=Path)
@@ -378,6 +406,8 @@ def main(args):
             f.write(render(**kwargs))
     else:
         sys.stdout.buffer.write(render(**kwargs))
+
+    generate_feed('posts', '_site/feed.xml')
 
 
 if __name__ == '__main__':

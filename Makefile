@@ -11,7 +11,7 @@ vpath %.jpeg assets
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg feed.xml)
 
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
@@ -49,3 +49,6 @@ dev:
 	printf '%s\n' render.py templates/cv.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv.txt & \
 	printf '%s\n' render.py templates/cv.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv.pdf & \
 	python3 -m http.server -b 0.0.0.0 -d $(OUTDIR)
+
+$(OUTDIR)/feed.xml: render.py $(wildcard posts/*.md) | $(OUTDIR)
+	./render.py $(FLAGS) -o $@ --generate-feed
