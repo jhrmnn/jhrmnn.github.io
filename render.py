@@ -14,10 +14,14 @@ from zoneinfo import ZoneInfo
 import requests
 import yaml
 from jinja2 import Environment, FileSystemLoader
-from scholarly import scholarly
+from scholarly import scholarly, MaxTriesExceededException
+from bs4 import BeautifulSoup
+
+scholarly.set_timeout(5)
+scholarly.set_retries(3)
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
-MAX_RETRIES = 10
+MAX_RETRIES = 3
 
 
 def reduce_sc(x):
@@ -118,11 +122,12 @@ def ref_to_md(item):
             + f']({url}) ({year})'
         )
     elif item['type'] == 'article':
-        archive, iden = re.match(
-            r'http://(arxiv).org/abs/([\d.]+)', item['URL']
-        ).groups()
-        if archive == 'arxiv':
-            ref = f'Preprint at [`arXiv:{iden}`]({url}) ({year})'
+        if "arxiv.org" in item['URL']:
+            iden, = re.match(r'http://arxiv.org/abs/([\d.]+)', item['URL']).groups()
+            iden = f"arXiv:{iden}"
+        elif "chemrxiv.org" in item['URL']:
+            iden = f"doi:{item['DOI']}"
+        ref = f'Preprint at [{iden}]({url}) ({year})'
     elif item['type'] == 'chapter':
         ref = (
             f'In *{item["container-title"]}* (eds {author_list(item["editor"], 3)})'
@@ -152,7 +157,7 @@ class Cache:
     def get(self, url, **kwargs):
         def func():
             for attempt in range(MAX_RETRIES):
-                r = requests.get(url, **kwargs)
+                r = requests.get(url, timeout=5.0, **kwargs)
                 try:
                     r.raise_for_status()
                 except requests.exceptions.HTTPError as e:
@@ -184,6 +189,15 @@ def norm_desc(s):
     s = re.sub(r'\.$', '', s)
     s = re.sub(r'\(.*\)', '', s)
     return s
+
+
+def parse_scholar_profile(path):
+    soup = BeautifulSoup(path.read_text(), "html.parser")
+    return {
+        row.select_one(".gsc_a_at").get_text(strip=True):
+        int(row.select_one(".gsc_a_c").get_text(strip=True) or 0)
+        for row in soup.select("#gsc_a_t .gsc_a_tr")
+    }
 
 
 def update_from_web(ctx, cache):  # noqa: C901
@@ -234,7 +248,10 @@ def update_from_web(ctx, cache):  # noqa: C901
                 del x['filled'], x['source']
             return author
 
-        ctx['scholar'] = cache.get_custom('scholar', func)
+        try:
+            ctx['scholar'] = cache.get_custom('scholar', func)
+        except MaxTriesExceededException:
+            pass
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
@@ -259,11 +276,22 @@ def update_from_web(ctx, cache):  # noqa: C901
         reduce_sc(strip_html(item['title'].lower()))[:120]: item
         for item in ctx['references']
     }
-    for p in ctx['scholar']['publications']:
-        if p['bib']['pub_year'] == '2011':
+    if "scholar" in ctx:
+        cites = {}
+        for p in ctx['scholar']['publications']:
+            cites[p['bib']['title']] = p['num_citations']
+    else:
+        cites = parse_scholar_profile(Path("assets") / "_Jan Hermann_ - _Google Scholar_.html")
+    for title, cite in cites.items():
+        key = reduce_sc(title.lower())[:120]
+        if key in {
+            "assessment of dispersion corrected density functional methods",
+            "theoretical investigation of silver clusters in zeolites",
+        }:
             continue
-        key = reduce_sc(p['bib']['title'].lower())[:120]
-        refs_by_key[key]['cited_by'] = p['num_citations']
+        refs_by_key[key]['cited_by'] = cite
+
+
 
 
 def render(template, ctx, **kwargs):  # noqa: C901
