@@ -34,7 +34,7 @@ $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
 
 $(OUTDIR) $(BLDDIR):
-	mkdir $@
+	mkdir -p $@
 
 clean:
 	rm -rf $(BLDDIR) $(OUTDIR)

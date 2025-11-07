@@ -268,3 +268,7 @@
 </main>
 
 <footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %}</footer>
+
+<script type="application/json" id="custom-data">
+{{ custom_data|tojson }}
+</script>

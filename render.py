@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo
 
 import requests
 import yaml
+from markupsafe import Markup
 from jinja2 import Environment, FileSystemLoader
 from scholarly import scholarly, MaxTriesExceededException
 from bs4 import BeautifulSoup
@@ -67,7 +68,9 @@ def md_to_html(x):
     x = str(x)
     x = re.sub(r'(?<!=)"([^"]*)"', r'“\1”', x)
     x = re.sub(r'__([^_]*)__', r'<strong>\1</strong>', x)
-    x = re.sub(r'\[([^\[\]]*)\]\(([^()]*)\)(?:\{:( [^}]*)})?', r'<a href="\2"\3>\1</a>', x)
+    x = re.sub(
+        r'\[([^\[\]]*)\]\(([^()]*)\)(?:\{:( [^}]*)})?', r'<a href="\2"\3>\1</a>', x
+    )
     x = re.sub(r'\*\*([^*]*)\*\*', r'<strong>\1</strong>', x)
     x = re.sub(r'\*([^*]*)\*', r'<em>\1</em>', x)
     x = re.sub(r'`([^`]*)`', r'<code>\1</code>', x)
@@ -89,7 +92,17 @@ def md_to_txt(x):
 def ref_to_md(item):
     def author_list(authors, max_len):
         auth_lst = [
-            ' '.join([*(f'{n[0]}.' for n in a['given'].split()), *((a['non-dropping-particle'],) if 'non-dropping-particle' in a else ()), a['family']])
+            ' '.join(
+                [
+                    *(f'{n[0]}.' for n in a['given'].split()),
+                    *(
+                        (a['non-dropping-particle'],)
+                        if 'non-dropping-particle' in a
+                        else ()
+                    ),
+                    a['family'],
+                ]
+            )
             + (f', {a["suffix"]}' if 'suffix' in a else '')
             for a in authors
         ]
@@ -97,9 +110,11 @@ def ref_to_md(item):
         return (
             auth_lst[0]
             if len(auth_lst) == 1
-            else f'{", ".join(auth_lst[:-1])} & {auth_lst[-1]}'
-            if len(auth_lst) <= max_len
-            else f'{auth_lst[0]} et al.'
+            else (
+                f'{", ".join(auth_lst[:-1])} & {auth_lst[-1]}'
+                if len(auth_lst) <= max_len
+                else f'{auth_lst[0]} et al.'
+            )
         )
 
     authors = author_list(item['author'], 10)
@@ -123,7 +138,7 @@ def ref_to_md(item):
         )
     elif item['type'] == 'article':
         if "arxiv.org" in item['URL']:
-            iden, = re.match(r'http://arxiv.org/abs/([\d.]+)', item['URL']).groups()
+            (iden,) = re.match(r'http://arxiv.org/abs/([\d.]+)', item['URL']).groups()
             iden = f"arXiv:{iden}"
         elif "chemrxiv.org" in item['URL']:
             iden = f"doi:{item['DOI']}"
@@ -194,8 +209,9 @@ def norm_desc(s):
 def parse_scholar_profile(path):
     soup = BeautifulSoup(path.read_text(), "html.parser")
     return {
-        row.select_one(".gsc_a_at").get_text(strip=True):
-        int(row.select_one(".gsc_a_c").get_text(strip=True) or 0)
+        row.select_one(".gsc_a_at").get_text(strip=True): int(
+            row.select_one(".gsc_a_c").get_text(strip=True) or 0
+        )
         for row in soup.select("#gsc_a_t .gsc_a_tr")
     }
 
@@ -280,8 +296,25 @@ def update_from_web(ctx, cache):  # noqa: C901
         cites = {}
         for p in ctx['scholar']['publications']:
             cites[p['bib']['title']] = p['num_citations']
+        ts = datetime.now().isoformat()
     else:
-        cites = parse_scholar_profile(Path("assets") / "_Jan Hermann_ - _Google Scholar_.html")
+        path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
+        scholar_citations = json.loads(
+            BeautifulSoup(requests.get("https://jan.hermann.name/").text, "html.parser")
+            .find("script", id="custom-data", type="application/json")
+            .get_text(strip=True)
+        )["scholar_citations"]
+        if (
+            ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
+        ) > scholar_citations["timestamp"]:
+            cites = parse_scholar_profile(path)
+        else:
+            cites = scholar_citations["value"]
+            ts = scholar_citations["timestamp"]
+    ctx["custom_data"]["scholar_citations"] = {
+        "timestamp": ts,
+        "value": cites,
+    }
     for title, cite in cites.items():
         key = reduce_sc(title.lower())[:120]
         if key in {
@@ -290,8 +323,6 @@ def update_from_web(ctx, cache):  # noqa: C901
         }:
             continue
         refs_by_key[key]['cited_by'] = cite
-
-
 
 
 def render(template, ctx, **kwargs):  # noqa: C901
@@ -306,9 +337,15 @@ def render(template, ctx, **kwargs):  # noqa: C901
             )(c.read_text()).items()
         )
     )
+    ctx["custom_data"] = {}
     with Cache() as cache:
         update_from_web(ctx, cache)
-    kwargs['now'] = datetime.now().replace(microsecond=0).astimezone(ZoneInfo("Europe/Berlin")).isoformat()
+    kwargs['now'] = (
+        datetime.now()
+        .replace(microsecond=0)
+        .astimezone(ZoneInfo("Europe/Berlin"))
+        .isoformat()
+    )
     ctx['settings'] = kwargs
     for item in ctx['references']:
         extras = ctx['ref_extras'].get(item['id'])
@@ -339,6 +376,8 @@ def render(template, ctx, **kwargs):  # noqa: C901
     elif '.html' in template.name:
 
         def finalize(x):
+            if isinstance(x, Markup):
+                return x
             if isinstance(x, str) and '<' in x:
                 return x
             return md_to_html(x)
