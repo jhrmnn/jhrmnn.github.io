@@ -179,12 +179,8 @@ class Cache:
                     if attempt < MAX_RETRIES - 1 and e.args[0].startswith('500'):
                         time.sleep(1)
                         continue
-                    elif e.args[0].startswith('429'):
-                        if attempt < MAX_RETRIES - 1:
-                            time.sleep(5)
-                            continue
-                        elif 'api.crossref.org' in url:
-                            return {}
+                    elif e.args[0].startswith('429') and 'api.crossref.org' in url:
+                        return {}
                     raise
                 else:
                     break
