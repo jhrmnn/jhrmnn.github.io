@@ -178,8 +178,14 @@ class Cache:
                 except requests.exceptions.HTTPError as e:
                     if attempt < MAX_RETRIES - 1 and e.args[0].startswith('500'):
                         time.sleep(1)
-                    else:
-                        raise
+                        continue
+                    elif e.args[0].startswith('429'):
+                        if attempt < MAX_RETRIES - 1:
+                            time.sleep(5)
+                            continue
+                        elif 'api.crossref.org' in url:
+                            return {}
+                    raise
                 else:
                     break
             return r.json()
@@ -254,7 +260,7 @@ def update_from_web(ctx, cache):  # noqa: C901
         if len(doi.split('/')[0].split('.')[1]) != 4:
             return
         r = cache.get(f'https://api.crossref.org/works/{doi}')
-        item['cited_by'] = r['message']['is-referenced-by-count']
+        item['cited_by'] = r['message']['is-referenced-by-count'] if r else "n/a"
 
     def scholar(ctx):
         def func():
