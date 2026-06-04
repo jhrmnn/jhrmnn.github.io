@@ -4,7 +4,10 @@ RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
         entr \
         make \
         latexmk \
+        libxml2-dev \
+        libxslt-dev \
         pipx \
+        python3-dev \
         python3-pip \
         python3-venv \
         texlive-base \
