@@ -22,7 +22,7 @@ fetch: | $(BLDDIR)
 
 # Reuse already-published data when fetch has not run (e.g. dev, pushes).
 $(DERIVED): | $(BLDDIR)
-	curl -fsS $(DATA_URL) -o $@
+	wget -nv -O $@ $(DATA_URL)
 
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
