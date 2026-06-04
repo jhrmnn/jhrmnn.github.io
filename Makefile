@@ -1,5 +1,8 @@
 export BLDDIR = build
 OUTDIR = _site
+DERIVED = $(BLDDIR)/derived.json
+DATA_URL = https://jan.hermann.name/derived.json
+CTX = $(wildcard data/*)
 
 vpath %.in templates
 vpath %.css templates
@@ -11,7 +14,15 @@ vpath %.jpeg assets
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg derived.json)
+
+# Refresh the hosted data; run by cron before rendering.
+fetch: | $(BLDDIR)
+	./fetch.py $(CTX) -o $(DERIVED)
+
+# Reuse already-published data when fetch has not run (e.g. dev, pushes).
+$(DERIVED): | $(BLDDIR)
+	curl -fsS $(DATA_URL) -o $@
 
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
@@ -22,11 +33,11 @@ $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 $(BLDDIR)/%.b64: % | $(BLDDIR)
 	base64 $^ >$@
 
-$(OUTDIR)/%: render.py %.in $(wildcard data/*) | $(OUTDIR)
-	./$(wordlist 1,5,$^) $(FLAGS) -o $@
+$(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(OUTDIR)
+	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
-$(BLDDIR)/%: render.py %.in $(wildcard data/*) | $(BLDDIR)
-	./$(wordlist 1,5,$^) $(FLAGS) -o $@
+$(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
+	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
 $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64
 

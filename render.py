@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import re
+import sys
 import time
 from datetime import datetime
 from itertools import chain
@@ -23,6 +24,7 @@ scholarly.set_retries(3)
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
 MAX_RETRIES = 3
+DATA_URL = 'https://jan.hermann.name/derived.json'
 
 
 def reduce_sc(x):
@@ -218,6 +220,15 @@ def parse_scholar_profile(path):
     }
 
 
+def published_scholar_citations():
+    try:
+        r = requests.get(DATA_URL, timeout=5.0)
+        r.raise_for_status()
+        return r.json()['custom_data']['scholar_citations']
+    except (requests.exceptions.RequestException, KeyError, ValueError):
+        return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -235,11 +246,13 @@ def update_from_web(ctx, cache):  # noqa: C901
                 }
             )
 
-    def reviews(activity):
+    def reviews(ctx):
         n_reviews = cache.get(
             'https://publons.com/api/v2/academic/0000-0002-2779-0749/',
             headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
         )['reviews']['pre']['count']
+        ctx['_n_reviews'] = n_reviews
+        activity = ctx['activity']
         for i in range(len(activity)):
             activity[i] = activity[i].replace('NUMREV', str(n_reviews))
 
@@ -276,7 +289,7 @@ def update_from_web(ctx, cache):  # noqa: C901
             pool.submit(func, x)
             for func, x in [
                 *((stars, x) for x in ctx['software']),
-                (reviews, ctx['activity']),
+                (reviews, ctx),
                 *((citations, x) for x in ctx['references']),
                 (scholar, ctx),
             ]
@@ -301,11 +314,7 @@ def update_from_web(ctx, cache):  # noqa: C901
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
-        scholar_citations = json.loads(
-            BeautifulSoup(requests.get("https://jan.hermann.name/").text, "html.parser")
-            .find("script", id="custom-data", type="application/json")
-            .get_text(strip=True)
-        )["scholar_citations"]
+        scholar_citations = published_scholar_citations()
         if (
             ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
         ) > scholar_citations["timestamp"]:
@@ -327,10 +336,10 @@ def update_from_web(ctx, cache):  # noqa: C901
         refs_by_key[key]['cited_by'] = cite
 
 
-def render(template, ctx, **kwargs):  # noqa: C901
-    ctx = dict(
+def load_ctx(paths):
+    return dict(
         x
-        for c in ctx
+        for c in paths
         for x in (
             (
                 (lambda x: {'references': json.loads(x)})
@@ -339,9 +348,48 @@ def render(template, ctx, **kwargs):  # noqa: C901
             )(c.read_text()).items()
         )
     )
-    ctx["custom_data"] = {}
-    with Cache() as cache:
-        update_from_web(ctx, cache)
+
+
+def extract_derived(ctx):
+    return {
+        'software': {
+            item['github']: {
+                'url': item['url'],
+                'description': item['description'],
+                'stars': item['stars'],
+            }
+            for item in ctx['software']
+            if 'github' in item and 'stars' in item
+        },
+        'references': {
+            item['id']: item['cited_by']
+            for item in ctx['references']
+            if 'cited_by' in item
+        },
+        'n_reviews': ctx.get('_n_reviews'),
+        'custom_data': ctx['custom_data'],
+    }
+
+
+def apply_derived(ctx, derived):
+    software = derived.get('software', {})
+    for item in ctx['software']:
+        gh = item.get('github')
+        if gh in software:
+            item.update(software[gh])
+    references = derived.get('references', {})
+    for item in ctx['references']:
+        if item['id'] in references:
+            item['cited_by'] = references[item['id']]
+    n_reviews = derived.get('n_reviews')
+    if n_reviews is not None:
+        ctx['activity'] = [
+            a.replace('NUMREV', str(n_reviews)) for a in ctx['activity']
+        ]
+    ctx['custom_data'] = derived.get('custom_data', {})
+
+
+def render(template, ctx, **kwargs):  # noqa: C901
     kwargs['now'] = (
         datetime.now()
         .replace(microsecond=0)
@@ -435,21 +483,33 @@ def main(args):
     p = argparse.ArgumentParser()
     p.add_argument('template', type=Path)
     p.add_argument('ctx', nargs='+', type=Path)
+    p.add_argument('--derived', type=Path, required=True)
     p.add_argument('--pic', default='assets/profile-pic.jpeg')
     p.add_argument('--statement', action='store_true', dest='with_statement')
     p.add_argument('--stars', action='store_true', dest='with_stars')
     p.add_argument('--generated')
     p.add_argument('-o', dest='output')
-    kwargs = vars(p.parse_args(args))
-    output = kwargs.pop('output')
-    if output:
-        with open(output, 'wb') as f:
-            f.write(render(**kwargs))
+    a = p.parse_args(args)
+    if not a.derived.exists():
+        sys.exit(f'error: no derived data at {a.derived}; run `make fetch` first')
+    derived = json.loads(a.derived.read_text())
+    if not derived:
+        sys.exit(f'error: derived data at {a.derived} is empty')
+    ctx = load_ctx(a.ctx)
+    apply_derived(ctx, derived)
+    doc = render(
+        a.template,
+        ctx,
+        pic=a.pic,
+        with_statement=a.with_statement,
+        with_stars=a.with_stars,
+        generated=a.generated,
+    )
+    if a.output:
+        Path(a.output).write_bytes(doc)
     else:
-        sys.stdout.buffer.write(render(**kwargs))
+        sys.stdout.buffer.write(doc)
 
 
 if __name__ == '__main__':
-    import sys
-
     main(sys.argv[1:])

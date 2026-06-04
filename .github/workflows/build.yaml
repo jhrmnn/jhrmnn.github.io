@@ -70,9 +70,14 @@ jobs:
         if: "!steps.cache.outputs.cache-hit"
         run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
       - run: poetry install --only main
-      - run: poetry run make
+      - name: Fetch data
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: poetry run make fetch
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
+      - name: Render
+        run: poetry run make
+        env:
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - uses: actions/upload-pages-artifact@v3
   deploy-github:
