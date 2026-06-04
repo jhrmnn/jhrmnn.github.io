@@ -1,6 +1,7 @@
 FROM ubuntu
 RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
     DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends \
+        build-essential \
         entr \
         make \
         latexmk \
