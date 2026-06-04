@@ -18,7 +18,7 @@ jobs:
     outputs:
       docker-tag: ${{ steps.docker-tag.outputs.docker-tag }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Maybe restore Docker tag
@@ -33,13 +33,13 @@ jobs:
       - name: Set Docker tag
         id: docker-tag
         run: echo docker-tag=$(cat docker-tag) >>$GITHUB_OUTPUT
-      - uses: docker/login-action@v2
+      - uses: docker/login-action@v3
         if: "!steps.cache.outputs.cache-hit"
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v4
+      - uses: docker/build-push-action@v6
         if: "!steps.cache.outputs.cache-hit"
         with:
           push: true
@@ -55,7 +55,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Restore fonts and Poetry cache
@@ -70,6 +70,8 @@ jobs:
         if: "!steps.cache.outputs.cache-hit"
         run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
       - run: poetry install --only main
+      - name: Run tests
+        run: poetry run python -m unittest discover -s tests
       - run: poetry run make
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}

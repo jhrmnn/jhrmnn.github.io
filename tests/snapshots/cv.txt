@@ -1,0 +1,109 @@
+Dr. Jan Hermann
+===============
+
+Employment
+----------
+
+- Nov 2022-, Principal research manager, AI for Science, Microsoft, Berlin
+- Nov 2020-Oct 2022, Junior research group leader, Department of Mathematics, Free University of Berlin
+- Jan 2019-Oct 2020, Postdoctoral researcher, AI4Science group, Free University of Berlin
+- Jan-Dec 2018, Postdoctoral researcher, Theoretical Chemical Physics group, University of Luxembourg
+- Oct 2013-Dec 2017, Graduate research assistant, Theory department, Fritz Haber Institute, Berlin
+- Mar 2010-Sep 2013, Undergraduate research assistant, Non-Covalent Interactions group, Institute of Organic Chemistry and Biochemistry, Prague
+
+Education
+---------
+
+- Dec 2017, Ph.D., Physics, summa cum laude, Humboldt University of Berlin
+- Sep 2013, M.S., Molecular Modeling, Charles University, Prague
+- Sep 2011, B.S., Physics, Charles University, Prague
+- Jun 2011, B.S., Chemistry, Charles University, Prague
+
+Awards
+------
+
+- Feb 2021, Marie Sklodowska-Curie Individual Fellowship [relinquished]
+- Jan 2014, Heyrovsky Prize for the best science graduate, Charles University
+- Jul 2008, Gold Medal, 39th International Physics Olympiad
+
+Funding
+-------
+
+- Apr 2021-Mar 2024, MATH+ AA2-8 (co-PI), "Deep backflow for accurate solution of the electronic Schroedinger equation," 160k EUR
+
+Activities
+----------
+
+- Peer-reviewed NUMREV manuscripts for Phys. Rev. X, Nat. Commun., Nat. Mach. Intell., Phys. Rev. Lett., J. Chem. Phys., and other journals
+- Reviewed 1 grant proposal for U. S. Department of Energy
+
+Mentorship
+----------
+
+- Sep 2022-Jul 2024, U. C. Kaya, Master student
+- Mar-Sep 2022, E. Trushin, Postdoc (with F. Noe)
+- Sep 2021-Oct 2022, B. Szabo, Phd student (with F. Noe)
+- May 2021-Dec 2022, P. del Mazo, Postdoc
+- Apr 2021-Apr 2022, M. Hoefler, Master student
+- Jul 2019-Jul 2020, J. Lederer, Phd student, TU Berlin (with K.-R. Mueller)
+- Jan 2019-Oct 2022, Z. Schaetzle, Master/Phd student (with F. Noe)
+
+Invited talks
+-------------
+
+- 2024, "Neural-network wave functions for quantum chemistry," European Seminar on Computational Methods in Quantum Chemistry (Copenhagen, Denmark)
+- 2023, "Solving the electronic Schroedinger equation with deep learning," SIAM Conference on Computational Science and Engineering (Amsterdam, Netherlands)
+- 2022, "Libmbd: A general-purpose package for scalable many-body dispersion calculations," Electronic Structure Software Development (Lausane, Switzerland) [virtual]
+- 2022, "Neural-network wave functions for quantum chemistry," MLQC4DYN (Institut Pascal, Paris, France)
+- 2022, "Neural-network wave functions for quantum chemistry," Monte Carlo and Machine Learning Approaches in Quantum Mechanics (IPAM, Los Angeles, USA)
+- 2021, "Deep-learning solution to the electronic many-body problem," Non-Covalent Interactions in Large Molecules and Extended Materials (EPFL, Lausanne, Switzerland)
+- 2021, "Solving the electronic Schroedinger equation with deep learning," ACS Fall Meeting [virtual]
+- 2020, "Density-functional model for van der Waals interactions: Unifying atomic approaches with nonlocal functionals," Electronic Structure Theory with Numeric Atom-Centered Basis Functions [virtual]
+- 2019, "Unifying density-functional and interatomic approaches to van der Waals interactions," Frontiers in Density Functional Theory and Beyond (Kavli ITS, Beijing, China)
+- 2018, "Modeling van der Waals interactions in molecules and materials," Molecular Simulations Meets Machine Learning and Artificial Intelligence (Lorentz Center, Leiden, Netherlands)
+- 2018, "Modeling van der Waals interactions in materials with many-body dispersion," Electronic Structure Theory with Numeric Atom-Centered Basis Functions (TU Munich, Germany)
+- 2018, "Modeling van der Waals interactions," Python for Quantum Chemistry and Materials Simulation Software (Caltech, Pasadena, USA)
+
+Publications
+------------
+
+Research articles
+
+- An ab initio foundation model of wavefunctions that accurately describes chemical bond breaking - A. Foster, Z. Schaetzle, P. B. Szabo, L. Cheng, J. Koehler, G. Cassella, N. Gao, J. Li, F. Noe & JH - Preprint at arXiv:2506.19960 (2025), doi:10.48550/arXiv.2506.19960
+- Accurate and scalable exchange-correlation with deep learning - G. Luise et al. - Preprint at arXiv:2506.14665 (2025), doi:10.48550/arXiv.2506.14665
+- Accurate Chemistry Collection: Coupled cluster atomization energies for broad chemical space - S. Ehlert et al. - Preprint at arXiv:2506.14492 (2025), doi:10.48550/arXiv.2506.14492
+- Chemical Space Exploration with Artificial "Mindless" Molecules - T. Gasevic, M. Mueller, J. Schoeps, S. Lanius, JH, S. Grimme & A. Hansen - Preprint at doi:10/pt7m (2025), doi:10/pt7m
+- Roadmap on Advancements of the FHI-aims Software Package - J. W. Abbott et al. - Preprint at arXiv:2505.00125 (2025), doi:10.48550/arXiv.2505.00125
+- Highly accurate real-space electron densities with neural networks - L. Cheng, P. B. Szabo, Z. Schaetzle, D. P. Kooi, J. Koehler, K. J. H. Giesbertz, F. Noe, JH, P. Gori-Giorgi & A. Foster - J. Chem. Phys. 162, 034120 (2025), doi:10.1063/5.0236919
+- Variational principle to regularize machine-learned density functionals: The non-interacting kinetic-energy functional - P. del Mazo-Sevillano & JH - J. Chem. Phys. 159, 194107 (2023), doi:10/gs47g9
+- libMBD: A general-purpose package for scalable quantum many-body dispersion calculations - JH, M. Stoehr, S. Goger, S. Chaudhuri, B. Aradi, R. J. Maurer & A. Tkatchenko - J. Chem. Phys. 159, 174802 (2023), doi:10/k4bm
+- DeepQMC: An open-source software suite for variational optimization of deep-learning molecular wave functions - Z. Schaetzle, P. B. Szabo, M. Mezera, JH & F. Noe - J. Chem. Phys. 159, 094108 (2023), doi:10/gs47hb
+- Ab initio quantum chemistry with neural-network wavefunctions - JH, J. Spencer, K. Choo, A. Mezzacapo, W. M. C. Foulkes, D. Pfau, G. Carleo & F. Noe - Nat. Rev. Chem. 7, 692-709 (2023), doi:10/gs47hc
+- Electronic excited states in deep variational Monte Carlo - M. T. Entwistle, Z. Schaetzle, P. A. Erdman, JH & F. Noe - Nat. Commun. 14, 274 (2023), doi:10/grp6v9
+- Roadmap on Machine learning in electronic structure - H. J. Kulik et al. - Electron. Struct. 4, 023004 (2022), doi:10/gptz7g
+- Quantum Chemistry Common Driver and Databases (QCDB) and Quantum Chemistry Engine (QCEngine): Automation and interoperability among computational chemistry programs - D. G. A. Smith et al. - J. Chem. Phys. 155, 204801 (2021), doi:10/gnj3jw
+- Anisotropic interlayer force field for transition metal dichalcogenides: The case of molybdenum disulfide - W. Ouyang, R. Sofer, X. Gao, JH, A. Tkatchenko, L. Kronik, M. Urbakh & O. Hod - J. Chem. Theory Comput. 17, 7237-7245 (2021), doi:10/gnb2mn
+- Convergence to the fixed-node limit in deep variational Monte Carlo - Z. Schaetzle, JH & F. Noe - J. Chem. Phys. 154, 124108 (2021), doi:10/gm7xvm
+- Coulomb interactions between dipolar quantum fluctuations in van der Waals bound molecules and materials - M. Stoehr, M. Sadhukhan, Y. S. Al-Hamdani, JH & A. Tkatchenko - Nat. Commun. 12, 137 (2021), doi:10/gm7xvk
+- Deep-neural-network solution of the electronic Schroedinger equation - JH, Z. Schaetzle & F. Noe - Nat. Chem. 12, 891-897 (2020), doi:10/ghcm5p
+- Fluctuational electrodynamics in atomic and macroscopic systems: van der Waals interactions and radiative heat transfer - P. S. Venkataram, JH, A. Tkatchenko & A. W. Rodriguez - Phys. Rev. B 102, 085403 (2020), doi:10/gm7xvj
+- Recent developments in the PySCF program package - Q. Sun et al. - J. Chem. Phys. 153, 024109 (2020), doi:10/gj67mr
+- Density functional model for van der Waals interactions: Unifying many-body atomic approaches with nonlocal functionals - JH & A. Tkatchenko - Phys. Rev. Lett. 124, 146401 (2020), doi:10/gm7xvh
+- DFTB+, a software package for efficient approximate density functional theory based atomistic simulations - B. Hourahine et al. - J. Chem. Phys. 152, 124101 (2020), doi:10/gjqhwr
+- Nonlocal electronic correlations in the cohesive properties of high-pressure hydrogen solids - T. Cui, J. Li, W. Gao, JH, A. Tkatchenko & Q. Jiang - J. Phys. Chem. Lett. 11, 1521-1527 (2020), doi:10/gm7xvg
+- Impact of nuclear vibrations on van der Waals and Casimir interactions at zero and finite temperature - P. S. Venkataram, JH, T. J. Vongkovit, A. Tkatchenko & A. W. Rodriguez - Sci. Adv. 5, eaaw0456 (2019), doi:10/gm7xvf
+- Phonon-polariton mediated thermal radiation and heat transfer among molecules and macroscopic bodies: Nonlocal electromagnetic response at mesoscopic scales - P. S. Venkataram, JH, A. Tkatchenko & A. W. Rodriguez - Phys. Rev. Lett. 121, 045901 (2018), doi:10/gd3mxx
+- Electronic exchange and correlation in van der Waals systems: Balancing semilocal and nonlocal energy contributions - JH & A. Tkatchenko - J. Chem. Theory Comput. 14, 1361-1369 (2018), doi:10/ggr9v8
+- Unifying microscopic and continuum treatments of van der Waals and Casimir interactions - P. S. Venkataram, JH, A. Tkatchenko & A. W. Rodriguez - Phys. Rev. Lett. 118, 266802 (2017), doi:10/gfspns
+- Tuning intermolecular interactions with nanostructured environments - M. Chattopadhyaya, JH, I. Poltavsky & A. Tkatchenko - Chem. Mater. 29, 2452-2458 (2017), doi:10/f9z5kv
+- First-principles models for van der Waals interactions in molecules and materials: Concepts, theory, and applications - JH, R. A. DiStasio, Jr. & A. Tkatchenko - Chem. Rev. 117, 4714-4758 (2017), doi:10/gfhx93
+- Nanoscale pi-pi stacked molecules are bound by collective charge fluctuations - JH, D. Alfe & A. Tkatchenko - Nat. Commun. 8, 14052 (2017), doi:10/f9pqff
+- Communication: Many-body stabilization of non-covalent interactions: Structure, stability, and mechanics of Ag3Co(CN)6 framework - X. Liu, JH & A. Tkatchenko - J. Chem. Phys. 145, 241101 (2016), doi:10/f9kmfc
+- Theoretical investigation of layered zeolite frameworks: Surface properties of 2D zeolites - JH, M. Trachta, P. Nachtigall & O. Bludsky - Catal. Today 227, 2-8 (2014), doi:10/gm7xvd
+- A novel correction scheme for DFT: A combined vdW-DF/CCSD(T) approach - JH & O. Bludsky - J. Chem. Phys. 139, 034115 (2013), doi:10/gm7xvc
+- Theoretical investigation of the Friedlaender reaction catalysed by CuBTC: Concerted effect of the adjacent Cu2+ sites - M. Polozij, E. Perez-Mayoral, J. Cejka, JH & P. Nachtigall - Catal. Today 204, 101-107 (2013), doi:10/f4pkmw
+
+Book chapters
+
+- Introduction to material modeling - JH - In Machine learning meets quantum physics (eds K. T. Schuett et al.) 7-24 (Springer, 2020), doi:10/g5qt
+- Van der Waals interactions in material modelling - JH & A. Tkatchenko - In Handbook of materials modeling (eds W. Andreoni & S. Yip) 1-33 (Springer, 2018), doi:10/g5qs
