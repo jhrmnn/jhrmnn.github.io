@@ -13,6 +13,8 @@ vpath %.jpeg assets
 
 cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 
+html: $(addprefix $(OUTDIR)/,index.html cv.txt cv.yaml profile-pic.jpeg)
+
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
 

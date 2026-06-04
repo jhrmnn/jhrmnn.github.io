@@ -221,10 +221,14 @@ def parse_scholar_profile(path):
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
-            info = cache.get(
-                f'https://api.github.com/repos/{item["github"]}',
-                headers={'accept': 'application/vnd.github.v3+json'},
-            )
+            try:
+                info = cache.get(
+                    f'https://api.github.com/repos/{item["github"]}',
+                    headers={'accept': 'application/vnd.github.v3+json'},
+                )
+            except requests.exceptions.HTTPError as e:
+                logging.warning(f'GitHub API error for {item["github"]}: {e}')
+                return
             item.update(
                 {
                     'url': f'https://github.com/{item["github"]}',
@@ -236,9 +240,13 @@ def update_from_web(ctx, cache):  # noqa: C901
             )
 
     def reviews(activity):
+        token = os.environ.get('PUBLONS_TOKEN')
+        if not token:
+            logging.warning('PUBLONS_TOKEN not set, skipping review count update')
+            return
         n_reviews = cache.get(
             'https://publons.com/api/v2/academic/0000-0002-2779-0749/',
-            headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
+            headers={'authorization': f'Token {token}'},
         )['reviews']['pre']['count']
         for i in range(len(activity)):
             activity[i] = activity[i].replace('NUMREV', str(n_reviews))
@@ -319,10 +327,7 @@ def update_from_web(ctx, cache):  # noqa: C901
     }
     for title, cite in cites.items():
         key = reduce_sc(title.lower())[:120]
-        if key in {
-            "assessment of dispersion corrected density functional methods",
-            "theoretical investigation of silver clusters in zeolites",
-        }:
+        if key not in refs_by_key:
             continue
         refs_by_key[key]['cited_by'] = cite
 
