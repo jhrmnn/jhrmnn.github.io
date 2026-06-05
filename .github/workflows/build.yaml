@@ -9,6 +9,7 @@ permissions:
   pages: write
   id-token: write
   packages: write
+  actions: read
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -46,9 +47,38 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ steps.docker-tag.outputs.docker-tag }}
-  build:
+  fetch:
     runs-on: ubuntu-latest
     needs: build-image
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    container:
+      image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore Poetry cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-${{ hashFiles('poetry.lock') }}
+      - run: poetry install --only main
+      - name: Fetch live data
+        run: poetry run make fetch
+        env:
+          PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: derived
+          path: build/derived.json
+  render:
+    runs-on: ubuntu-latest
+    needs: [build-image, fetch]
+    if: ${{ !cancelled() && needs.build-image.result == 'success' && needs.fetch.result != 'failure' }}
     container:
       image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
       credentials:
@@ -65,14 +95,28 @@ jobs:
           path: |
             fonts
             ~/.cache/pypoetry
-          key: ${{ hashFiles('poetry.lock') }}
+          key: fonts-${{ hashFiles('poetry.lock') }}
       - name: Get fonts
         if: "!steps.cache.outputs.cache-hit"
         run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
       - run: poetry install --only main
-      - run: poetry run make
+      - name: Resolve latest data run
+        id: data
+        run: |
+          run_id=$(poetry run python reuse_data.py --run-id)
+          echo "run-id=$run_id" >>"$GITHUB_OUTPUT"
         env:
-          PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download data
+        uses: actions/download-artifact@v4
+        with:
+          name: derived
+          path: build
+          run-id: ${{ steps.data.outputs.run-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Render
+        run: poetry run make
+        env:
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - uses: actions/upload-pages-artifact@v3
   deploy-github:
@@ -81,7 +125,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: render
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4

@@ -1,5 +1,7 @@
 export BLDDIR = build
 OUTDIR = _site
+DERIVED = $(BLDDIR)/derived.json
+CTX = $(wildcard data/*)
 
 vpath %.in templates
 vpath %.css templates
@@ -13,6 +15,14 @@ vpath %.jpeg assets
 
 cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 
+# Refresh the data by crawling live sources; run on schedule/dispatch.
+fetch: | $(BLDDIR)
+	./fetch.py $(CTX) -o $(DERIVED)
+
+# Otherwise reuse the most recent data artifact from a previous run.
+$(DERIVED): | $(BLDDIR)
+	./reuse_data.py -o $@
+
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@
 
@@ -22,11 +32,11 @@ $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 $(BLDDIR)/%.b64: % | $(BLDDIR)
 	base64 $^ >$@
 
-$(OUTDIR)/%: render.py %.in $(wildcard data/*) | $(OUTDIR)
-	./$(wordlist 1,5,$^) $(FLAGS) -o $@
+$(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(OUTDIR)
+	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
-$(BLDDIR)/%: render.py %.in $(wildcard data/*) | $(BLDDIR)
-	./$(wordlist 1,5,$^) $(FLAGS) -o $@
+$(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
+	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
 $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64
 

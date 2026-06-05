@@ -2,3 +2,4 @@
 /build/
 /_site/
 /fonts
+__pycache__/
