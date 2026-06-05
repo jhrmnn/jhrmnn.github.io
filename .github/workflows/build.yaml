@@ -49,7 +49,6 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     needs: build-image
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     container:
       image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
       credentials:
@@ -65,10 +64,14 @@ jobs:
           path: ~/.cache/pypoetry
           key: poetry-${{ hashFiles('poetry.lock') }}
       - run: poetry install --only main
-      - name: Fetch data
+      - name: Fetch live data
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: poetry run make fetch
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
+      - name: Reuse published data
+        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
+        run: make build/derived.json
       - uses: actions/upload-artifact@v4
         with:
           name: derived
@@ -76,7 +79,6 @@ jobs:
   render:
     runs-on: ubuntu-latest
     needs: [build-image, fetch]
-    if: ${{ !cancelled() && needs.build-image.result == 'success' && needs.fetch.result != 'failure' }}
     container:
       image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
       credentials:
@@ -99,7 +101,6 @@ jobs:
         run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
       - run: poetry install --only main
       - name: Use fetched data
-        if: needs.fetch.result == 'success'
         uses: actions/download-artifact@v4
         with:
           name: derived
