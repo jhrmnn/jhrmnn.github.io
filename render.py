@@ -219,12 +219,16 @@ def parse_scholar_profile(path):
 
 
 def update_from_web(ctx, cache):  # noqa: C901
+    github_headers = {'accept': 'application/vnd.github.v3+json'}
+    if token := os.environ.get('GITHUB_TOKEN'):
+        github_headers['authorization'] = f'token {token}'
+
     def stars(item):
         if 'github' in item:
             try:
                 info = cache.get(
                     f'https://api.github.com/repos/{item["github"]}',
-                    headers={'accept': 'application/vnd.github.v3+json'},
+                    headers=github_headers,
                 )
             except requests.exceptions.HTTPError as e:
                 logging.warning(f'GitHub API error for {item["github"]}: {e}')
