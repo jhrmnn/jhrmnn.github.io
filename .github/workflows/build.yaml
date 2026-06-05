@@ -9,6 +9,7 @@ permissions:
   pages: write
   id-token: write
   packages: write
+  actions: read
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -69,9 +70,11 @@ jobs:
         run: poetry run make fetch
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
-      - name: Reuse published data
+      - name: Reuse last fetched data
         if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
-        run: make build/derived.json
+        run: poetry run python reuse_data.py -o build/derived.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: derived

@@ -380,8 +380,9 @@ def apply_derived(ctx, derived):
             item.update(software[gh])
     references = derived.get('references', {})
     for item in ctx['references']:
-        if item['id'] in references:
-            item['cited_by'] = references[item['id']]
+        cited_by = references.get(item['id'])
+        if cited_by not in (None, 'n/a'):
+            item['cited_by'] = cited_by
     n_reviews = derived.get('n_reviews')
     if n_reviews is not None:
         ctx['activity'] = [
