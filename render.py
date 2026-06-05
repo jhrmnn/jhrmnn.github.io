@@ -232,9 +232,14 @@ def published_scholar_citations():
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
+            headers = {'accept': 'application/vnd.github.v3+json'}
+            # Authenticate when a token is available (CI and web sessions both
+            # export GITHUB_TOKEN); unauthenticated calls are rate-limited/403.
+            if token := os.environ.get('GITHUB_TOKEN'):
+                headers['authorization'] = f'Bearer {token}'
             info = cache.get(
                 f'https://api.github.com/repos/{item["github"]}',
-                headers={'accept': 'application/vnd.github.v3+json'},
+                headers=headers,
             )
             item.update(
                 {
