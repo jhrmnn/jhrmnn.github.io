@@ -1,7 +1,6 @@
 export BLDDIR = build
 OUTDIR = _site
 DERIVED = $(BLDDIR)/derived.json
-DATA_URL = https://jan.hermann.name/derived.json
 CTX = $(wildcard data/*)
 
 vpath %.in templates
@@ -14,15 +13,15 @@ vpath %.jpeg assets
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg derived.json)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 
-# Refresh the hosted data; run by cron before rendering.
+# Refresh the data by crawling live sources; run on schedule/dispatch.
 fetch: | $(BLDDIR)
 	./fetch.py $(CTX) -o $(DERIVED)
 
-# Reuse already-published data when fetch has not run (e.g. dev, pushes).
+# Otherwise reuse the most recent data artifact from a previous run.
 $(DERIVED): | $(BLDDIR)
-	wget -nv -O $@ $(DATA_URL)
+	./reuse_data.py -o $@
 
 $(OUTDIR)/%: % | $(OUTDIR)
 	cp $^ $@

@@ -13,6 +13,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import requests
+import reuse_data
 import yaml
 from markupsafe import Markup
 from jinja2 import Environment, FileSystemLoader
@@ -24,7 +25,6 @@ scholarly.set_retries(3)
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
 MAX_RETRIES = 3
-DATA_URL = 'https://jan.hermann.name/derived.json'
 
 
 def reduce_sc(x):
@@ -222,10 +222,10 @@ def parse_scholar_profile(path):
 
 def published_scholar_citations():
     try:
-        r = requests.get(DATA_URL, timeout=5.0)
-        r.raise_for_status()
-        return r.json()['custom_data']['scholar_citations']
-    except (requests.exceptions.RequestException, KeyError, ValueError):
+        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
+            'scholar_citations'
+        ]
+    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
         return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
 
 
