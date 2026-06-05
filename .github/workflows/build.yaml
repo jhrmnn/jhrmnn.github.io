@@ -120,7 +120,7 @@ jobs:
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - uses: actions/upload-pages-artifact@v3
   deploy-github:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ !cancelled() && needs.render.result == 'success' && github.ref == 'refs/heads/main' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
