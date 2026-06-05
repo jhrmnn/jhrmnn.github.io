@@ -100,10 +100,23 @@ jobs:
         if: "!steps.cache.outputs.cache-hit"
         run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
       - run: poetry install --only main
+      - name: Resolve latest data run
+        id: data
+        run: |
+          run_id=$(poetry run python reuse_data.py --run-id)
+          echo "run-id=$run_id" >>"$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download data
+        uses: actions/download-artifact@v4
+        with:
+          name: derived
+          path: build
+          run-id: ${{ steps.data.outputs.run-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Render
         run: poetry run make
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - uses: actions/upload-pages-artifact@v3
   deploy-github:
