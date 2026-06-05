@@ -37,4 +37,16 @@ if [ -n "${FONTS_URL:-}" ] && [ ! -d fonts ]; then
   wget -nv -O - "$FONTS_URL" | tar -xz
 fi
 
+# 4. Expose the repo slug for the render path. `make` reuses the cached data
+#    artifact via reuse_data.py, which reads GITHUB_TOKEN (already provided)
+#    and GITHUB_REPOSITORY. The latter is set in CI but not in web sessions,
+#    so derive it from the git remote and persist it for the session.
+if [ -n "${CLAUDE_ENV_FILE:-}" ] && [ -z "${GITHUB_REPOSITORY:-}" ]; then
+  slug=$(git config --get remote.origin.url | tr ':' '/' \
+    | sed -E 's#\.git$##' | awk -F/ 'NF>=2{print $(NF-1)"/"$NF}')
+  if [ -n "$slug" ]; then
+    echo "export GITHUB_REPOSITORY=$slug" >> "$CLAUDE_ENV_FILE"
+  fi
+fi
+
 echo "session-start hook: environment ready (fetch/render)"
