@@ -133,7 +133,7 @@
 <+ if not loop.first +>\\<+ endif +>
 \hfill\color{white}<+ if loop.first and false +><< year|dateformat >><+ else +><+ if settings.with_stars and item.star +>{\large$\mathbf{\bigwhitestar}$}<+ else +>$\bullet$<+ endif +>\hspace{0.6em}<+ endif +> &&
 \hangpara{1.5em}{1}<< title >>~$\cdot$ << authors >>~$\cdot$ << ref >> &
-\hfill<+ if item.cited_by +><< item.cited_by >><+ endif +>
+\hfill<+ if item.cited_by +> << item.cited_by >><+ endif +>
 <+ endfor +>
 \end{cvblock2}}
 <+ endmacro +>
