@@ -269,7 +269,8 @@ def update_from_web(ctx, cache):  # noqa: C901
         if len(doi.split('/')[0].split('.')[1]) != 4:
             return
         r = cache.get(f'https://api.crossref.org/works/{doi}')
-        item['cited_by'] = r['message']['is-referenced-by-count'] if r else "n/a"
+        if r:
+            item['cited_by'] = r['message']['is-referenced-by-count']
 
     def scholar(ctx):
         def func():
