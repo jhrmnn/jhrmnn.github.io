@@ -71,6 +71,7 @@ jobs:
         env:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCHOLAR_PROXY: ${{ secrets.SCHOLAR_PROXY }}
       - uses: actions/upload-artifact@v4
         with:
           name: derived

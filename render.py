@@ -290,8 +290,17 @@ def update_from_web(ctx, cache):  # noqa: C901
 
     def scholar(ctx):
         def func():
+            # Route through a residential proxy when configured; Scholar blocks
+            # datacenter IPs but lets residential ones through. SCHOLAR_PROXY is
+            # a full proxy URL, e.g. http://user:pass@gw.dataimpulse.com:823.
+            proxies = None
+            if proxy := os.environ.get('SCHOLAR_PROXY'):
+                proxies = {'http': proxy, 'https': proxy}
             r = requests.get(
-                SCHOLAR_PROFILE_URL, headers=SCHOLAR_HEADERS, timeout=10
+                SCHOLAR_PROFILE_URL,
+                headers=SCHOLAR_HEADERS,
+                timeout=30,
+                proxies=proxies,
             )
             r.raise_for_status()
             return parse_scholar_profile_html(r.text)
