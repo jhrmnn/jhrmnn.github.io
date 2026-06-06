@@ -8,7 +8,6 @@ import re
 import sys
 import time
 from datetime import datetime
-from itertools import chain
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -17,14 +16,22 @@ import reuse_data
 import yaml
 from markupsafe import Markup
 from jinja2 import Environment, FileSystemLoader
-from scholarly import scholarly, MaxTriesExceededException
 from bs4 import BeautifulSoup
-
-scholarly.set_timeout(5)
-scholarly.set_retries(3)
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
 MAX_RETRIES = 3
+# Fetch the full publication list in a single request (the profile shows only
+# 20 rows by default); parse_scholar_profile_html reads the citation counts.
+SCHOLAR_PROFILE_URL = (
+    'https://scholar.google.com/citations?hl=en&user=5TjVq0YAAAAJ&pagesize=100'
+)
+SCHOLAR_HEADERS = {
+    'User-Agent': (
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
+        '(KHTML, like Gecko) Chrome/124.0 Safari/537.36'
+    ),
+    'Accept-Language': 'en-US,en;q=0.9',
+}
 
 
 def reduce_sc(x):
@@ -210,14 +217,18 @@ def norm_desc(s):
     return s
 
 
-def parse_scholar_profile(path):
-    soup = BeautifulSoup(path.read_text(), "html.parser")
+def parse_scholar_profile_html(html):
+    soup = BeautifulSoup(html, "html.parser")
     return {
         row.select_one(".gsc_a_at").get_text(strip=True): int(
             row.select_one(".gsc_a_c").get_text(strip=True) or 0
         )
         for row in soup.select("#gsc_a_t .gsc_a_tr")
     }
+
+
+def parse_scholar_profile(path):
+    return parse_scholar_profile_html(path.read_text())
 
 
 def published_scholar_citations():
@@ -279,16 +290,18 @@ def update_from_web(ctx, cache):  # noqa: C901
 
     def scholar(ctx):
         def func():
-            author = scholarly.search_author_id('5TjVq0YAAAAJ')
-            scholarly.fill(author)
-            for x in chain([author], author['coauthors'], author['publications']):
-                del x['filled'], x['source']
-            return author
+            r = requests.get(
+                SCHOLAR_PROFILE_URL, headers=SCHOLAR_HEADERS, timeout=10
+            )
+            r.raise_for_status()
+            return parse_scholar_profile_html(r.text)
 
+        # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
+        # committed profile snapshot instead of failing the whole fetch.
         try:
-            ctx['scholar'] = cache.get_custom('scholar', func)
-        except MaxTriesExceededException:
-            pass
+            ctx['scholar_cites'] = cache.get_custom('scholar', func)
+        except requests.exceptions.RequestException as e:
+            logging.warning('Could not fetch Google Scholar profile: %r', e)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
@@ -313,10 +326,8 @@ def update_from_web(ctx, cache):  # noqa: C901
         reduce_sc(strip_html(item['title'].lower()))[:120]: item
         for item in ctx['references']
     }
-    if "scholar" in ctx:
-        cites = {}
-        for p in ctx['scholar']['publications']:
-            cites[p['bib']['title']] = p['num_citations']
+    if "scholar_cites" in ctx:
+        cites = ctx["scholar_cites"]
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
