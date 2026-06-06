@@ -20,6 +20,10 @@ from bs4 import BeautifulSoup
 
 SMALL_CAPS = dict(zip('ᴍʏɴɢɪɴᴇ', 'myngine'))
 MAX_RETRIES = 3
+# Google Scholar blocks IPs with a bad reputation (429 "sorry" CAPTCHA). When a
+# residential proxy is configured each connection gets a fresh exit IP, so retry
+# a handful of times to land a clean one.
+SCHOLAR_PROXY_RETRIES = 5
 # Fetch the full publication list in a single request (the profile shows only
 # 20 rows by default); parse_scholar_profile_html reads the citation counts.
 SCHOLAR_PROFILE_URL = (
@@ -296,14 +300,26 @@ def update_from_web(ctx, cache):  # noqa: C901
             proxies = None
             if proxy := os.environ.get('SCHOLAR_PROXY'):
                 proxies = {'http': proxy, 'https': proxy}
-            r = requests.get(
-                SCHOLAR_PROFILE_URL,
-                headers=SCHOLAR_HEADERS,
-                timeout=30,
-                proxies=proxies,
-            )
-            r.raise_for_status()
-            return parse_scholar_profile_html(r.text)
+            # A fresh connection per attempt rotates the proxy's exit IP, so
+            # retrying sheds a flagged IP. No point retrying without a proxy:
+            # a datacenter IP stays blocked.
+            attempts = SCHOLAR_PROXY_RETRIES if proxies else 1
+            for attempt in range(attempts):
+                try:
+                    r = requests.get(
+                        SCHOLAR_PROFILE_URL,
+                        headers=SCHOLAR_HEADERS,
+                        timeout=30,
+                        proxies=proxies,
+                    )
+                    r.raise_for_status()
+                except requests.exceptions.RequestException as e:
+                    if attempt < attempts - 1:
+                        logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
+                        time.sleep(2)
+                        continue
+                    raise
+                return parse_scholar_profile_html(r.text)
 
         # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
         # committed profile snapshot instead of failing the whole fetch.
