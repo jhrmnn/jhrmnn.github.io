@@ -345,12 +345,11 @@ def update_from_web(ctx, cache):  # noqa: C901
     }
     for title, cite in cites.items():
         key = reduce_sc(title.lower())[:120]
-        if key in {
-            "assessment of dispersion corrected density functional methods",
-            "theoretical investigation of silver clusters in zeolites",
-        }:
-            continue
-        refs_by_key[key]['cited_by'] = cite
+        # Scholar lists publications that aren't tracked as references here
+        # (and the live profile can surface new ones at any time); only apply
+        # counts to references we actually have.
+        if key in refs_by_key:
+            refs_by_key[key]['cited_by'] = cite
 
 
 def load_ctx(paths):
