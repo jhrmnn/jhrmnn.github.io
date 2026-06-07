@@ -15,7 +15,8 @@ vpath %.jpeg assets
 
 cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 
-# Refresh the data by crawling live sources; run on schedule/dispatch.
+# Refresh the data by crawling live sources; run on schedule/dispatch and on
+# pushes/PRs that touch the fetch inputs.
 fetch: | $(BLDDIR)
 	./fetch.py $(CTX) -o $(DERIVED)
 

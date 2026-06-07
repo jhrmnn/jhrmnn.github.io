@@ -2,8 +2,9 @@
 """Locate / reuse the data produced by a previous run.
 
 The most recent `derived` artifact is the single source of truth for the
-fetched data. The fetch job (schedule/dispatch only) refreshes it; every
-other run, and the Scholar fallback, reuse it instead of crawling again.
+fetched data. The fetch job refreshes it (on schedule/dispatch and on
+pushes/PRs that touch the fetch inputs); every other run, and the Scholar
+fallback, reuse it instead of crawling again.
 
 With ``--run-id`` this prints the id of the run that owns the latest
 artifact, so a workflow can hand it to ``actions/download-artifact``.
