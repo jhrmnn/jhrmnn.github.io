@@ -386,13 +386,23 @@ def update_from_web(ctx, cache):  # noqa: C901
                         proxies=proxies,
                     )
                     r.raise_for_status()
+                    cites = parse_scholar_profile_html(r.text)
+                    # A soft block (CAPTCHA / "sorry" page) returns HTTP 200 with
+                    # no publication rows, so raise_for_status() can't catch it.
+                    # Treat an empty parse as a failure: retry on a fresh exit IP,
+                    # and if it never recovers, let the snapshot fallback take over
+                    # rather than publishing (and timestamping) an empty result.
+                    if not cites:
+                        raise requests.exceptions.RequestException(
+                            'Scholar returned no publication rows (likely a soft block)'
+                        )
                 except requests.exceptions.RequestException as e:
                     if attempt < attempts - 1:
                         logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
                         time.sleep(2)
                         continue
                     raise
-                return parse_scholar_profile_html(r.text)
+                return cites
 
         # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
         # committed profile snapshot instead of failing the whole fetch.
@@ -425,15 +435,18 @@ def update_from_web(ctx, cache):  # noqa: C901
         reduce_sc(strip_html(item['title'].lower()))[:120]: item
         for item in ctx['references']
     }
-    if "scholar_cites" in ctx:
+    if ctx.get("scholar_cites"):
         cites = ctx["scholar_cites"]
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
         scholar_citations = published_scholar_citations()
+        # Prefer the more recent of the committed snapshot and the last published
+        # value, but never carry forward an empty published value (a stale soft
+        # block): fall back to the snapshot so citation numbers don't vanish.
         if (
             ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
-        ) > scholar_citations["timestamp"]:
+        ) > scholar_citations["timestamp"] or not scholar_citations["value"]:
             cites = parse_scholar_profile(path)
         else:
             cites = scholar_citations["value"]
