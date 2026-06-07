@@ -39,8 +39,7 @@ SCHOLAR_HEADERS = {
 }
 # Publications come from the public Zotero "My Publications" library as CSL-JSON
 # (the same shape the references were previously committed in). The item-type
-# filter drops attachments/notes server-side; `id` then carries the Zotero item
-# key, which is the stable join key for ref_extras/keypubs.
+# filter drops attachments/notes server-side.
 ZOTERO_REFS_URL = (
     'https://api.zotero.org/users/1562978/publications/items?'
     + urlencode({'format': 'csljson', 'itemType': '-attachment || note', 'limit': 100})
