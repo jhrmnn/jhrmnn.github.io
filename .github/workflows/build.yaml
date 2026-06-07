@@ -122,6 +122,16 @@ jobs:
           PUBLONS_TOKEN: ${{ secrets.PUBLONS_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SCHOLAR_PROXY: ${{ secrets.SCHOLAR_PROXY }}
+      - name: Check derived-data integrity
+        # Compares the fresh data against the last published artifact and fails
+        # if anything was removed/changed or a growth count dropped. Failing here
+        # aborts the job before the upload below, so the bad data isn't published
+        # (render needs fetch to succeed). A manual dispatch only logs the
+        # problems and carries on, so a known-good refresh can be forced through.
+        continue-on-error: ${{ github.event_name == 'workflow_dispatch' }}
+        run: poetry run make check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v4
         with:
           name: derived
