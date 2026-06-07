@@ -257,13 +257,11 @@ def _ensure_nltk():
     """Make sure the corpora `iso4` needs are present (fetch step only)."""
     import nltk
 
-    needed = [('wordnet', 'corpora/wordnet'), ('stopwords', 'corpora/stopwords')]
-    # nltk >= 3.9 renamed the Punkt tables from `punkt` to `punkt_tab`.
-    if tuple(int(x) for x in nltk.__version__.split('.')[:2]) >= (3, 9):
-        needed.append(('punkt_tab', 'tokenizers/punkt_tab'))
-    else:
-        needed.append(('punkt', 'tokenizers/punkt'))
-    for pkg, path in needed:
+    for pkg, path in (
+        ('wordnet', 'corpora/wordnet'),
+        ('stopwords', 'corpora/stopwords'),
+        ('punkt_tab', 'tokenizers/punkt_tab'),
+    ):
         try:
             nltk.data.find(path)
         except LookupError:
@@ -293,23 +291,14 @@ def canonical_doi(doi, cache):
 
 
 def fetch_references(cache):
-    data = cache.get(ZOTERO_REFS_URL)
-    items = data['items'] if isinstance(data, dict) else data
+    items = cache.get(ZOTERO_REFS_URL)['items']
+    _ensure_nltk()
     refs = []
-    if any(
-        it.get('type') == 'article-journal' and it.get('container-title')
-        for it in items
-    ):
-        _ensure_nltk()
     for it in items:
         it = dict(it)
-        # Key each reference by its canonical DOI (the stable join key for
-        # ref_extras/keypubs); fall back to the Zotero item key if DOI-less.
-        it['id'] = (
-            canonical_doi(it['DOI'], cache)
-            if it.get('DOI')
-            else it['id'].split('/')[-1]
-        )
+        # Key each reference by its canonical DOI: the stable join key for
+        # ref_extras/keypubs.
+        it['id'] = canonical_doi(it['DOI'], cache)
         # Zotero emits year as int for full dates but str for year-only ones;
         # normalize so date-parts sort and compare consistently.
         for field in ('issued', 'accessed', 'submitted'):
@@ -492,8 +481,7 @@ def apply_derived(ctx, derived):
         gh = item.get('github')
         if gh in software:
             item.update(software[gh])
-    references = derived.get('references')
-    ctx['references'] = references if isinstance(references, list) else []
+    ctx['references'] = derived['references']
     n_reviews = derived.get('n_reviews')
     if n_reviews is not None:
         ctx['activity'] = [
