@@ -386,15 +386,16 @@ def update_from_web(ctx, cache):  # noqa: C901
                         proxies=proxies,
                     )
                     r.raise_for_status()
-                    cites = parse_scholar_profile_html(r.text)
-                    # A soft block (CAPTCHA / "sorry" page) returns HTTP 200 with
-                    # no publication rows, so raise_for_status() can't catch it.
-                    # Treat an empty parse as a failure: retry on a fresh exit IP,
-                    # and if it never recovers, let the snapshot fallback take over
-                    # rather than publishing (and timestamping) an empty result.
-                    if not cites:
+                    # A soft block serves a CAPTCHA / "sorry" page with HTTP 200,
+                    # so raise_for_status() can't catch it. Detect it from the
+                    # response itself -- Google redirects blocked traffic to a
+                    # /sorry/ page and the body asks to solve a CAPTCHA -- and
+                    # retry on a fresh exit IP; if it never clears, raise so the
+                    # snapshot fallback takes over rather than publishing (and
+                    # timestamping) an empty result.
+                    if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
                         raise requests.exceptions.RequestException(
-                            'Scholar returned no publication rows (likely a soft block)'
+                            'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
                         )
                 except requests.exceptions.RequestException as e:
                     if attempt < attempts - 1:
@@ -402,7 +403,7 @@ def update_from_web(ctx, cache):  # noqa: C901
                         time.sleep(2)
                         continue
                     raise
-                return cites
+                return parse_scholar_profile_html(r.text)
 
         # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
         # committed profile snapshot instead of failing the whole fetch.
