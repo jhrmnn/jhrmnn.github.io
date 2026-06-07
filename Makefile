@@ -20,6 +20,11 @@ cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg)
 fetch: | $(BLDDIR)
 	./fetch.py $(CTX) -o $(DERIVED)
 
+# Verify a freshly fetched dataset hasn't regressed against the last published
+# one (run after `make fetch`).
+check:
+	./check_derived.py $(DERIVED)
+
 # Otherwise reuse the most recent data artifact from a previous run.
 $(DERIVED): | $(BLDDIR)
 	./reuse_data.py -o $@
