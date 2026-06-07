@@ -386,6 +386,17 @@ def update_from_web(ctx, cache):  # noqa: C901
                         proxies=proxies,
                     )
                     r.raise_for_status()
+                    # A soft block serves a CAPTCHA / "sorry" page with HTTP 200,
+                    # so raise_for_status() can't catch it. Detect it from the
+                    # response itself -- Google redirects blocked traffic to a
+                    # /sorry/ page and the body asks to solve a CAPTCHA -- and
+                    # retry on a fresh exit IP; if it never clears, raise so the
+                    # snapshot fallback takes over rather than publishing (and
+                    # timestamping) an empty result.
+                    if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
+                        raise requests.exceptions.RequestException(
+                            'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
+                        )
                 except requests.exceptions.RequestException as e:
                     if attempt < attempts - 1:
                         logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
@@ -425,15 +436,18 @@ def update_from_web(ctx, cache):  # noqa: C901
         reduce_sc(strip_html(item['title'].lower()))[:120]: item
         for item in ctx['references']
     }
-    if "scholar_cites" in ctx:
+    if ctx.get("scholar_cites"):
         cites = ctx["scholar_cites"]
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
         scholar_citations = published_scholar_citations()
+        # Prefer the more recent of the committed snapshot and the last published
+        # value, but never carry forward an empty published value (a stale soft
+        # block): fall back to the snapshot so citation numbers don't vanish.
         if (
             ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
-        ) > scholar_citations["timestamp"]:
+        ) > scholar_citations["timestamp"] or not scholar_citations["value"]:
             cites = parse_scholar_profile(path)
         else:
             cites = scholar_citations["value"]
