@@ -1,109 +1,106 @@
+# ref_extras and keypubs are keyed by Zotero item key (the stable `id` from
+# the public "My Publications" library). The trailing comment on each entry
+# is the former Better BibTeX citation key and the title, for readability.
 ref_extras:
-  Abbott25:
+  NMIYAU77:  # Abbott25 — Roadmap on Advancements of the FHI-aims Software Package
     PDF: https://nablapsi.science/2505.00125v1.pdf
-  ChengJCP25:
+  PHY5CMY9:  # ChengJCP25 — Highly accurate real-space electron densities with neural ne
     PDF: https://nablapsi.science/2409.01306v1.pdf
-  HermannNRC23:
+  AU3HXJ3C:  # HermannNRC23 — Ab initio quantum chemistry with neural-network wavefunction
     PDF: https://rdcu.be/diWv0
-  HermannJCP23:
+  CXIUQE55:  # HermannJCP23 — libMBD: A general-purpose package for scalable quantum many-
     PDF: https://nablapsi.science/174802_1_5.0170972.pdf
-  SchatzleJCP23:
+  FFHWXI9G:  # SchatzleJCP23 — DeepQMC: An open-source software suite for variational optim
     PDF: https://nablapsi.science/JCP23-AR-SAML2022-01587.pdf
-  delMazo-SevillanoJCP23:
+  JS2BQBSS:  # delMazo-SevillanoJCP23 — Variational principle to regularize machine-learned density 
     PDF: https://nablapsi.science/JCP23-AR-02283.pdf
-  Hermann22:
-    PDF: http://pub.hrmnn.net/ba/b78eadef/2208.12590.pdf
-  KulikES22:
+  86T8WL3C:  # KulikES22 — Roadmap on Machine learning in electronic structure
     PDF: http://pub.hrmnn.net/43/d5572085/Kulik_2022_Electron._Struct._4_023004.pdf
-  EntwistleNC23:
+  733H2D6Q:  # EntwistleNC23 — Electronic excited states in deep variational Monte Carlo
     PDF: https://www.nature.com/articles/s41467-022-35534-5.pdf
-  StohrNC21:
+  YTBZ7FP3:  # StohrNC21 — Coulomb interactions between dipolar quantum fluctuations in
     PDF: https://pub.hrmnn.net/a5/d95c90c0/s41467-020-20473-w.pdf
-  SchatzleJCP21:
+  KKZFJGVG:  # SchatzleJCP21 — Convergence to the fixed-node limit in deep variational Mont
     PDF: https://pub.hrmnn.net/8e/c5e13dc6/JCP20-AR-FROST2020-04042.pdf
-  HermannNC20:
+  N878ZYEF:  # HermannNC20 — Deep-neural-network solution of the electronic Schrödinger e
     PDF: https://pub.hrmnn.net/3b/76f996c2/preprint.pdf
-  HermannPRL20:
+  7IINT7Y7:  # HermannPRL20 — Density functional model for van der Waals interactions: uni
     PDF: https://pub.hrmnn.net/69/1867a12e/PhysRevLett.124.146401.pdf
-  HermannJCP13:
+  MRKTARJC:  # HermannJCP13 — A novel correction scheme for DFT: a combined vdW-DF/CCSD(T)
     PDF: https://pub.hrmnn.net/b3/abd9fc4e/1.4813826.pdf
     notice: |
       This article may be downloaded for personal use only. Any other use
       requires prior permission of the author and AIP Publishing.
-  LiuJCP16:
+  F7TQCHST:  # LiuJCP16 — Communication: Many-body stabilization of non-covalent inter
     PDF: https://pub.hrmnn.net/b9/4a7a3134/1.4972810.pdf
     notice: |
       This article may be downloaded for personal use only. Any other use
       requires prior permission of the author and AIP Publishing.
-  HermannCR17:
+  3M9EQMBE:  # HermannCR17 — First-principles models for van der Waals interactions in mo
     PDF: https://pub.hrmnn.net/9c/a1e2ca5c/preprint.pdf
     notice: |
       This document is the unedited Author’s version of a Submitted Work that was
       subsequently accepted for publication in Chemical Reviews, copyright ©
       American Chemical Society after peer review. To access the final edited and
       published work follow this link.
-  VenkataramPRL17:
+  5JCDCADC:  # VenkataramPRL17 — Unifying microscopic and continuum treatments of van der Waa
     PDF: https://pub.hrmnn.net/51/625aeb03/PhysRevLett.118.266802.pdf
     notice: |
       Copyright 2017 by the American Physical Society
-  Hermann18:
+  ARMS8DJU:  # Hermann18 — Towards unified density-functional model of van der Waals in
     PDF: https://pub.hrmnn.net/30/5f1310e7/dissertation_hermann_jan.pdf
-  Hermann13:
+  EAPGJ5ST:  # Hermann13 — Nonlocal correlation in density functional theory
     PDF: https://pub.hrmnn.net/a0/b020f0f3/DPTX_2011_1_11310_0_362552_0_118279.pdf
-  HermannJCTC18:
+  VQHZKTKB:  # HermannJCTC18 — Electronic exchange and correlation in van der Waals systems
     PDF: https://pub.hrmnn.net/83/f31d79d8/preprint.pdf
     notice: |
       This document is the unedited Author’s version of a Submitted Work that was
       subsequently accepted for publication in Journal of Chemical Theory and
       Computation, copyright © American Chemical Society after peer review. To
       access the final edited and published work follow this link.
-  ChattopadhyayaCM17:
+  LQ7K9QPY:  # ChattopadhyayaCM17 — Tuning intermolecular interactions with nanostructured envir
     PDF: https://pub.hrmnn.net/26/1f09e38b/preprint.pdf
     notice: |
       This document is the unedited Author’s version of a Submitted Work that was
       subsequently accepted for publication in Chemistry of Materials, copyright
       © American Chemical Society after peer review. To access the final edited
       and published work follow this link.
-  HermannNC17:
+  I855A4TT:  # HermannNC17 — Nanoscale π–π stacked molecules are bound by collective char
     PDF: https://pub.hrmnn.net/9c/6872e7d1/ncomms14052.pdf
-  VenkataramPRL18:
+  CDS3E4YN:  # VenkataramPRL18 — Phonon-polariton mediated thermal radiation and heat transfe
     PDF: https://pub.hrmnn.net/48/be258fc4/PhysRevLett.121.045901.pdf
     notice: |
       Copyright 2018 by the American Physical Society
-  Hermann20:
-    PDF: https://pub.hrmnn.net/9a/bd44e834/1909.08423-7.pdf
-  VenkataramSA19:
+  ZJXS8JIJ:  # VenkataramSA19 — Impact of nuclear vibrations on van der Waals and Casimir in
     PDF: https://pub.hrmnn.net/53/644d76c0/eaaw0456.full.pdf
-  CuiJPCL20:
+  KBPEXJNE:  # CuiJPCL20 — Nonlocal electronic correlations in the cohesive properties 
     PDF: https://pub.hrmnn.net/33/aba88bf5/preprint.pdf
     notice: |
       This document is the unedited Author’s version of a Submitted Work that was
       subsequently accepted for publication in The Journal of Physical Chemistry
       Letters, copyright © American Chemical Society after peer review. To access
       the final edited and published work follow this link.
-  HourahineJCP20:
+  NDR63T7C:  # HourahineJCP20 — DFTB+, a software package for efficient approximate density 
     PDF: https://pub.hrmnn.net/51/b55c959c/JCP19-AR-ESS2020-05219.pdf
     notice: |
       This article may be downloaded for personal use only. Any other use
       requires prior permission of the author and AIP Publishing.
-  Stohr20:
-    PDF: https://pub.hrmnn.net/4b/30385447/2007.12505.pdf
-  SunJCP20:
+  4DKHCU6J:  # SunJCP20 — Recent developments in the PʏSCF program package
     PDF: https://pub.hrmnn.net/fd/9edc2077/JCP20-AR-ESS2020-00671.pdf
     notice: |
       This article may be downloaded for personal use only. Any other use
       requires prior permission of the author and AIP Publishing.
-  VenkataramPRB20:
+  K99UYD56:  # VenkataramPRB20 — Fluctuational electrodynamics in atomic and macroscopic syst
     PDF: https://pub.hrmnn.net/b5/4d42db87/PhysRevB.102.085403.pdf
     notice: |
       Copyright 2020 by the American Physical Society
-  SmithJCP21:
+  FTM7AJXH:  # SmithJCP21 — Quantum Chemistry Common Driver and Databases (QCDB) and Qua
     PDF: https://nablapsi.science/204801_1_online.pdf
-  OuyangJCTC21:
+  TVH7X46D:  # OuyangJCTC21 — Anisotropic interlayer force field for transition metal dich
     PDF: https://pub.hrmnn.net/63/38feae25/acs.jctc.1c00782.pdf
 keypubs:
-  - HermannNC20
-  - HermannNC17
-  - HermannPRL20
-  - HermannCR17
-  - HermannJCTC18
+  - N878ZYEF  # HermannNC20
+  - I855A4TT  # HermannNC17
+  - 7IINT7Y7  # HermannPRL20
+  - 3M9EQMBE  # HermannCR17
+  - VQHZKTKB  # HermannJCTC18

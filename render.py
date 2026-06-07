@@ -9,6 +9,7 @@ import sys
 import time
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 import requests
@@ -36,6 +37,14 @@ SCHOLAR_HEADERS = {
     ),
     'Accept-Language': 'en-US,en;q=0.9',
 }
+# Publications come from the public Zotero "My Publications" library as CSL-JSON
+# (the same shape the references were previously committed in). The item-type
+# filter drops attachments/notes server-side; `id` then carries the Zotero item
+# key, which is the stable join key for ref_extras/keypubs.
+ZOTERO_REFS_URL = (
+    'https://api.zotero.org/users/1562978/publications/items?'
+    + urlencode({'format': 'csljson', 'itemType': '-attachment || note', 'limit': 100})
+)
 
 
 def reduce_sc(x):
@@ -244,6 +253,62 @@ def published_scholar_citations():
         return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
 
 
+def _ensure_nltk():
+    """Make sure the corpora `iso4` needs are present (fetch step only)."""
+    import nltk
+
+    needed = [('wordnet', 'corpora/wordnet'), ('stopwords', 'corpora/stopwords')]
+    # nltk >= 3.9 renamed the Punkt tables from `punkt` to `punkt_tab`.
+    if tuple(int(x) for x in nltk.__version__.split('.')[:2]) >= (3, 9):
+        needed.append(('punkt_tab', 'tokenizers/punkt_tab'))
+    else:
+        needed.append(('punkt', 'tokenizers/punkt'))
+    for pkg, path in needed:
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            nltk.download(pkg, quiet=True)
+
+
+def abbreviate_journal(name):
+    """ISO-4 journal abbreviation, matching Better BibTeX's output."""
+    from iso4 import abbreviate
+
+    return abbreviate(name, periods=True, disambiguation_langs=['en'])
+
+
+def fetch_references(cache):
+    data = cache.get(ZOTERO_REFS_URL)
+    items = data['items'] if isinstance(data, dict) else data
+    refs = []
+    if any(
+        it.get('type') == 'article-journal' and it.get('container-title')
+        for it in items
+    ):
+        _ensure_nltk()
+    for it in items:
+        it = dict(it)
+        # CSL-JSON `id` is "<libraryID>/<itemKey>"; keep the stable item key.
+        it['id'] = it['id'].split('/')[-1]
+        # Zotero emits year as int for full dates but str for year-only ones;
+        # normalize so date-parts sort and compare consistently.
+        for field in ('issued', 'accessed', 'submitted'):
+            date = it.get(field)
+            if isinstance(date, dict) and 'date-parts' in date:
+                date['date-parts'] = [
+                    [int(x) if str(x).isdigit() else x for x in part]
+                    for part in date['date-parts']
+                ]
+        if (
+            it.get('type') == 'article-journal'
+            and it.get('container-title')
+            and 'container-title-short' not in it
+        ):
+            it['container-title-short'] = abbreviate_journal(it['container-title'])
+        refs.append(it)
+    return refs
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -328,6 +393,7 @@ def update_from_web(ctx, cache):  # noqa: C901
         except requests.exceptions.RequestException as e:
             logging.warning('Could not fetch Google Scholar profile: %r', e)
 
+    ctx['references'] = fetch_references(cache)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(func, x)
@@ -378,17 +444,9 @@ def update_from_web(ctx, cache):  # noqa: C901
 
 
 def load_ctx(paths):
-    return dict(
-        x
-        for c in paths
-        for x in (
-            (
-                (lambda x: {'references': json.loads(x)})
-                if c.name == 'refs.json'
-                else yaml.safe_load
-            )(c.read_text()).items()
-        )
-    )
+    # References are fetched from Zotero into the derived artifact; the static
+    # context files are all YAML.
+    return dict(x for c in paths for x in yaml.safe_load(c.read_text()).items())
 
 
 def extract_derived(ctx):
@@ -402,11 +460,7 @@ def extract_derived(ctx):
             for item in ctx['software']
             if 'github' in item and 'stars' in item
         },
-        'references': {
-            item['id']: item['cited_by']
-            for item in ctx['references']
-            if 'cited_by' in item
-        },
+        'references': ctx['references'],
         'n_reviews': ctx.get('_n_reviews'),
         'custom_data': ctx['custom_data'],
     }
@@ -418,11 +472,8 @@ def apply_derived(ctx, derived):
         gh = item.get('github')
         if gh in software:
             item.update(software[gh])
-    references = derived.get('references', {})
-    for item in ctx['references']:
-        cited_by = references.get(item['id'])
-        if cited_by not in (None, 'n/a'):
-            item['cited_by'] = cited_by
+    references = derived.get('references')
+    ctx['references'] = references if isinstance(references, list) else []
     n_reviews = derived.get('n_reviews')
     if n_reviews is not None:
         ctx['activity'] = [
