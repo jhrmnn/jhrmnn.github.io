@@ -20,6 +20,7 @@ from pathlib import Path
 import requests
 
 NAME = 'derived'
+DEFAULT_BRANCH = 'main'
 
 
 def _headers():
@@ -30,8 +31,24 @@ def _headers():
     }
 
 
+def _current_branch():
+    """Branch the current run belongs to, matching artifacts' head_branch.
+
+    On ``pull_request`` events ``GITHUB_REF_NAME`` is ``<pr>/merge`` while the
+    artifact's ``workflow_run.head_branch`` carries the PR's source branch, which
+    GitHub exposes as ``GITHUB_HEAD_REF``. Everywhere else (push, schedule,
+    dispatch) ``GITHUB_REF_NAME`` is the branch itself.
+    """
+    return os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME')
+
+
 def latest_derived_artifact():
     """Return metadata of the most recent non-expired `derived` artifact.
+
+    Prefers the artifact produced on the current branch so a PR exercises its
+    own fetched data, falling back to ``main``. Restricting to these two means
+    the published site (which renders on ``main``) never picks up an unreviewed
+    PR branch's artifact.
 
     Raises on API/network errors or when no usable artifact exists.
     """
@@ -45,9 +62,19 @@ def latest_derived_artifact():
     )
     r.raise_for_status()
     artifacts = [x for x in r.json()['artifacts'] if not x['expired']]
-    if not artifacts:
+
+    def on_branch(branch):
+        return [
+            x
+            for x in artifacts
+            if (x.get('workflow_run') or {}).get('head_branch') == branch
+        ]
+
+    branch = _current_branch()
+    candidates = (branch and on_branch(branch)) or on_branch(DEFAULT_BRANCH)
+    if not candidates:
         raise LookupError(f"no '{NAME}' artifact to reuse")
-    return max(artifacts, key=lambda x: x['created_at'])
+    return max(candidates, key=lambda x: x['created_at'])
 
 
 def latest_derived_bytes():
