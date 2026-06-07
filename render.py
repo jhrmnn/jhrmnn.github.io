@@ -277,6 +277,21 @@ def abbreviate_journal(name):
     return abbreviate(name, periods=True, disambiguation_langs=['en'])
 
 
+def canonical_doi(doi, cache):
+    """Full `10.prefix/suffix` DOI, resolving shortDOIs via the handle system.
+
+    Non-DOI identifiers (e.g. the handle Zotero stores for a thesis) pass
+    through unchanged. The result is lower-cased so it is a stable join key.
+    """
+    doi = re.sub(r'^https?://(dx\.)?doi\.org/', '', doi.strip(), flags=re.I)
+    if doi.startswith('10/'):
+        values = cache.get(f'https://doi.org/api/handles/{doi}').get('values', [])
+        doi = next(
+            (v['data']['value'] for v in values if v.get('type') == 'HS_ALIAS'), doi
+        )
+    return doi.lower()
+
+
 def fetch_references(cache):
     data = cache.get(ZOTERO_REFS_URL)
     items = data['items'] if isinstance(data, dict) else data
@@ -288,8 +303,13 @@ def fetch_references(cache):
         _ensure_nltk()
     for it in items:
         it = dict(it)
-        # CSL-JSON `id` is "<libraryID>/<itemKey>"; keep the stable item key.
-        it['id'] = it['id'].split('/')[-1]
+        # Key each reference by its canonical DOI (the stable join key for
+        # ref_extras/keypubs); fall back to the Zotero item key if DOI-less.
+        it['id'] = (
+            canonical_doi(it['DOI'], cache)
+            if it.get('DOI')
+            else it['id'].split('/')[-1]
+        )
         # Zotero emits year as int for full dates but str for year-only ones;
         # normalize so date-parts sort and compare consistently.
         for field in ('issued', 'accessed', 'submitted'):
