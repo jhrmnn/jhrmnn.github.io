@@ -19,10 +19,10 @@
   });
   const styleEl = document.getElementById('site-styles');
   const toggle = document.getElementById('style-toggle');
-  toggle.addEventListener('click', (e) => {
-    e.preventDefault();
+  toggle.addEventListener('click', () => {
     styleEl.disabled = !styleEl.disabled;
     toggle.textContent = styleEl.disabled ? 'enable styles' : 'disable styles';
+    toggle.setAttribute('aria-pressed', String(styleEl.disabled));
   });
 </script>
 
@@ -91,7 +91,7 @@
   </dl>
 {% endmacro %}
 
-<nav>
+<nav aria-label="Sections">
   <ul>
     <li><a href="#Publications">Publications</a>
     <li><a href="#Software">Software</a>
@@ -109,7 +109,7 @@
   <section>  
     <p class="p-note">{{ bio }}
     
-    <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg">
+    <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg" alt="Jan Hermann">
     
     {{ dl_block(links, contact) }}
   </section>
@@ -139,7 +139,7 @@
         <li>
             <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>&nbsp;&middot;
             {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
-            {% if item.description %}</br>{{ item.description}}{% endif %}
+            {% if item.description %}<br>{{ item.description}}{% endif %}
       {% endfor %}
     </ul>
   </section>
@@ -160,7 +160,7 @@
     {{ talk_block(presentations.seminars, "talks") }}
   </section>
 
-  <section id="CV">
+  <section id="CV" aria-label="CV">
     <h2>Employment</h2>
     <table class="cvblock">
       {% for item in employment %}
@@ -274,7 +274,7 @@
   </section>
 </main>
 
-<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; <a href="#" id="style-toggle">disable styles</a></footer>
+<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; <button type="button" id="style-toggle" aria-pressed="false">disable styles</button></footer>
 
 <script type="application/json" id="custom-data">
 {{ custom_data|tojson }}
