@@ -41,6 +41,13 @@ ZOTERO_REFS_URL = (
     'https://api.zotero.org/users/1562978/publications/items?'
     + urlencode({'format': 'csljson', 'itemType': '-attachment || note', 'limit': 100})
 )
+# Public ORCID record of the same publications, used by check_sources.py to
+# cross-check the Zotero list. The summary works endpoint gives title, type,
+# year and DOI per work -- enough to catch a paper that's missing from, or
+# recorded differently than, Zotero (e.g. preprint vs published).
+ORCID_ID = '0000-0002-2779-0749'
+ORCID_WORKS_URL = f'https://pub.orcid.org/v3.0/{ORCID_ID}/works'
+ORCID_HEADERS = {'Accept': 'application/json'}
 
 
 class Cache:
@@ -176,6 +183,42 @@ def fetch_references(cache):
     return refs
 
 
+def fetch_orcid(cache):
+    """Flat list of the public ORCID works, one record per work summary.
+
+    ORCID lists each work's versions (preprint, published, ...) under the same
+    title, so duplicates are expected; check_sources.py collapses them by DOI.
+    DOIs are canonicalised to the same `10.prefix/suffix` join key Zotero uses.
+    """
+    data = cache.get(ORCID_WORKS_URL, headers=ORCID_HEADERS)
+    works = []
+    for group in data.get('group', []):
+        for summary in group.get('work-summary', []):
+            title = (((summary.get('title') or {}).get('title')) or {}).get('value')
+            if not title:
+                continue
+            dois = sorted(
+                {
+                    canonical_doi(eid['external-id-value'], cache)
+                    for eid in (summary.get('external-ids') or {}).get(
+                        'external-id', []
+                    )
+                    if eid.get('external-id-type') == 'doi'
+                }
+            )
+            pubdate = summary.get('publication-date') or {}
+            year = ((pubdate.get('year') or {}).get('value')) if pubdate else None
+            works.append(
+                {
+                    'title': title,
+                    'dois': dois,
+                    'type': summary.get('type'),
+                    'year': str(year) if year else None,
+                }
+            )
+    return works
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -272,6 +315,14 @@ def update_from_web(ctx, cache):  # noqa: C901
             logging.warning('Could not fetch Google Scholar profile: %r', e)
 
     ctx['references'] = fetch_references(cache)
+    # ORCID only gates the push-to-main cross-check; a transient outage
+    # shouldn't fail unrelated fetches, so degrade to an empty list (which
+    # check_sources.py reports as "no ORCID data" on main).
+    try:
+        ctx['orcid'] = fetch_orcid(cache)
+    except requests.exceptions.RequestException as e:
+        logging.warning('Could not fetch ORCID works: %r', e)
+        ctx['orcid'] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(func, x)
@@ -336,6 +387,7 @@ def extract_derived(ctx):
             if 'github' in item and 'stars' in item
         },
         'references': ctx['references'],
+        'orcid': ctx.get('orcid', []),
         'n_reviews': ctx.get('_n_reviews'),
         'custom_data': ctx['custom_data'],
     }

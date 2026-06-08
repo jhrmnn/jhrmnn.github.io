@@ -25,6 +25,11 @@ fetch: | $(BLDDIR)
 check:
 	./check_derived.py $(DERIVED)
 
+# Cross-check that Zotero, ORCID and Google Scholar agree on the publication
+# list and its substance (run after `make fetch`, gated to pushes to main).
+check-sources:
+	./check_sources.py $(DERIVED)
+
 # Otherwise reuse the most recent data artifact from a previous run.
 $(DERIVED): | $(BLDDIR)
 	./reuse_data.py -o $@

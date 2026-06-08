@@ -137,6 +137,21 @@ jobs:
         run: poetry run make check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cross-check Zotero, ORCID and Google Scholar
+        # Gate production deploys on the three publication sources agreeing.
+        # Runs whenever fetch produces data that will be published: the daily
+        # schedule and manual dispatch (both deploy to main), plus a push that
+        # changed fetch inputs (fetch already runs, so no extra crawl). The
+        # workflow's push trigger is main-only, so checking the event is enough.
+        # Not on PRs, which don't deploy and shouldn't be blocked by a mismatch
+        # that's the author's to reconcile (e.g. a paper not yet added to ORCID).
+        # Failing here aborts before the upload below, so render and the Pages
+        # deploy are skipped and inconsistent data isn't published.
+        if: >-
+          github.event_name == 'schedule' ||
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'push'
+        run: poetry run make check-sources
       - uses: actions/upload-artifact@v4
         with:
           name: derived
