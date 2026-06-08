@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Cross-check that the three publication sources agree.
+"""Cross-check that the publication sources agree.
 
 The site's reference list comes from the Zotero "My Publications" library;
-ORCID and Google Scholar are independent records of the same publications. This
-reads a freshly fetched `build/derived.json` and verifies that all three list
-the same papers and that, for each paper, ORCID's substance matches Zotero's.
+ORCID, Google Scholar and Web of Science are independent records of the same
+publications. This reads a freshly fetched `build/derived.json` and verifies
+that they list the same papers and that, for each paper, ORCID's substance
+matches Zotero's.
 
 The only differences tolerated are accents, letter case, and unicode-vs-ascii
 spelling of the same character (see `common.fold_text`); anything else -- a
@@ -22,7 +23,10 @@ Scholar's profile exposes title, year and venue. So:
   as a preprint),
 - the year is corroborated against both ORCID and Scholar,
 - the venue is compared across all three, folded to a common ISO-4 abbreviation,
-- and Scholar must additionally list every Zotero paper.
+- Scholar must additionally list every Zotero paper,
+- and Web of Science must list every Zotero paper it would index -- i.e. every
+  published one, since WoS doesn't index preprints, theses or book chapters --
+  and must carry no unexpected record of its own (see WOS_ALLOWED_EXTRAS).
 
 Neither ORCID nor Scholar carries volume/page, so those are not cross-checked.
 """
@@ -52,6 +56,28 @@ ORCID_STATUS = {
     'book-chapter': 'chapter',
     'dissertation-thesis': 'thesis',
     'dissertation': 'thesis',
+}
+
+# Web of Science (via Publons) indexes the published literature only -- not
+# preprints, theses or book chapters -- so a Zotero item of one of those types
+# legitimately has no WoS counterpart and isn't required to appear there.
+WOS_OPTIONAL_STATUS = {'preprint', 'chapter', 'thesis'}
+
+# WoS records that have no Zotero counterpart yet are expected, so the
+# cross-check tolerates them rather than flagging a regression. Keyed by the
+# same join identifier fetch.py builds -- the canonical DOI where WoS has one,
+# else the WoS/Publons accession id:
+WOS_ALLOWED_EXTRAS = {
+    # DFTB+ erratum ("vol 152, 124101, 2020"), which WoS indexes as a record
+    # distinct from the article itself (Zotero keeps only the article).
+    '10.1063/5.0103026',
+    # Duplicate preprint of the deep-VMC fixed-node paper; its published version
+    # (10.1063/5.0032836) is the record Zotero lists and WoS also carries.
+    'PPRN:11490275',
+    # Two records mis-attributed to this profile -- a cochlear-implant preprint
+    # and a 2006 laser-ablation paper, both by a different J. Hermann.
+    '10.1101/19000711',
+    'PPRN:49096155',
 }
 
 
@@ -197,6 +223,42 @@ def check(  # noqa: C901
     return problems
 
 
+def check_wos(refs, wos):
+    """Cross-check the Zotero list against Web of Science (empty = skipped).
+
+    Joins on the canonical identifier fetch.py builds for both sides (DOI, else
+    the WoS accession id). WoS must list every Zotero paper it would index --
+    preprints, theses and chapters excepted, since WoS doesn't index those --
+    and must not carry an unexpected record of its own (WOS_ALLOWED_EXTRAS lists
+    the known, tolerated ones). Returns a list of disagreement reasons.
+    """
+    problems = []
+    if not wos:
+        problems.append('no Web of Science works to cross-check against')
+        return problems
+    wos_ids = {w['id'] for w in wos if w['id']}
+    # Every Zotero paper WoS is expected to index must be present.
+    for ref in refs:
+        status = ZOTERO_STATUS.get(ref.get('type'), ref.get('type'))
+        if status in WOS_OPTIONAL_STATUS:
+            continue
+        ident = ref.get('id')
+        if ident and ident not in wos_ids:
+            problems.append(f'absent from Web of Science: {ref["title"]!r}')
+    # WoS records with no Zotero counterpart, beyond the known-allowed extras.
+    zotero_ids = {ref['id'] for ref in refs if ref.get('id')}
+    for work in wos:
+        key = work['id'] or work.get('accession')
+        if key in WOS_ALLOWED_EXTRAS:
+            continue
+        if work['id'] and work['id'] in zotero_ids:
+            continue
+        problems.append(
+            f'in Web of Science but not Zotero: {work["title"]!r} ({key})'
+        )
+    return problems
+
+
 def main(args):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('derived', nargs='?', default='build/derived.json', type=Path)
@@ -209,6 +271,7 @@ def main(args):
         scholar_years(derived),
         scholar_venues(derived),
     )
+    problems += check_wos(derived.get('references', []), derived.get('wos', []))
     if not problems:
         print('publication sources agree')
         return
