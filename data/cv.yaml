@@ -162,6 +162,9 @@ software:
 - name: Pyberny
   role: creator
   github: jhrmnn/pyberny
+- name: Skala
+  role: contributor
+  github: microsoft/skala
 - name: FHI-aims
   role: core contributor
   url: https://fhi-aims.org
@@ -175,9 +178,6 @@ software:
 - name: QCEngine
   role: contributor
   url: https://github.com/MolSSI/QCEngine
-- name: Skala
-  role: contributor
-  github: microsoft/skala
 presentations:
   invited:
   - title: Neural-network wave functions for quantum chemistry
