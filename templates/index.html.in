@@ -109,7 +109,7 @@
   <section>  
     <p class="p-note">{{ bio }}
     
-    <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg" alt="Jan Hermann">
+    <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg" alt="Jan Hermann" height="160">
     
     {{ dl_block(links, contact) }}
   </section>
