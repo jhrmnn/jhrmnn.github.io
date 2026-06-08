@@ -221,7 +221,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy _site --project-name=jhrmnn-cv --branch=${{ github.head_ref }}
+          command: pages deploy _site --project-name=jhrmnngithubio --branch=${{ github.head_ref }}
       - uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: cloudflare-preview
