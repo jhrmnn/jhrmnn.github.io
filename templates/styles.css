@@ -82,6 +82,20 @@ footer {
     margin-top: 2em;
 }
 
+#style-toggle {
+    font: inherit;
+    color: #347AB7;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+#style-toggle:hover {
+    color: #2D6A9F;
+    text-decoration: underline;
+}
+
 .pub {
     font-size: 0.95em;
 }
@@ -218,6 +232,14 @@ tr.heading:not(:first-child) td {
     }
 
     a:hover {
+        color: #74a9d8;
+    }
+
+    #style-toggle {
+        color: #609dd2;
+    }
+
+    #style-toggle:hover {
         color: #74a9d8;
     }
 }
