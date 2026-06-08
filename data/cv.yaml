@@ -248,6 +248,11 @@ presentations:
     event_url: https://molssi.org/2018/03/26/molssi-workshop-on-python-for-quantum-chemistry-and-materials-simulation/
     year: 2018
   contributed:
+  - title: "Skala: Accurate and scalable exchange-correlation with deep learning"
+    event: Symposium on Theoretical Chemistry
+    where: Berlin, Germany
+    event_url: https://www.bcp.fu-berlin.de/en/stc2025/index.html
+    year: 2025
   - title: Approaching exact solutions of the electronic Schrödinger equation with deep quantum Monte Carlo
     event: APS March Meeting
     note: virtual
