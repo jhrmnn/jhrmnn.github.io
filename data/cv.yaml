@@ -251,7 +251,7 @@ presentations:
   - title: "Skala: Accurate and scalable exchange-correlation with deep learning"
     event: Symposium on Theoretical Chemistry
     where: Berlin, Germany
-    event_url: https://www.bcp.fu-berlin.de/en/stc2025/index.html
+    url: https://www.bcp.fu-berlin.de/en/stc2025/long-program/abstracts/Abstract_Hermann/index.html
     year: 2025
   - title: Approaching exact solutions of the electronic Schrödinger equation with deep quantum Monte Carlo
     event: APS March Meeting
