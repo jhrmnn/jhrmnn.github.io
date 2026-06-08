@@ -102,17 +102,33 @@ def _scholar_rows(html):
         cites = int(row.select_one(".gsc_a_c").get_text(strip=True) or 0)
         year_cell = row.select_one(".gsc_a_y")
         year = year_cell.get_text(strip=True) if year_cell else ''
-        yield title, cites, year or None
+        # The second grey line is the venue, e.g. "J. Chem. Inf. Model. 65 (18),
+        # 9576-9580, 2025". Keep only the name: everything before the first
+        # volume number, with a truncation ellipsis trimmed off.
+        grays = row.select(".gs_gray")
+        venue = grays[1].get_text(strip=True) if len(grays) > 1 else ''
+        venue = re.split(r'\s+(?=\d)', venue, 1)[0].strip().rstrip('…').strip()
+        yield title, cites, year or None, venue or None
 
 
 def parse_scholar_profile_html(html):
-    return {title: cites for title, cites, _ in _scholar_rows(html)}
+    return {title: cites for title, cites, _, _ in _scholar_rows(html)}
 
 
 def parse_scholar_years_html(html):
     # The profile lists a publication year per row; check_sources.py uses it as a
     # third witness on each paper's year. Rows without a year are skipped.
-    return {title: year for title, _, year in _scholar_rows(html) if year}
+    return {title: year for title, _, year, _ in _scholar_rows(html) if year}
+
+
+def parse_scholar_venues_html(html):
+    # ISO-4 abbreviation of each row's venue, so check_sources.py can compare it
+    # to Zotero's container-title-short and ORCID's journal-title on equal terms.
+    return {
+        title: journal_abbrev(venue)
+        for title, _, _, venue in _scholar_rows(html)
+        if venue
+    }
 
 
 def parse_scholar_profile(path):
@@ -121,6 +137,10 @@ def parse_scholar_profile(path):
 
 def parse_scholar_years(path):
     return parse_scholar_years_html(path.read_text())
+
+
+def parse_scholar_venues(path):
+    return parse_scholar_venues_html(path.read_text())
 
 
 def published_scholar_citations():
@@ -136,6 +156,15 @@ def published_scholar_years():
     try:
         return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
             'scholar_years'
+        ]
+    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
+        return {}
+
+
+def published_scholar_venues():
+    try:
+        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
+            'scholar_venues'
         ]
     except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
         return {}
@@ -161,6 +190,23 @@ def abbreviate_journal(name):
     from iso4 import abbreviate
 
     return abbreviate(name, periods=True, disambiguation_langs=['en'])
+
+
+def journal_abbrev(name):
+    """ISO-4 abbreviation of a venue, tolerant of missing/odd input.
+
+    Used to fold each source's venue (ORCID's journal-title, Scholar's venue
+    line) onto the same abbreviated form Zotero already stores in
+    container-title-short, so the cross-check can compare them. Returns None for
+    empty input and falls back to the raw name if abbreviation fails (e.g. a
+    preprint server, which the venue check ignores anyway).
+    """
+    if not name:
+        return None
+    try:
+        return abbreviate_journal(name)
+    except Exception:
+        return name
 
 
 def canonical_doi(doi, cache):
@@ -236,12 +282,14 @@ def fetch_orcid(cache):
             )
             pubdate = summary.get('publication-date') or {}
             year = ((pubdate.get('year') or {}).get('value')) if pubdate else None
+            journal = (summary.get('journal-title') or {}).get('value')
             works.append(
                 {
                     'title': title,
                     'ids': ids,
                     'type': summary.get('type'),
                     'year': str(year) if year else None,
+                    'journal': journal_abbrev(journal),
                 }
             )
     return works
@@ -344,6 +392,7 @@ def update_from_web(ctx, cache):  # noqa: C901
         else:
             ctx['scholar_cites'] = parse_scholar_profile_html(html)
             ctx['scholar_years'] = parse_scholar_years_html(html)
+            ctx['scholar_venues'] = parse_scholar_venues_html(html)
 
     ctx['references'] = fetch_references(cache)
     # ORCID only gates the push-to-main cross-check; a transient outage
@@ -380,6 +429,7 @@ def update_from_web(ctx, cache):  # noqa: C901
     if ctx.get("scholar_cites"):
         cites = ctx["scholar_cites"]
         years = ctx.get("scholar_years", {})
+        venues = ctx.get("scholar_venues", {})
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
@@ -392,17 +442,20 @@ def update_from_web(ctx, cache):  # noqa: C901
         ) > scholar_citations["timestamp"] or not scholar_citations["value"]:
             cites = parse_scholar_profile(path)
             years = parse_scholar_years(path)
+            venues = parse_scholar_venues(path)
         else:
             cites = scholar_citations["value"]
             ts = scholar_citations["timestamp"]
-            # Older published artifacts predate scholar_years; absent it the
-            # cross-check simply skips Scholar's year corroboration.
+            # Older published artifacts predate scholar_years/venues; absent them
+            # the cross-check simply skips Scholar's year/venue corroboration.
             years = published_scholar_years()
+            venues = published_scholar_venues()
     ctx["custom_data"]["scholar_citations"] = {
         "timestamp": ts,
         "value": cites,
     }
     ctx["custom_data"]["scholar_years"] = years
+    ctx["custom_data"]["scholar_venues"] = venues
     for title, cite in cites.items():
         key = reduce_sc(title.lower())[:120]
         # Scholar lists publications that aren't tracked as references here

@@ -8,16 +8,22 @@ the same papers and that, for each paper, ORCID's substance matches Zotero's.
 
 The only differences tolerated are accents, letter case, and unicode-vs-ascii
 spelling of the same character (see `common.fold_text`); anything else -- a
-paper present in one source but not another, a preprint-vs-published DOI/type
-mismatch, a differing year -- is a regression. Run at the end of the fetch job
-on pushes to main (see the workflow), a non-zero exit aborts before the artifact
-is uploaded, so the site never deploys from inconsistent sources.
+paper present in one source but not another, a preprint-vs-published mismatch, a
+differing year or venue -- is a regression. Run at the end of the fetch job on
+pushes to main (see the workflow), a non-zero exit aborts before the artifact is
+uploaded, so the site never deploys from inconsistent sources.
 
 Field coverage differs by source: Zotero (CSL-JSON) is richest; ORCID exposes
-title, type, year and an identifier (DOI or handle) per work; Google Scholar's
-profile exposes title and a publication year. So the identifier and
-preprint-vs-published status are checked against ORCID, the year against both
-ORCID and Scholar, and Scholar additionally must list every Zotero paper.
+title, type, year, an identifier (DOI or handle) and a journal per work; Google
+Scholar's profile exposes title, year and venue. So:
+
+- the identifier and preprint-vs-published status are checked against ORCID
+  (including flagging a paper ORCID lists as published while Zotero still has it
+  as a preprint),
+- the year is corroborated against both ORCID and Scholar,
+- the venue is compared across all three, folded to a common ISO-4 abbreviation,
+- and Scholar must additionally list every Zotero paper.
+
 Neither ORCID nor Scholar carries volume/page, so those are not cross-checked.
 """
 
@@ -66,7 +72,13 @@ def scholar_years(derived):
     return (derived.get('custom_data') or {}).get('scholar_years', {})
 
 
-def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
+def scholar_venues(derived):
+    return (derived.get('custom_data') or {}).get('scholar_venues', {})
+
+
+def check(  # noqa: C901
+    refs, orcid, scholar, scholar_year_by_title, scholar_venue_by_title
+):
     """Return a list of human-readable disagreement reasons (empty when clean)."""
     problems = []
 
@@ -80,12 +92,17 @@ def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
         for ident in work.get('ids') or []:
             o_by_id[ident].append(work)
 
+    # Scholar venues arrive keyed by Scholar's raw title; re-key on title_key so
+    # they pair with references the same way everything else does.
+    s_venues = {title_key(t): v for t, v in (scholar_venue_by_title or {}).items()}
+
     z_titles = set()
     z_ids = set()
     if not orcid:
         problems.append('no ORCID works to cross-check against')
     for ref in refs:
-        z_titles.add(title_key(ref['title']))
+        key = title_key(ref['title'])
+        z_titles.add(key)
         ident = ref.get('id')  # canonical DOI/handle: the join key fetch.py builds
         if ident:
             z_ids.add(ident)
@@ -93,10 +110,27 @@ def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
             continue
         # Pair on title, falling back to a shared identifier when the titles
         # diverge by more than the tolerated folds.
-        cands = o_by_title.get(title_key(ref['title'])) or (o_by_id.get(ident) or [])
+        cands = o_by_title.get(key) or (o_by_id.get(ident) or [])
         if not cands:
             problems.append(f'absent from ORCID: {ref["title"]!r}')
             continue
+        z_status = ZOTERO_STATUS.get(ref.get('type'), ref.get('type'))
+        # A paper ORCID records as a published journal article while Zotero still
+        # lists it as a preprint: Zotero should be advanced to the published
+        # version. ORCID keeps both versions, so the preprint identifier still
+        # matches -- this is the drift the plain identifier check can't see.
+        if z_status == 'preprint':
+            published = [
+                c for c in cands if ORCID_STATUS.get(c.get('type')) == 'journal'
+            ]
+            if published:
+                pub_ids = sorted({i for c in published for i in c.get('ids') or []})
+                problems.append(
+                    f'published on ORCID but still a preprint in Zotero: '
+                    f'{ref["title"]!r} (Zotero preprint {ident}; '
+                    f'ORCID published {pub_ids})'
+                )
+                continue
         same_id = [c for c in cands if ident in (c.get('ids') or [])]
         if not same_id:
             orcid_ids = sorted({i for c in cands for i in c.get('ids') or []})
@@ -106,7 +140,6 @@ def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
             )
             continue
         work = same_id[0]
-        z_status = ZOTERO_STATUS.get(ref.get('type'), ref.get('type'))
         o_status = ORCID_STATUS.get(work.get('type'), work.get('type'))
         if z_status != o_status:
             problems.append(
@@ -118,6 +151,20 @@ def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
             problems.append(
                 f'year differs: {ref["title"]!r} Zotero {z_year} vs ORCID {o_year}'
             )
+        # Venue: Zotero's container-title-short, ORCID's journal-title and
+        # Scholar's venue, all folded to the same ISO-4 abbreviation (fetch.py
+        # abbreviates ORCID/Scholar; Zotero already stores the short form). Only
+        # journal articles -- a chapter/thesis "venue" isn't a journal.
+        if ref.get('type') == 'article-journal':
+            venues = {
+                'Zotero': ref.get('container-title-short'),
+                'ORCID': work.get('journal'),
+                'Google Scholar': s_venues.get(key),
+            }
+            folded = {src: title_key(v) for src, v in venues.items() if v}
+            if len(set(folded.values())) > 1:
+                detail = ', '.join(f'{src} {venues[src]!r}' for src in folded)
+                problems.append(f'venue differs: {ref["title"]!r} {detail}')
 
     # ORCID works that match no Zotero paper -- by title or by a shared
     # identifier (the latter skips ORCID's own duplicate records of papers
@@ -160,6 +207,7 @@ def main(args):
         derived.get('orcid', []),
         scholar_titles(derived),
         scholar_years(derived),
+        scholar_venues(derived),
     )
     if not problems:
         print('publication sources agree')
