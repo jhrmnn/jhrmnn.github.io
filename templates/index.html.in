@@ -19,16 +19,25 @@
   });
   const styleEl = document.getElementById('site-styles');
   const toggle = document.getElementById('style-toggle');
-  toggle.addEventListener('click', () => {
-    styleEl.disabled = !styleEl.disabled;
+  const syncToggle = () => {
     toggle.textContent = styleEl.disabled ? 'enable styles' : 'disable styles';
     toggle.setAttribute('aria-pressed', String(styleEl.disabled));
+  };
+  syncToggle();
+  toggle.addEventListener('click', () => {
+    styleEl.disabled = !styleEl.disabled;
+    syncToggle();
+    try { localStorage.setItem('styles', styleEl.disabled ? 'off' : 'on'); } catch (e) {}
   });
 </script>
 
 <style id="site-styles">
   {% include "templates/styles.css" %}
 </style>
+<script>
+  // Apply the persisted toggle state before paint to avoid a flash of styles.
+  try { document.getElementById('site-styles').disabled = localStorage.getItem('styles') === 'off'; } catch (e) {}
+</script>
 
 <link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
 <link rel="canonical" href="https://jan.hermann.name">
