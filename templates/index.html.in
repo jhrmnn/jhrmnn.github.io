@@ -17,9 +17,16 @@
       article.removeChild(notice_star);
     }
   });
+  const styleEl = document.getElementById('site-styles');
+  const toggle = document.getElementById('style-toggle');
+  toggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    styleEl.disabled = !styleEl.disabled;
+    toggle.textContent = styleEl.disabled ? 'enable styles' : 'disable styles';
+  });
 </script>
 
-<style>
+<style id="site-styles">
   {% include "templates/styles.css" %}
 </style>
 
@@ -267,7 +274,7 @@
   </section>
 </main>
 
-<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %}</footer>
+<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; <a href="#" id="style-toggle">disable styles</a></footer>
 
 <script type="application/json" id="custom-data">
 {{ custom_data|tojson }}
