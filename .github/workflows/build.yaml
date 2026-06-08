@@ -14,7 +14,11 @@ permissions:
   actions: read
   pull-requests: write
 concurrency:
-  group: pages
+  # Scope to the triggering ref so PR runs and main runs don't cancel each
+  # other; a static group would put every run in one bucket and, with
+  # cancel-in-progress, let any new run preempt an unrelated one. Same-ref
+  # superseding (e.g. a new push to a branch) is still cancelled.
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   build-image:
