@@ -98,14 +98,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-image, changes]
     # !cancelled() so a skipped changes job (schedule/dispatch) doesn't skip fetch.
-    # Pushes to main always fetch (even when no fetch input changed) so the
-    # Zotero/ORCID/Scholar cross-check below runs on every production deploy.
     if: >-
       !cancelled() &&
       needs.build-image.result == 'success' &&
       (github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
       needs.changes.outputs.fetch == 'true')
     container:
       image: ghcr.io/${{ github.repository }}:${{ needs.build-image.outputs.docker-tag }}
@@ -142,11 +139,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Cross-check Zotero, ORCID and Google Scholar
         # Gate production deploys on the three publication sources agreeing.
-        # Only on pushes to main: PRs and the daily refresh shouldn't be blocked
-        # by a mismatch that's the author's to reconcile (e.g. a paper not yet
-        # added to ORCID). Failing here aborts before the upload below, so render
-        # and the Pages deploy are skipped and inconsistent data isn't published.
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        # Runs whenever fetch produces data that will be published: the daily
+        # schedule and manual dispatch (both deploy to main), plus a push to main
+        # that changed fetch inputs (fetch already runs, so no extra crawl). Not
+        # on PRs, which don't deploy and shouldn't be blocked by a mismatch
+        # that's the author's to reconcile (e.g. a paper not yet added to ORCID).
+        # Failing here aborts before the upload below, so render and the Pages
+        # deploy are skipped and inconsistent data isn't published.
+        if: >-
+          github.event_name == 'schedule' ||
+          github.event_name == 'workflow_dispatch' ||
+          (github.event_name == 'push' && github.ref == 'refs/heads/main')
         run: poetry run make check-sources
       - uses: actions/upload-artifact@v4
         with:
