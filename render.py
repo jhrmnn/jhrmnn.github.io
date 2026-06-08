@@ -156,25 +156,12 @@ def apply_derived(ctx, derived):
     ctx['custom_data'] = derived.get('custom_data', {})
 
 
-def render(template, ctx, **kwargs):  # noqa: C901
-    kwargs['now'] = (
-        datetime.now()
-        .replace(microsecond=0)
-        .astimezone(ZoneInfo("Europe/Berlin"))
-        .isoformat()
-    )
-    ctx['settings'] = kwargs
-    for item in ctx['references']:
-        extras = ctx['ref_extras'].get(item['id'])
-        if not extras:
-            continue
-        item['pdf_url'] = extras['PDF']
-        if 'notice' in extras:
-            item['pdf_notice'] = extras['notice']
-        if item['id'] in ctx['keypubs']:
-            item['star'] = True
+def make_env(name):
+    """Build a Jinja environment whose autoescaping/delimiters/finalizer match
+    the output format implied by the template name. Shared by `render` (CV) and
+    `posts.py` (blog) so both stages produce identically normalised output."""
     extra_kwargs = {}
-    if '.tex' in template.name:
+    if '.tex' in name:
 
         def finalize(x):
             if isinstance(x, str) and '\\' in x:
@@ -190,7 +177,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
             'comment_end_string': '#>',
         }
 
-    elif '.html' in template.name:
+    elif '.html' in name:
 
         def finalize(x):
             if isinstance(x, Markup):
@@ -199,7 +186,7 @@ def render(template, ctx, **kwargs):  # noqa: C901
                 return x
             return md_to_html(x)
 
-    elif '.txt' in template.name:
+    elif '.txt' in name:
         finalize = md_to_txt
     env = Environment(
         loader=FileSystemLoader(['.', os.getenv('BLDDIR')]),
@@ -212,13 +199,17 @@ def render(template, ctx, **kwargs):  # noqa: C901
     env.filters['sortrefs'] = sort_refs
     env.filters['reftomd'] = ref_to_md
     env.filters['initials'] = lambda x: [f'{x[0]}.' for x in x.split()]
-    template = env.get_template(str(template))
-    doc = template.render(ctx)
+    return env
+
+
+def finalize_doc(doc, name):
+    """Apply the cross-format output cleanups (quote/punctuation shuffling, and
+    for plain text the unicode-to-ascii fold) and encode to bytes."""
     doc = re.sub(r'(?<!\?</a>)”([.,])', r'\1”', doc)
     doc = re.sub(r'”[.,]', r'”', doc)
     doc = re.sub(r"(?<!\?})''([.,])", r"\1''", doc)
     doc = re.sub(r"''([.,])", r"''", doc)
-    if '.txt' in template.name:
+    if '.txt' in name:
         doc = re.sub(r'€(\d+[kM])', r'\1 EUR', doc)
         doc = (
             doc.replace('ł', 'l')
@@ -240,10 +231,31 @@ def render(template, ctx, **kwargs):  # noqa: C901
             .replace('ó', 'o')
         )
         doc = reduce_sc(doc)
-        doc = doc.encode('ascii')
-    else:
-        doc = doc.encode()
-    return doc
+        return doc.encode('ascii')
+    return doc.encode()
+
+
+def render(template, ctx, **kwargs):
+    kwargs['now'] = (
+        datetime.now()
+        .replace(microsecond=0)
+        .astimezone(ZoneInfo("Europe/Berlin"))
+        .isoformat()
+    )
+    ctx['settings'] = kwargs
+    for item in ctx['references']:
+        extras = ctx['ref_extras'].get(item['id'])
+        if not extras:
+            continue
+        item['pdf_url'] = extras['PDF']
+        if 'notice' in extras:
+            item['pdf_notice'] = extras['notice']
+        if item['id'] in ctx['keypubs']:
+            item['star'] = True
+    env = make_env(template.name)
+    template = env.get_template(str(template))
+    doc = template.render(ctx)
+    return finalize_doc(doc, template.name)
 
 
 def main(args):

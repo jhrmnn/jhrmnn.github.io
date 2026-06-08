@@ -266,3 +266,37 @@ tr.heading:not(:first-child) td {
 [data-tooltip]:hover:before {
     display: block;
 }
+
+.postmeta {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: -0.4em;
+}
+
+.e-content {
+    line-height: 1.5;
+}
+
+.h-feed article.h-entry {
+    margin-bottom: 1.4em;
+}
+
+.h-feed article.h-entry h2 {
+    margin-bottom: 0.1em;
+}
+
+.h-feed time {
+    color: #666;
+    font-size: 0.85em;
+}
+
+.h-feed .p-summary {
+    margin: 0.2em 0 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .postmeta,
+    .h-feed time {
+        color: #999;
+    }
+}

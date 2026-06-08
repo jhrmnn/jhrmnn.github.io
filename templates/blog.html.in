@@ -1,0 +1,26 @@
+{# vim: set ft=jinja sts=2 sw=2: #}
+{% set page_title = "Writing · Jan Hermann" %}
+{% set canonical = "https://jan.hermann.name/blog/" %}
+{% include "templates/_head.html" %}
+
+<nav aria-label="Sections">
+  <ul>
+    <li><a href="/">Home</a>
+  </ul>
+</nav>
+
+<main>
+  <div class="h-feed">
+    <h1 class="p-name">Writing</h1>
+    <a class="p-author h-card u-author" href="https://jan.hermann.name/" hidden>Jan Hermann</a>
+    {% for post in posts %}
+      <article class="h-entry">
+        <h2><a class="u-url p-name" href="{{ post.url }}">{{ post.title }}</a></h2>
+        <time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time>
+        {% if post.summary %}<p class="p-summary">{{ post.summary }}</p>{% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</main>
+
+{% include "templates/_footer.html" %}

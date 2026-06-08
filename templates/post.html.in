@@ -1,0 +1,29 @@
+{# vim: set ft=jinja sts=2 sw=2: #}
+{% set page_title = post.title ~ " · Jan Hermann" %}
+{% set canonical = post.url %}
+{% include "templates/_head.html" %}
+
+<nav aria-label="Sections">
+  <ul>
+    <li><a href="/">Home</a>
+    <li><a href="/blog/">Writing</a>
+  </ul>
+</nav>
+
+<main>
+  <article class="h-entry">
+    <h1 class="p-name">{{ post.title }}</h1>
+    <p class="postmeta">
+      <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
+      &middot; by <a class="p-author h-card u-author" href="https://jan.hermann.name/">Jan Hermann</a>
+    </p>
+    <div class="e-content">
+{{ post.content_html }}
+    </div>
+    <!-- Tells Bridgy Fed to bridge this post to the Fediverse (target of the
+         webmention sent on publish). Hidden; not part of the post content. -->
+    <a class="u-bridgy-fed" href="https://fed.brid.gy/" hidden></a>
+  </article>
+</main>
+
+{% include "templates/_footer.html" %}

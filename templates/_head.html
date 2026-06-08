@@ -1,0 +1,44 @@
+{# vim: set ft=jinja sts=2 sw=2: #}
+<!doctype html>
+<html lang="en" class="no-js">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{{ page_title }}</title>
+
+<script type="module">
+  document.documentElement.classList.replace('no-js', 'js');
+  Array.from(document.getElementsByClassName('article')).forEach((article) => {
+    const notice = article.getElementsByClassName('notice')[0];
+    if (notice) {
+      article.getElementsByClassName('pdf')[0].dataset.tooltip = notice.textContent.trim().slice(1);
+      article.removeChild(notice);
+      const notice_star = article.getElementsByClassName('notice-star')[0];
+      article.removeChild(notice_star);
+    }
+  });
+  const styleEl = document.getElementById('site-styles');
+  const toggle = document.getElementById('style-toggle');
+  const syncToggle = () => {
+    toggle.textContent = styleEl.disabled ? 'enable styles' : 'disable styles';
+    toggle.setAttribute('aria-pressed', String(styleEl.disabled));
+  };
+  syncToggle();
+  toggle.addEventListener('click', () => {
+    styleEl.disabled = !styleEl.disabled;
+    syncToggle();
+    try { localStorage.setItem('styles', styleEl.disabled ? 'off' : 'on'); } catch (e) {}
+  });
+</script>
+
+<style id="site-styles">
+  {% include "templates/styles.css" %}
+</style>
+<script>
+  // Apply the persisted toggle state before paint to avoid a flash of styles.
+  try { document.getElementById('site-styles').disabled = localStorage.getItem('styles') === 'off'; } catch (e) {}
+</script>
+
+<link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
+<link rel="canonical" href="{{ canonical }}">
+<link rel="webmention" href="https://fed.brid.gy/webmention">
