@@ -48,6 +48,12 @@ ZOTERO_REFS_URL = (
 ORCID_ID = '0000-0002-2779-0749'
 ORCID_WORKS_URL = f'https://pub.orcid.org/v3.0/{ORCID_ID}/works'
 ORCID_HEADERS = {'Accept': 'application/json'}
+# Web of Science publication list, exposed through the Publons "WoS-OP" API for
+# the same researcher profile reviews() reads its review count from. WoS indexes
+# the published literature, so check_sources.py uses it to catch a published
+# paper missing from Zotero (and an unexpected record on the WoS side). The
+# academic record carries the paginated publication-list URL.
+WOS_ACADEMIC_URL = f'https://publons.com/api/v2/academic/{ORCID_ID}/'
 
 
 class Cache:
@@ -295,6 +301,36 @@ def fetch_orcid(cache):
     return works
 
 
+def fetch_wos(cache):
+    """Flat list of the Web of Science (Publons) publication records.
+
+    The academic record exposes a paginated publication-list URL; each record is
+    reduced to the fields the cross-check needs -- the title, the publication
+    year, and a join key: the canonical DOI where WoS has one (resolved and
+    lower-cased the same way Zotero's identifiers are, so the two sides compare
+    equal), else the WoS/Publons accession id (e.g. a ``PPRN:...`` preprint id)
+    so DOI-less records can still be named.
+    """
+    headers = {'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'}
+    url = cache.get(WOS_ACADEMIC_URL, headers=headers)['publications']['url']
+    works = []
+    while url:
+        page = cache.get(url, headers=headers)
+        for record in page['results']:
+            pub = record['publication']
+            doi = pub['ids'].get('doi')
+            works.append(
+                {
+                    'title': pub['title'],
+                    'id': canonical_doi(doi, cache) if doi else None,
+                    'accession': pub['ids'].get('ut') or None,
+                    'year': (pub.get('date_published') or '')[:4] or None,
+                }
+            )
+        url = page.get('next')
+    return works
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -319,7 +355,7 @@ def update_from_web(ctx, cache):  # noqa: C901
 
     def reviews(ctx):
         n_reviews = cache.get(
-            'https://publons.com/api/v2/academic/0000-0002-2779-0749/',
+            WOS_ACADEMIC_URL,
             headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
         )['reviews']['pre']['count']
         ctx['_n_reviews'] = n_reviews
@@ -403,6 +439,13 @@ def update_from_web(ctx, cache):  # noqa: C901
     except requests.exceptions.RequestException as e:
         logging.warning('Could not fetch ORCID works: %r', e)
         ctx['orcid'] = []
+    # Same tolerance for Web of Science: a fetch failure leaves an empty list,
+    # which check_sources.py reports as "no Web of Science data" on main.
+    try:
+        ctx['wos'] = fetch_wos(cache)
+    except requests.exceptions.RequestException as e:
+        logging.warning('Could not fetch Web of Science works: %r', e)
+        ctx['wos'] = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(func, x)
@@ -478,6 +521,7 @@ def extract_derived(ctx):
         },
         'references': ctx['references'],
         'orcid': ctx.get('orcid', []),
+        'wos': ctx.get('wos', []),
         'n_reviews': ctx.get('_n_reviews'),
         'custom_data': ctx['custom_data'],
     }

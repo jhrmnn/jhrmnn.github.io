@@ -137,8 +137,8 @@ jobs:
         run: poetry run make check
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Cross-check Zotero, ORCID and Google Scholar
-        # Gate production deploys on the three publication sources agreeing.
+      - name: Cross-check Zotero, ORCID, Google Scholar and Web of Science
+        # Gate production deploys on the publication sources agreeing.
         # Runs whenever fetch produces data that will be published: the daily
         # schedule and manual dispatch (both deploy to main), plus a push that
         # changed fetch inputs (fetch already runs, so no extra crawl). The
