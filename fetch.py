@@ -95,18 +95,32 @@ def norm_desc(s):
     return s
 
 
-def parse_scholar_profile_html(html):
+def _scholar_rows(html):
     soup = BeautifulSoup(html, "html.parser")
-    return {
-        row.select_one(".gsc_a_at").get_text(strip=True): int(
-            row.select_one(".gsc_a_c").get_text(strip=True) or 0
-        )
-        for row in soup.select("#gsc_a_t .gsc_a_tr")
-    }
+    for row in soup.select("#gsc_a_t .gsc_a_tr"):
+        title = row.select_one(".gsc_a_at").get_text(strip=True)
+        cites = int(row.select_one(".gsc_a_c").get_text(strip=True) or 0)
+        year_cell = row.select_one(".gsc_a_y")
+        year = year_cell.get_text(strip=True) if year_cell else ''
+        yield title, cites, year or None
+
+
+def parse_scholar_profile_html(html):
+    return {title: cites for title, cites, _ in _scholar_rows(html)}
+
+
+def parse_scholar_years_html(html):
+    # The profile lists a publication year per row; check_sources.py uses it as a
+    # third witness on each paper's year. Rows without a year are skipped.
+    return {title: year for title, _, year in _scholar_rows(html) if year}
 
 
 def parse_scholar_profile(path):
     return parse_scholar_profile_html(path.read_text())
+
+
+def parse_scholar_years(path):
+    return parse_scholar_years_html(path.read_text())
 
 
 def published_scholar_citations():
@@ -116,6 +130,15 @@ def published_scholar_citations():
         ]
     except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
         return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
+
+
+def published_scholar_years():
+    try:
+        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
+            'scholar_years'
+        ]
+    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
+        return {}
 
 
 def _ensure_nltk():
@@ -187,8 +210,8 @@ def fetch_orcid(cache):
     """Flat list of the public ORCID works, one record per work summary.
 
     ORCID lists each work's versions (preprint, published, ...) under the same
-    title, so duplicates are expected; check_sources.py collapses them by DOI.
-    DOIs are canonicalised to the same `10.prefix/suffix` join key Zotero uses.
+    title, so duplicates are expected; check_sources.py collapses them by
+    identifier. Identifiers are canonicalised to the same join key Zotero uses.
     """
     data = cache.get(ORCID_WORKS_URL, headers=ORCID_HEADERS)
     works = []
@@ -197,13 +220,18 @@ def fetch_orcid(cache):
             title = (((summary.get('title') or {}).get('title')) or {}).get('value')
             if not title:
                 continue
-            dois = sorted(
+            # Match on DOIs *and* handles. Theses are identified by a handle
+            # (e.g. a dspace/edoc handle), which ORCID files under external-id
+            # type "handle" and Zotero keeps in its DOI field; collecting only
+            # DOIs would leave a thesis with no identifier to join on.
+            # canonical_doi resolves shortDOIs and lower-cases handles unchanged.
+            ids = sorted(
                 {
                     canonical_doi(eid['external-id-value'], cache)
                     for eid in (summary.get('external-ids') or {}).get(
                         'external-id', []
                     )
-                    if eid.get('external-id-type') == 'doi'
+                    if eid.get('external-id-type') in ('doi', 'handle')
                 }
             )
             pubdate = summary.get('publication-date') or {}
@@ -211,7 +239,7 @@ def fetch_orcid(cache):
             works.append(
                 {
                     'title': title,
-                    'dois': dois,
+                    'ids': ids,
                     'type': summary.get('type'),
                     'year': str(year) if year else None,
                 }
@@ -305,14 +333,17 @@ def update_from_web(ctx, cache):  # noqa: C901
                         time.sleep(2)
                         continue
                     raise
-                return parse_scholar_profile_html(r.text)
+                return r.text
 
         # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
         # committed profile snapshot instead of failing the whole fetch.
         try:
-            ctx['scholar_cites'] = cache.get_custom('scholar', func)
+            html = cache.get_custom('scholar', func)
         except requests.exceptions.RequestException as e:
             logging.warning('Could not fetch Google Scholar profile: %r', e)
+        else:
+            ctx['scholar_cites'] = parse_scholar_profile_html(html)
+            ctx['scholar_years'] = parse_scholar_years_html(html)
 
     ctx['references'] = fetch_references(cache)
     # ORCID only gates the push-to-main cross-check; a transient outage
@@ -348,6 +379,7 @@ def update_from_web(ctx, cache):  # noqa: C901
     }
     if ctx.get("scholar_cites"):
         cites = ctx["scholar_cites"]
+        years = ctx.get("scholar_years", {})
         ts = datetime.now().isoformat()
     else:
         path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
@@ -359,13 +391,18 @@ def update_from_web(ctx, cache):  # noqa: C901
             ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
         ) > scholar_citations["timestamp"] or not scholar_citations["value"]:
             cites = parse_scholar_profile(path)
+            years = parse_scholar_years(path)
         else:
             cites = scholar_citations["value"]
             ts = scholar_citations["timestamp"]
+            # Older published artifacts predate scholar_years; absent it the
+            # cross-check simply skips Scholar's year corroboration.
+            years = published_scholar_years()
     ctx["custom_data"]["scholar_citations"] = {
         "timestamp": ts,
         "value": cites,
     }
+    ctx["custom_data"]["scholar_years"] = years
     for title, cite in cites.items():
         key = reduce_sc(title.lower())[:120]
         # Scholar lists publications that aren't tracked as references here

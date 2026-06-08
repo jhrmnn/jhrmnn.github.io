@@ -14,10 +14,11 @@ on pushes to main (see the workflow), a non-zero exit aborts before the artifact
 is uploaded, so the site never deploys from inconsistent sources.
 
 Field coverage differs by source: Zotero (CSL-JSON) is richest; ORCID exposes
-title, type, year and DOI per work; Google Scholar's profile listing only
-exposes titles reliably. So Scholar is checked for presence only, while the
-field-level substance check (DOI, preprint-vs-published status, year) is done
-against ORCID. ORCID does not carry volume/page, so those are not cross-checked.
+title, type, year and an identifier (DOI or handle) per work; Google Scholar's
+profile exposes title and a publication year. So the identifier and
+preprint-vs-published status are checked against ORCID, the year against both
+ORCID and Scholar, and Scholar additionally must list every Zotero paper.
+Neither ORCID nor Scholar carries volume/page, so those are not cross-checked.
 """
 
 import argparse
@@ -61,45 +62,50 @@ def scholar_titles(derived):
     return list(value)
 
 
-def check(refs, orcid, scholar):  # noqa: C901
+def scholar_years(derived):
+    return (derived.get('custom_data') or {}).get('scholar_years', {})
+
+
+def check(refs, orcid, scholar, scholar_year_by_title):  # noqa: C901
     """Return a list of human-readable disagreement reasons (empty when clean)."""
     problems = []
 
-    # Index ORCID works both ways: by title (to pair) and by DOI (to collapse
-    # ORCID's per-version duplicates onto the Zotero paper they belong to).
+    # Index ORCID works both ways: by title (to pair) and by identifier (to
+    # collapse ORCID's per-version duplicates onto the Zotero paper they belong
+    # to). Identifiers are DOIs or handles (theses are filed under a handle).
     o_by_title = defaultdict(list)
-    o_by_doi = defaultdict(list)
+    o_by_id = defaultdict(list)
     for work in orcid:
         o_by_title[title_key(work['title'])].append(work)
-        for doi in work.get('dois') or []:
-            o_by_doi[doi].append(work)
+        for ident in work.get('ids') or []:
+            o_by_id[ident].append(work)
 
     z_titles = set()
-    z_dois = set()
+    z_ids = set()
     if not orcid:
         problems.append('no ORCID works to cross-check against')
     for ref in refs:
         z_titles.add(title_key(ref['title']))
-        doi = ref.get('id')  # canonical DOI: the same join key fetch.py builds
-        if doi:
-            z_dois.add(doi)
+        ident = ref.get('id')  # canonical DOI/handle: the join key fetch.py builds
+        if ident:
+            z_ids.add(ident)
         if not orcid:
             continue
-        # Pair on title, falling back to a shared DOI when the titles diverge
-        # by more than the tolerated folds.
-        cands = o_by_title.get(title_key(ref['title'])) or (o_by_doi.get(doi) or [])
+        # Pair on title, falling back to a shared identifier when the titles
+        # diverge by more than the tolerated folds.
+        cands = o_by_title.get(title_key(ref['title'])) or (o_by_id.get(ident) or [])
         if not cands:
             problems.append(f'absent from ORCID: {ref["title"]!r}')
             continue
-        same_doi = [c for c in cands if doi in (c.get('dois') or [])]
-        if not same_doi:
-            orcid_dois = sorted({d for c in cands for d in c.get('dois') or []})
+        same_id = [c for c in cands if ident in (c.get('ids') or [])]
+        if not same_id:
+            orcid_ids = sorted({i for c in cands for i in c.get('ids') or []})
             problems.append(
-                f'DOI mismatch (preprint vs published?): {ref["title"]!r} '
-                f'Zotero {doi} vs ORCID {orcid_dois}'
+                f'identifier mismatch (preprint vs published?): {ref["title"]!r} '
+                f'Zotero {ident} vs ORCID {orcid_ids}'
             )
             continue
-        work = same_doi[0]
+        work = same_id[0]
         z_status = ZOTERO_STATUS.get(ref.get('type'), ref.get('type'))
         o_status = ORCID_STATUS.get(work.get('type'), work.get('type'))
         if z_status != o_status:
@@ -113,23 +119,33 @@ def check(refs, orcid, scholar):  # noqa: C901
                 f'year differs: {ref["title"]!r} Zotero {z_year} vs ORCID {o_year}'
             )
 
-    # ORCID works that match no Zotero paper -- by title or by a shared DOI (the
-    # latter skips ORCID's own duplicate records of papers Zotero does list).
+    # ORCID works that match no Zotero paper -- by title or by a shared
+    # identifier (the latter skips ORCID's own duplicate records of papers
+    # Zotero does list).
     for work in orcid:
         if title_key(work['title']) not in z_titles and not (
-            set(work.get('dois') or []) & z_dois
+            set(work.get('ids') or []) & z_ids
         ):
             problems.append(f'in ORCID but not Zotero: {work["title"]!r}')
 
     # Google Scholar auto-indexes extra items (talks, duplicates) we can't
-    # curate away, so only require it to cover the Zotero papers, and skip the
-    # check entirely when Scholar data is missing (a soft block) rather than
-    # flagging every paper.
+    # curate away, so only require it to cover the Zotero papers (skipping the
+    # check when Scholar data is missing, e.g. a soft block, rather than flagging
+    # every paper), and corroborate the year where Scholar reports one.
     if scholar:
         s_titles = {title_key(t) for t in scholar}
+        s_years = {title_key(t): y for t, y in scholar_year_by_title.items()}
         for ref in refs:
-            if title_key(ref['title']) not in s_titles:
+            key = title_key(ref['title'])
+            if key not in s_titles:
                 problems.append(f'absent from Google Scholar: {ref["title"]!r}')
+                continue
+            z_year, s_year = ref_year(ref), s_years.get(key)
+            if z_year and s_year and z_year != s_year:
+                problems.append(
+                    f'year differs: {ref["title"]!r} '
+                    f'Zotero {z_year} vs Google Scholar {s_year}'
+                )
 
     return problems
 
@@ -143,6 +159,7 @@ def main(args):
         derived.get('references', []),
         derived.get('orcid', []),
         scholar_titles(derived),
+        scholar_years(derived),
     )
     if not problems:
         print('publication sources agree')
