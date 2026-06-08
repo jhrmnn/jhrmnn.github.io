@@ -174,7 +174,7 @@ software:
   url: https://dftbplus.org
 - name: QCEngine
   role: contributor
-  github: MolSSI/QCEngine
+  url: https://github.com/MolSSI/QCEngine
 - name: Skala
   role: contributor
   github: microsoft/skala
