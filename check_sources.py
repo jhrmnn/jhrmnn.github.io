@@ -234,7 +234,10 @@ def check_wos(refs, wos):
     """
     problems = []
     if not wos:
-        problems.append('no Web of Science works to cross-check against')
+        # Publons/WoS rate-limits with HTTP 429, leaving fetch.py with an empty
+        # list. Skip the WoS cross-check when the source is missing -- as the
+        # Scholar check does on a soft block -- rather than failing the deploy on
+        # a transient outage. A genuine partial regression still surfaces below.
         return problems
     wos_ids = {w['id'] for w in wos if w['id']}
     # Every Zotero paper WoS is expected to index must be present.
