@@ -162,6 +162,9 @@ software:
 - name: Pyberny
   role: creator
   github: jhrmnn/pyberny
+- name: Skala
+  role: contributor
+  github: microsoft/skala
 - name: FHI-aims
   role: core contributor
   url: https://fhi-aims.org
