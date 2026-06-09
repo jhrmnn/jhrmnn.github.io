@@ -15,8 +15,12 @@
     <a class="p-author h-card u-author" href="/" hidden>Jan Hermann</a>
     {% for post in posts %}
       <article class="h-entry">
-        <h2><a class="u-url p-name" href="{{ post.url }}">{{ post.title }}</a></h2>
-        <time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time>
+        {% if post.title %}<h2><a class="u-url p-name" href="{{ post.url }}">{{ post.title }}</a></h2>{% endif %}
+        {% if post.title %}
+          <time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time>
+        {% else %}
+          <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
+        {% endif %}
         <div class="e-content">
 {{ post.content_html }}
         </div>

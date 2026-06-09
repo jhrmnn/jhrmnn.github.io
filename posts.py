@@ -80,8 +80,10 @@ def parse_post(path):
         # federated identity is still the canonical URL below.
         'url': f'/posts/{slug}/',
         'canonical': f'{BASE_URL}/posts/{slug}/',
-        'title': meta.get('title', slug.replace('-', ' ')),
-        'summary': meta.get('summary'),
+        # Optional: a post with a title is an article, one without is a note (a
+        # short, Mastodon-style post). The templates omit p-name when absent so
+        # microformats/Bridgy Fed treat it as a note.
+        'title': meta.get('title'),
         'datetime': date.strftime('%Y-%m-%d'),
         'date_display': date.strftime('%-d %B %Y'),
         'date': date,

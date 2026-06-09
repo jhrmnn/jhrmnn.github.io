@@ -1,5 +1,5 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
-{% set page_title = post.title ~ " · Jan Hermann" %}
+{% set page_title = (post.title or post.date_display) ~ " · Jan Hermann" %}
 {% set canonical = post.canonical %}
 {% include "templates/_head.html" %}
 
@@ -12,7 +12,7 @@
 
 <main>
   <article class="h-entry">
-    <h1 class="p-name">{{ post.title }}</h1>
+    {% if post.title %}<h1 class="p-name">{{ post.title }}</h1>{% endif %}
     <p class="postmeta">
       <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
       &middot; by <a class="p-author h-card u-author" href="/">Jan Hermann</a>
