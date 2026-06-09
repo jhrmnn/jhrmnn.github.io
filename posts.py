@@ -74,7 +74,12 @@ def parse_post(path):
     date = datetime(int(year), int(month), int(day))
     return {
         'slug': slug,
-        'url': f'{BASE_URL}/posts/{slug}/',
+        # Relative permalink for in-page links and u-url, so navigation works on
+        # any deployment (production, Cloudflare preview, local). Bridgy Fed
+        # fetches the production page and resolves it against that, so the
+        # federated identity is still the canonical URL below.
+        'url': f'/posts/{slug}/',
+        'canonical': f'{BASE_URL}/posts/{slug}/',
         'title': meta.get('title', slug.replace('-', ' ')),
         'summary': meta.get('summary'),
         'datetime': date.strftime('%Y-%m-%d'),

@@ -1,6 +1,6 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
 {% set page_title = post.title ~ " · Jan Hermann" %}
-{% set canonical = post.url %}
+{% set canonical = post.canonical %}
 {% include "templates/_head.html" %}
 
 <nav aria-label="Sections">
@@ -15,7 +15,7 @@
     <h1 class="p-name">{{ post.title }}</h1>
     <p class="postmeta">
       <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
-      &middot; by <a class="p-author h-card u-author" href="https://jan.hermann.name/">Jan Hermann</a>
+      &middot; by <a class="p-author h-card u-author" href="/">Jan Hermann</a>
     </p>
     <div class="e-content">
 {{ post.content_html }}

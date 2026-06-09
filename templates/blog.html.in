@@ -12,7 +12,7 @@
 <main>
   <div class="h-feed">
     <h1 class="p-name">Writing</h1>
-    <a class="p-author h-card u-author" href="https://jan.hermann.name/" hidden>Jan Hermann</a>
+    <a class="p-author h-card u-author" href="/" hidden>Jan Hermann</a>
     {% for post in posts %}
       <article class="h-entry">
         <h2><a class="u-url p-name" href="{{ post.url }}">{{ post.title }}</a></h2>
