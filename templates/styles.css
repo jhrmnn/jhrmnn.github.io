@@ -100,6 +100,53 @@ footer {
     font-size: 0.95em;
 }
 
+#tools-lead {
+    color: #666;
+    margin-bottom: 0.5em;
+}
+
+.hub {
+    margin-bottom: 1.6em;
+}
+
+.hub h2 {
+    margin-bottom: 6px;
+}
+
+.hub h2 .hub-repo {
+    font-weight: normal;
+}
+
+.hub-blurb {
+    line-height: 1.45;
+    margin: 0 0 0.6em 0;
+}
+
+.hub-extra {
+    margin: 0.3em 0 0 1em;
+    font-size: 0.95em;
+}
+
+.hub-extra summary {
+    color: #666;
+    cursor: pointer;
+}
+
+.hub-extra summary:hover {
+    color: #347AB7;
+}
+
+@media (prefers-color-scheme: dark) {
+    #tools-lead,
+    .hub-extra summary {
+        color: #999;
+    }
+
+    .hub-extra summary:hover {
+        color: #609dd2;
+    }
+}
+
 .small {
     font-size: 0.85em;
 }

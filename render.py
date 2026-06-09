@@ -141,6 +141,42 @@ def sort_refs(refs):
     return sorted(refs, key=lambda x: x['issued']['date-parts'][0], reverse=True)
 
 
+# Distribute talks into the homepage tool-hubs by matching their title against a
+# few topic keywords (checked in this order). Talks whose title matches nothing
+# (e.g. untitled seminars) stay out of the hubs but remain in the full CV.
+HUB_KEYWORDS = {
+    'Skala': ['skala', 'exchange-correlation', 'exchange–correlation'],
+    'DeepQMC': [
+        'schrödinger', 'wave function', 'wavefunction', 'quantum monte carlo',
+        'fixed-node', 'deep-learning solution', 'neural network solution',
+        'neural-network wave', 'deep neural network',
+    ],
+    'libMBD': [
+        'van der waals', 'many-body dispersion', 'dispersion', 'libmbd',
+        'zeolite', 'faujasite', 'non-local density', 'nonlocal',
+        'electron correlation in density', 'charge fluctuations', 'π–π',
+    ],
+}
+
+
+def classify_talk(title):
+    title = (title or '').lower()
+    for hub, keywords in HUB_KEYWORDS.items():
+        if any(k in title for k in keywords):
+            return hub
+    return None
+
+
+def group_talks_by_hub(presentations):
+    hubs = {hub: [] for hub in HUB_KEYWORDS}
+    for talks in presentations.values():
+        for talk in talks:
+            hub = classify_talk(talk.get('title'))
+            if hub:
+                hubs[hub].append(talk)
+    return hubs
+
+
 def apply_derived(ctx, derived):
     software = derived.get('software', {})
     for item in ctx['software']:
@@ -252,6 +288,13 @@ def render(template, ctx, **kwargs):
             item['pdf_notice'] = extras['notice']
         if item['id'] in ctx['keypubs']:
             item['star'] = True
+    # Lookups for the tool-hub homepage: a reference by DOI, a software entry by
+    # its GitHub repo (for star counts), and talks bucketed into the hubs.
+    ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
+    ctx['software_by_github'] = {
+        s['github']: s for s in ctx.get('software', []) if 'github' in s
+    }
+    ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
     env = make_env(template.name)
     template = env.get_template(str(template))
     doc = template.render(ctx)

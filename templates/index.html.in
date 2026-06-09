@@ -30,22 +30,58 @@
   </table>
 {% endmacro %}
 
-{% macro pub_block(types, by_year=false) %}
+{# Render a list of references given their canonical DOIs, in the given order
+   (hubs curate their order to match the blurb's narrative, so no re-sorting). #}
+{% macro pub_rows(dois) %}
   <table class="pub">
-    {% for item in references|selectattr("type", "in", types)|sortrefs %}
-      {% set title, authors, ref = item|reftomd %}
-      <tr>
-        <td class="article">
-          {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
-          {%- if item.pdf_url -%}
-            &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
-            {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
-          {%- endif %}
-        </td>
-        <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
-      </tr>
+    {% for doi in dois %}
+      {% set item = refs_by_id[doi] %}
+      {% if item %}
+        {% set title, authors, ref = item|reftomd %}
+        <tr>
+          <td class="article">
+            {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
+            {%- if item.pdf_url -%}
+              &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
+              {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
+            {%- endif %}
+          </td>
+          <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
+        </tr>
+      {% endif %}
     {% endfor %}
   </table>
+{% endmacro %}
+
+{# A tool-hub: name + repo, a narrative blurb, its publications, and collapsed
+   datasets / related-work / talks. #}
+{% macro hub_block(tool) %}
+  {% set repo = software_by_github[tool.github] %}
+  <section id="{{ tool.name }}" class="hub">
+    <h2>{{ tool.name }}
+      <a class="hub-repo small" href="https://github.com/{{ tool.github }}">{{ tool.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+    </h2>
+    <p class="hub-blurb">{{ tool.blurb }}</p>
+    {{ pub_rows(tool.pubs) }}
+    {% if tool.datasets %}
+      <details class="hub-extra">
+        <summary>Datasets</summary>
+        {{ pub_rows(tool.datasets) }}
+      </details>
+    {% endif %}
+    {% if tool.satellites %}
+      <details class="hub-extra">
+        <summary>Related &middot; Casimir &amp; fluctuational electrodynamics</summary>
+        {{ pub_rows(tool.satellites) }}
+      </details>
+    {% endif %}
+    {% if hub_talks[tool.name] %}
+      <details class="hub-extra">
+        <summary>Talks ({{ hub_talks[tool.name]|length }})</summary>
+        {{ talk_block(hub_talks[tool.name], "talks small") }}
+      </details>
+    {% endif %}
+  </section>
 {% endmacro %}
 
 {% macro dl_block(items, defs) %}
@@ -63,9 +99,7 @@
 
 <nav aria-label="Sections">
   <ul>
-    <li><a href="#Publications">Publications</a>
-    <li><a href="#Software">Software</a>
-    <li><a href="#Presentations">Presentations</a>
+    {% for tool in tools %}<li><a href="#{{ tool.name }}">{{ tool.name }}</a>{% endfor %}
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
@@ -96,49 +130,43 @@
 
   </div>
 
-  <section id="Publications">
-    <h2>Publications</h2>
+  <p id="tools-lead">My work clusters around a handful of tools, each tying together its
+    method papers, applications, and talks. Threaded physics-first to learning-first,
+    they share one aim: making electronic structure more accurate, by adding the missing
+    physics by hand or by learning it. <span class="small">(→ citations from Google Scholar.)</span>
 
-    <ul><li>Citation numbers (→) from Google Scholar</ul>
+  {% for tool in tools %}
+    {{ hub_block(tool) }}
+  {% endfor %}
 
-    <h3>Research articles</h3>
-    {{ pub_block(["article-journal", "article"], by_year=true) }}
-
-    <h3>Book chapters</h3>
-    {{ pub_block(["chapter"]) }}
-
-    <h3>Theses</h3>
-    {{ pub_block(["thesis"]) }}
-  </section>
-
-  <section id="Software">
-    <h2>Software</h2>
-
+  <section id="other-tools">
+    <h2>Other tools I've built</h2>
     <ul>
-      {% for item in software %}
-        <li>
-            <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>&nbsp;&middot;
-            {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
-            {% if item.description %}<br>{{ item.description}}{% endif %}
+      {% for item in other_tools %}
+        {% set repo = software_by_github[item.github] %}
+        <li><strong><a href="https://github.com/{{ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot;
+          {{ item.role }}{% if repo and repo.stars %}&nbsp;&middot; <em>{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
       {% endfor %}
     </ul>
   </section>
 
-  <section id="Presentations">
-    <h2>Presentations</h2>
-
-    <h3>Invited conference talks</h3>
-    {{ talk_block(presentations.invited, "talks") }}
-
-    <h3>Contributed conference talks</h3>
-    {{ talk_block(presentations.contributed, "talks") }}
-
-    <h3>Conference poster presentations</h3>
-    {{ talk_block(presentations.posters, "talks") }}
-
-    <h3>Invited seminars</h3>
-    {{ talk_block(presentations.seminars, "talks") }}
+  <section id="contributes">
+    <h2>Also contributes to</h2>
+    <ul>
+      {% for item in contributes %}
+        {% set p = refs_by_id[item.paper] %}
+        <li><strong><a href="{{ item.url }}">{{ item.name }}</a></strong>{% if p %}&nbsp;&middot;
+          <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
+      {% endfor %}
+    </ul>
   </section>
+
+  {% if reviews %}
+  <section id="reviews">
+    <h2>Reviews &amp; roadmaps</h2>
+    {{ pub_rows(reviews) }}
+  </section>
+  {% endif %}
 
   <section id="CV" aria-label="CV">
     <h2>Employment</h2>
