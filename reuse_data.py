@@ -42,6 +42,42 @@ def _current_branch():
     return os.environ.get('GITHUB_HEAD_REF') or os.environ.get('GITHUB_REF_NAME')
 
 
+def _get(path, **params):
+    """GET a repo-scoped GitHub API endpoint and return parsed JSON."""
+    api = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
+    repo = os.environ['GITHUB_REPOSITORY']
+    r = requests.get(
+        f'{api}/repos/{repo}/{path}',
+        params=params or None,
+        headers=_headers(),
+        timeout=30,
+    )
+    r.raise_for_status()
+    return r.json()
+
+
+def _derived_artifacts():
+    """Non-expired `derived` artifacts, newest first."""
+    artifacts = [
+        x
+        for x in _get('actions/artifacts', name=NAME, per_page=100)['artifacts']
+        if not x['expired']
+    ]
+    return sorted(artifacts, key=lambda x: x['created_at'], reverse=True)
+
+
+def _download(artifact):
+    """Return the `derived.json` bytes from an artifact's zip."""
+    z = requests.get(
+        artifact['archive_download_url'], headers=_headers(), timeout=30
+    )
+    z.raise_for_status()
+    with zipfile.ZipFile(io.BytesIO(z.content)) as zf:
+        names = zf.namelist()
+        member = 'derived.json' if 'derived.json' in names else names[0]
+        return zf.read(member)
+
+
 def latest_derived_artifact():
     """Return metadata of the most recent non-expired `derived` artifact.
 
@@ -52,16 +88,7 @@ def latest_derived_artifact():
 
     Raises on API/network errors or when no usable artifact exists.
     """
-    api = os.environ.get('GITHUB_API_URL', 'https://api.github.com')
-    repo = os.environ['GITHUB_REPOSITORY']
-    r = requests.get(
-        f'{api}/repos/{repo}/actions/artifacts',
-        params={'name': NAME, 'per_page': 100},
-        headers=_headers(),
-        timeout=30,
-    )
-    r.raise_for_status()
-    artifacts = [x for x in r.json()['artifacts'] if not x['expired']]
+    artifacts = _derived_artifacts()
 
     def on_branch(branch):
         return [
@@ -74,21 +101,58 @@ def latest_derived_artifact():
     candidates = (branch and on_branch(branch)) or on_branch(DEFAULT_BRANCH)
     if not candidates:
         raise LookupError(f"no '{NAME}' artifact to reuse")
-    return max(candidates, key=lambda x: x['created_at'])
+    return candidates[0]
 
 
 def latest_derived_bytes():
     """Return the JSON bytes of the most recent `derived` artifact."""
-    z = requests.get(
-        latest_derived_artifact()['archive_download_url'],
-        headers=_headers(),
-        timeout=30,
-    )
-    z.raise_for_status()
-    with zipfile.ZipFile(io.BytesIO(z.content)) as zf:
-        names = zf.namelist()
-        member = 'derived.json' if 'derived.json' in names else names[0]
-        return zf.read(member)
+    return _download(latest_derived_artifact())
+
+
+def _baseline_sha():
+    """SHA of the most recent default-branch commit the current run descends from.
+
+    On the default branch this is the current commit's first parent (the
+    previously published state); on any other branch or PR it is the merge base
+    with the default branch (the commit the branch forked from). Either way the
+    integrity check grades a fresh fetch against published ``main`` state, never
+    against the current branch's own in-progress artifacts.
+    """
+    head = os.environ.get('GITHUB_HEAD_REF') or os.environ['GITHUB_REF_NAME']
+    if head == DEFAULT_BRANCH:
+        return _get(f'commits/{os.environ["GITHUB_SHA"]}')['parents'][0]['sha']
+    return _get(f'compare/{DEFAULT_BRANCH}...{head}')['merge_base_commit']['sha']
+
+
+def _is_ancestor(sha, descendant):
+    """True if `sha` is an ancestor of (or equal to) `descendant`."""
+    if sha == descendant:
+        return True
+    return _get(f'compare/{sha}...{descendant}')['status'] in ('ahead', 'identical')
+
+
+def baseline_derived_artifact():
+    """The `derived` artifact a fresh fetch should be graded against.
+
+    Among default-branch artifacts (newest first), the first whose commit is an
+    ancestor of the baseline commit (see `_baseline_sha`). Restricting to the
+    default branch and to ancestors of the fork point means a PR never grades
+    itself against its own intermediate artifacts, nor against ``main`` commits
+    made after it branched.
+    """
+    baseline = _baseline_sha()
+    for artifact in _derived_artifacts():
+        run = artifact.get('workflow_run') or {}
+        if run.get('head_branch') != DEFAULT_BRANCH:
+            continue
+        if run.get('head_sha') and _is_ancestor(run['head_sha'], baseline):
+            return artifact
+    raise LookupError(f"no '{NAME}' artifact for baseline {baseline}")
+
+
+def baseline_derived_bytes():
+    """Return the JSON bytes of the baseline `derived` artifact."""
+    return _download(baseline_derived_artifact())
 
 
 def main(args):

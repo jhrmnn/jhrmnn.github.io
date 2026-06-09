@@ -4,11 +4,15 @@
 `fetch.py` rebuilds `build/derived.json` from live sources, which can degrade:
 an API hiccup, a soft block, a deleted Zotero item, or a recount can drop
 publications, rewrite bibliographic data, or report lower counts than what was
-last published. This compares the new dataset against the latest published
-`derived` artifact (the previous run's, since the fetch job runs this before
-uploading the new one) and exits non-zero if anything was removed, an identity
-field changed, or a count that should only grow went down. Running it at the end
-of the fetch job means a regression aborts before the artifact is uploaded.
+last published. This compares the new dataset against the published `derived`
+artifact for the most recent default-branch commit the run descends from (the
+previous `main` commit on `main`, the fork point on a PR branch) and exits
+non-zero if anything was removed, an identity field changed, or a count that
+should only grow went down. Grading against the default-branch ancestor — rather
+than the current branch's own latest artifact — means a PR is checked against
+published `main` state, not against its own in-progress commits. Running it at
+the end of the fetch job means a regression aborts before the artifact is
+uploaded.
 """
 
 import argparse
@@ -29,9 +33,10 @@ REF_IDENTITY_FIELDS = ('title', 'author', 'issued', 'container-title')
 
 
 def load_baseline():
-    """Latest published derived data, or None when there's nothing to compare."""
+    """Published derived data for the most recent default-branch ancestor of the
+    current run, or None when there's nothing to compare against."""
     try:
-        return json.loads(reuse_data.latest_derived_bytes())
+        return json.loads(reuse_data.baseline_derived_bytes())
     except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
         return None
 
