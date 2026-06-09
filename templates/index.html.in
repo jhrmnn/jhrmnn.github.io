@@ -66,8 +66,8 @@
     <li><a href="#Publications">Publications</a>
     <li><a href="#Software">Software</a>
     <li><a href="#Presentations">Presentations</a>
-    <li><a href="/blog/">Writing</a>
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
+    <li><a href="/blog/">Notes</a>
   </ul>
 </nav>
 

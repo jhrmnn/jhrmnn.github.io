@@ -1,5 +1,5 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
-{% set page_title = "Writing · Jan Hermann" %}
+{% set page_title = "Notes · Jan Hermann" %}
 {% set canonical = "https://jan.hermann.name/blog/" %}
 {% include "templates/_head.html" %}
 
@@ -11,13 +11,15 @@
 
 <main>
   <div class="h-feed">
-    <h1 class="p-name">Writing</h1>
+    <h1 class="p-name">Notes</h1>
     <a class="p-author h-card u-author" href="/" hidden>Jan Hermann</a>
     {% for post in posts %}
       <article class="h-entry">
         <h2><a class="u-url p-name" href="{{ post.url }}">{{ post.title }}</a></h2>
         <time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time>
-        {% if post.summary %}<p class="p-summary">{{ post.summary }}</p>{% endif %}
+        <div class="e-content">
+{{ post.content_html }}
+        </div>
       </article>
     {% endfor %}
   </div>

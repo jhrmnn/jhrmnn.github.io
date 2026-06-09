@@ -6,7 +6,7 @@
 <nav aria-label="Sections">
   <ul>
     <li><a href="/">Home</a>
-    <li><a href="/blog/">Writing</a>
+    <li><a href="/blog/">Notes</a>
   </ul>
 </nav>
 
