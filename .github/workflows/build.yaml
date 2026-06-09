@@ -245,7 +245,7 @@ jobs:
       - name: Send webmentions for changed posts
         run: |
           # Map each posts/*.md changed since the previous commit to its public
-          # URL (posts/<slug>/, slug = filename minus the YYYY-MM-DD- prefix).
+          # URL (notes/<YYYY-MM-DD-slug>/, i.e. the full filename stem).
           base="${{ github.event.before }}"
           if [ -z "$base" ] || ! git rev-parse -q --verify "$base^{commit}" >/dev/null; then
             changed="$(git ls-files posts)"
@@ -256,8 +256,8 @@ jobs:
           while IFS= read -r f; do
             case "$f" in
               posts/*.md)
-                slug="$(basename "$f" .md | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}-//')"
-                urls="$urls https://jan.hermann.name/posts/$slug/"
+                stem="$(basename "$f" .md)"
+                urls="$urls https://jan.hermann.name/notes/$stem/"
                 ;;
             esac
           done <<<"$changed"

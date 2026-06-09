@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render the blog: each `posts/YYYY-MM-DD-slug.md` into an h-entry permalink
-page at `posts/<slug>/index.html`, plus an h-feed index at `blog/index.html`.
+page at `notes/YYYY-MM-DD-slug/index.html`, plus an h-feed index at
+`notes/index.html`.
 
 The microformats2 markup (h-card on the home page, h-entry here) is what lets
 Bridgy Fed (https://fed.brid.gy) bridge the site into the Fediverse. Reuses the
@@ -70,16 +71,19 @@ def parse_post(path):
     m = FILENAME_RE.search(path.name)
     if not m:
         sys.exit(f'error: post filename must be YYYY-MM-DD-slug.md: {path.name}')
-    year, month, day, slug = m.groups()
+    year, month, day, _slug = m.groups()
     date = datetime(int(year), int(month), int(day))
+    # URL segment is the full filename stem (date + slug), e.g.
+    # 2026-05-05-consciousness, so the date lives in the permalink too.
+    segment = path.stem
     return {
-        'slug': slug,
+        'segment': segment,
         # Relative permalink for in-page links and u-url, so navigation works on
         # any deployment (production, Cloudflare preview, local). Bridgy Fed
         # fetches the production page and resolves it against that, so the
         # federated identity is still the canonical URL below.
-        'url': f'/posts/{slug}/',
-        'canonical': f'{BASE_URL}/posts/{slug}/',
+        'url': f'/notes/{segment}/',
+        'canonical': f'{BASE_URL}/notes/{segment}/',
         # Optional: a post with a title is an article, one without is a note (a
         # short, Mastodon-style post). The templates omit p-name when absent so
         # microformats/Bridgy Fed treat it as a note.
@@ -127,13 +131,13 @@ def main(argv):
             env,
             'templates/post.html.in',
             {'post': post, 'settings': settings},
-            a.outdir / 'posts' / post['slug'] / 'index.html',
+            a.outdir / 'notes' / post['segment'] / 'index.html',
         )
     render_to(
         env,
         'templates/blog.html.in',
         {'posts': posts, 'settings': settings},
-        a.outdir / 'blog' / 'index.html',
+        a.outdir / 'notes' / 'index.html',
     )
     print(f'rendered {len(posts)} post(s) + blog index', file=sys.stderr)
 
