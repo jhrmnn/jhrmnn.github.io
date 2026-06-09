@@ -245,6 +245,17 @@ def group_talks_by_hub(presentations):
     return hubs
 
 
+def unhubbed_talks(presentations):
+    """Talks tied to no hub — untitled seminars and the few titled talks that
+    belong to the catch-all fourth theme. They are surfaced there, not dropped."""
+    return [
+        talk
+        for talks in presentations.values()
+        for talk in talks
+        if not classify_talk(talk.get('title'))
+    ]
+
+
 def apply_derived(ctx, derived):
     software = derived.get('software', {})
     for item in ctx['software']:
@@ -368,6 +379,7 @@ def render(template, ctx, **kwargs):
         ctx.get('software', []), hub_repos
     )
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
+    ctx['theme_talks'] = unhubbed_talks(ctx.get('presentations', {}))
     check_completeness(ctx)
     env = make_env(template.name)
     template = env.get_template(str(template))

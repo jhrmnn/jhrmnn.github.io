@@ -100,6 +100,7 @@
 <nav aria-label="Sections">
   <ul>
     {% for tool in tools %}<li><a href="#{{ tool.name }}">{{ tool.name }}</a>{% endfor %}
+    <li><a href="#{{ fourth_theme.id }}">{{ fourth_theme.name }}</a>
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
@@ -139,32 +140,32 @@
     {{ hub_block(tool) }}
   {% endfor %}
 
-  <section id="other-tools">
-    <h2>Other tools I've built</h2>
-    <ul>
+  <section id="{{ fourth_theme.id }}" class="hub">
+    <h2>{{ fourth_theme.name }}</h2>
+    <p class="hub-blurb">{{ fourth_theme.blurb }}</p>
+    <ul class="theme-tools">
       {% for item in other_tools %}
-        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
       {% endfor %}
-    </ul>
-  </section>
-
-  <section id="contributes">
-    <h2>Also contributes to</h2>
-    <ul>
       {% for item in contributes %}
         {% set p = refs_by_id[item.paper] if item.paper %}
-        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>{% if p %}&nbsp;&middot;
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>contributor</em>{% if p %}&nbsp;&middot;
           <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
       {% endfor %}
     </ul>
+    {% if reviews %}
+      <details class="hub-extra">
+        <summary>Reviews &amp; roadmaps</summary>
+        {{ pub_rows(reviews) }}
+      </details>
+    {% endif %}
+    {% if theme_talks %}
+      <details class="hub-extra">
+        <summary>Talks ({{ theme_talks|length }})</summary>
+        {{ talk_block(theme_talks, "talks small") }}
+      </details>
+    {% endif %}
   </section>
-
-  {% if reviews %}
-  <section id="reviews">
-    <h2>Reviews &amp; roadmaps</h2>
-    {{ pub_rows(reviews) }}
-  </section>
-  {% endif %}
 
   <section id="CV" aria-label="CV">
     <h2>Employment</h2>

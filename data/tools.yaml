@@ -80,7 +80,28 @@ tools:
 # becomes an "other tool", any other non-hub entry a "contributes to" line. Each
 # contributor entry may name its program `paper` (a DOI) in that list.
 
-# Cross-cutting writing that doesn't sit under a single tool.
+# A fourth, thematic section that folds in the remainder — smaller tools I've
+# built, the community codes I contribute to, survey writing, and any talks tied
+# to no hub — with a single paragraph tying most of the bits together. Its tool
+# lists are derived from the software list, its reviews from `reviews` below, and
+# its talks are the ones `unhubbed_talks` collects.
+fourth_theme:
+  id: more
+  name: Codes, tools & writing
+  blurb: |
+    Beyond the three flagships, the connective tissue. I build smaller standalone
+    tools — [Pyberny](https://github.com/jhrmnn/pyberny), a molecular geometry
+    optimizer, and [Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf),
+    a framework for reproducible computational science — and contribute to the
+    community electronic-structure codes the methods above plug into:
+    [FHI-aims](https://fhi-aims.org), [PySCF](https://pyscf.org),
+    [DFTB+](https://dftbplus.org), and [QCEngine](https://github.com/MolSSI/QCEngine).
+    The same breadth runs through survey writing, from a
+    [roadmap on machine learning in electronic structure](https://doi.org/10.1088/2516-1075/ac572f)
+    to an [introduction to material modeling](https://doi.org/10.1007/978-3-030-40245-7_2),
+    and the assorted invited seminars below.
+
+# Cross-cutting writing that doesn't sit under a single tool (shown in the fourth theme).
 reviews:
 - 10.1088/2516-1075/ac572f     # KulikES22 — roadmap on ML in electronic structure
 - 10.1007/978-3-030-40245-7_2  # Introduction to material modeling (chapter)
