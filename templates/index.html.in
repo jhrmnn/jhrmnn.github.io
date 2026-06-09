@@ -78,6 +78,10 @@
   <h1 class="p-name"><a rel="me" class="u-url" href="https://jan.hermann.name"><span id="firstname">Jan</span> Hermann</a></h1>
   {# Verifies ownership of the Bridgy Fed (fed.brid.gy) bridged account. #}
   <a rel="me" href="https://web.brid.gy/jan.hermann.name" hidden></a>
+  {# Mastodon verifies a remote account's profile links against its `url` field,
+     which Bridgy Fed serves in this redirect form (not the actor id above), so
+     this rel=me is what earns the green "verified link" badge. #}
+  <a rel="me" href="http://web.brid.gy/r/https://jan.hermann.name/" hidden></a>
   {# Transparent u-featured so the bridged Mastodon profile uses a blank header
      instead of falling back to the avatar (u-photo) for its banner. #}
   <img class="u-featured" src="header-blank.png" alt="" hidden>
