@@ -290,6 +290,13 @@ tr.heading:not(:first-child) td {
     font-size: 0.85em;
 }
 
+/* Title-less notes link the date itself; let it read as a link (the plain
+   date on a titled entry stays muted). Higher specificity than .h-feed time,
+   so it wins in light and dark alike. */
+.h-feed a time {
+    color: inherit;
+}
+
 @media (prefers-color-scheme: dark) {
     .postmeta,
     .h-feed time {
