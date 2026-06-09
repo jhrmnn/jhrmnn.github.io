@@ -71,6 +71,12 @@ jobs:
           # The fetch step crawls live sources from these inputs. When a push or
           # PR touches one, run a real fetch so the change is exercised end to
           # end instead of silently reusing the previous run's artifact.
+          # The Makefile is intentionally excluded: its fetch recipe is a thin
+          # wrapper and rarely changes, whereas most edits (build wiring, the
+          # blog targets) have nothing to do with crawling. A real change to
+          # fetch behaviour lives in fetch.py/common.py/reuse_data.py, which do
+          # trigger here. This keeps unrelated Makefile edits from forcing a
+          # live crawl (and inheriting flaky upstream rate limits) on every PR.
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base="${{ github.event.pull_request.base.sha }}"
           else
@@ -86,7 +92,7 @@ jobs:
           fetch=false
           while IFS= read -r f; do
             case "$f" in
-              fetch.py|common.py|reuse_data.py|Makefile|pyproject.toml|poetry.lock|data/*|"assets/_Jan Hermann_ - _Google Scholar_.html")
+              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock|data/*|"assets/_Jan Hermann_ - _Google Scholar_.html")
                 fetch=true
                 break
                 ;;
