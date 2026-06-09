@@ -158,6 +158,13 @@ def published_scholar_citations():
         return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
 
 
+def published_n_reviews():
+    try:
+        return json.loads(reuse_data.latest_derived_bytes())['n_reviews']
+    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
+        return None
+
+
 def published_scholar_years():
     try:
         return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
@@ -354,10 +361,22 @@ def update_from_web(ctx, cache):  # noqa: C901
             )
 
     def reviews(ctx):
-        n_reviews = cache.get(
-            WOS_ACADEMIC_URL,
-            headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
-        )['reviews']['pre']['count']
+        try:
+            n_reviews = cache.get(
+                WOS_ACADEMIC_URL,
+                headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
+            )['reviews']['pre']['count']
+        except requests.exceptions.HTTPError as e:
+            # Publons/WoS rate-limits with HTTP 429; don't let a transient block
+            # fail the whole fetch (fetch_wos degrades the same way). Fall back
+            # to the last published review count so NUMREV still renders; skip
+            # the replacement entirely only if there's no prior value to reuse.
+            if not e.args[0].startswith('429'):
+                raise
+            logging.warning('Could not fetch Web of Science reviews: %r', e)
+            n_reviews = published_n_reviews()
+            if n_reviews is None:
+                return
         ctx['_n_reviews'] = n_reviews
         activity = ctx['activity']
         for i in range(len(activity)):
