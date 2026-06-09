@@ -312,10 +312,18 @@ def fetch_wos(cache):
     so DOI-less records can still be named.
     """
     headers = {'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'}
-    url = cache.get(WOS_ACADEMIC_URL, headers=headers)['publications']['url']
+    # Route through the same residential proxy as Google Scholar when
+    # configured; Publons/WoS also blocks datacenter/CI IPs. SCHOLAR_PROXY is
+    # a full proxy URL, e.g. http://user:pass@gw.dataimpulse.com:823.
+    proxies = None
+    if proxy := os.environ.get('SCHOLAR_PROXY'):
+        proxies = {'http': proxy, 'https': proxy}
+    url = cache.get(WOS_ACADEMIC_URL, headers=headers, proxies=proxies)[
+        'publications'
+    ]['url']
     works = []
     while url:
-        page = cache.get(url, headers=headers)
+        page = cache.get(url, headers=headers, proxies=proxies)
         for record in page['results']:
             pub = record['publication']
             doi = pub['ids'].get('doi')
