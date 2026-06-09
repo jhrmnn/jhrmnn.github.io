@@ -74,26 +74,11 @@ tools:
   - 10.1103/physrevb.102.085403 # VenkataramPRB20
   - 10.1038/s41467-020-20473-w  # StohrNC21
 
-# Own tools with real effort but no research arc behind them — a utility line, not a hub.
-other_tools:
-- name: Pyberny
-  role: molecular geometry optimizer
-  github: jhrmnn/pyberny
-
-# De-emphasized contributor role: high-impact community codes, each with its program paper.
-contributes:
-- name: FHI-aims
-  url: https://fhi-aims.org
-  paper: 10.48550/arxiv.2505.00125
-- name: PySCF
-  url: https://pyscf.org
-  paper: 10.1063/5.0006074
-- name: DFTB+
-  url: https://dftbplus.org
-  paper: 10.1063/1.5143190
-- name: QCEngine
-  url: https://github.com/MolSSI/QCEngine
-  paper: 10.1063/5.0059356
+# Own tools with real effort but no research arc behind them, and de-emphasized
+# contributor codes, are both derived from the `software` list in data/cv.yaml
+# (the single source of truth): a creator entry whose repo is not a hub anchor
+# becomes an "other tool", any other non-hub entry a "contributes to" line. Each
+# contributor entry may name its program `paper` (a DOI) in that list.
 
 # Cross-cutting writing that doesn't sit under a single tool.
 reviews:

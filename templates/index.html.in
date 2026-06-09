@@ -143,9 +143,7 @@
     <h2>Other tools I've built</h2>
     <ul>
       {% for item in other_tools %}
-        {% set repo = software_by_github[item.github] %}
-        <li><strong><a href="https://github.com/{{ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot;
-          {{ item.role }}{% if repo and repo.stars %}&nbsp;&middot; <em>{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
       {% endfor %}
     </ul>
   </section>
@@ -154,8 +152,8 @@
     <h2>Also contributes to</h2>
     <ul>
       {% for item in contributes %}
-        {% set p = refs_by_id[item.paper] %}
-        <li><strong><a href="{{ item.url }}">{{ item.name }}</a></strong>{% if p %}&nbsp;&middot;
+        {% set p = refs_by_id[item.paper] if item.paper %}
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>{% if p %}&nbsp;&middot;
           <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
       {% endfor %}
     </ul>

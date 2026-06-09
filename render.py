@@ -159,12 +159,80 @@ HUB_KEYWORDS = {
 }
 
 
+# Titled talks that legitimately belong to no hub (untitled talks are always
+# allowed to fall outside the hubs). The completeness check tolerates exactly
+# these; any other unmatched titled talk is an error to fix (add a keyword or
+# extend this list).
+TALK_NOHUB_ALLOWLIST = {
+    'Mona: Calculation framework for reproducible science',
+    'Python interface to FHI-aims',
+}
+
+
 def classify_talk(title):
     title = (title or '').lower()
     for hub, keywords in HUB_KEYWORDS.items():
         if any(k in title for k in keywords):
             return hub
     return None
+
+
+def split_software(software, hub_repos):
+    """Partition the software list into the homepage's footer tiers. Hub repos
+    are rendered as hubs and skipped here; a creator of any other repo is an
+    "other tool", and everything else a "contributes to" line."""
+    other, contributes = [], []
+    for item in software:
+        if item.get('github') in hub_repos:
+            continue
+        (other if item.get('role') == 'creator' else contributes).append(item)
+    return other, contributes
+
+
+def check_completeness(ctx):
+    """Fail the build if any fetched publication, software entry, or titled talk
+    would silently not appear on the homepage. Publications and talks are
+    live-fetched, so this guards against a newly published item vanishing behind
+    a green build."""
+    problems = []
+
+    claimed = set()
+    for tool in ctx.get('tools', []):
+        for key in ('pubs', 'datasets', 'satellites'):
+            claimed.update(tool.get(key, []))
+    claimed.update(ctx.get('reviews', []))
+    claimed.update(s['paper'] for s in ctx.get('software', []) if 'paper' in s)
+    ref_ids = {r['id'] for r in ctx['references']}
+    if orphans := ref_ids - claimed:
+        problems.append(
+            'publications surfaced nowhere (add to a hub, review, or program '
+            f'paper): {", ".join(sorted(orphans))}'
+        )
+    if dangling := claimed - ref_ids:
+        problems.append(
+            f'referenced DOIs absent from fetched data: {", ".join(sorted(dangling))}'
+        )
+
+    hub_repos = {t['github'] for t in ctx.get('tools', [])}
+    sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
+    if missing := hub_repos - sw_repos:
+        problems.append(
+            f'hub repos missing from the software list: {", ".join(sorted(missing))}'
+        )
+
+    for talks in ctx.get('presentations', {}).values():
+        for talk in talks:
+            title = talk.get('title')
+            if title and not classify_talk(title) and title not in TALK_NOHUB_ALLOWLIST:
+                problems.append(
+                    f'talk matched to no hub (add a keyword or allow-list it): {title!r}'
+                )
+
+    if problems:
+        raise SystemExit(
+            'error: homepage completeness check failed:\n  - '
+            + '\n  - '.join(problems)
+        )
 
 
 def group_talks_by_hub(presentations):
@@ -289,12 +357,18 @@ def render(template, ctx, **kwargs):
         if item['id'] in ctx['keypubs']:
             item['star'] = True
     # Lookups for the tool-hub homepage: a reference by DOI, a software entry by
-    # its GitHub repo (for star counts), and talks bucketed into the hubs.
+    # its GitHub repo (for star counts), the footer tiers derived from the
+    # software list, and talks bucketed into the hubs.
     ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
     ctx['software_by_github'] = {
         s['github']: s for s in ctx.get('software', []) if 'github' in s
     }
+    hub_repos = {t['github'] for t in ctx.get('tools', [])}
+    ctx['other_tools'], ctx['contributes'] = split_software(
+        ctx.get('software', []), hub_repos
+    )
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
+    check_completeness(ctx)
     env = make_env(template.name)
     template = env.get_template(str(template))
     doc = template.render(ctx)
