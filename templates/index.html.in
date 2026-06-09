@@ -1,46 +1,7 @@
 <!-- vim: set ft=jinja sts=2 sw=2: -->
-<!doctype html>
-<html lang="en" class="no-js">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Jan Hermann</title>
-
-<script type="module">
-  document.documentElement.classList.replace('no-js', 'js');
-  Array.from(document.getElementsByClassName('article')).forEach((article) => {
-    const notice = article.getElementsByClassName('notice')[0];
-    if (notice) {
-      article.getElementsByClassName('pdf')[0].dataset.tooltip = notice.textContent.trim().slice(1);
-      article.removeChild(notice);
-      const notice_star = article.getElementsByClassName('notice-star')[0];
-      article.removeChild(notice_star);
-    }
-  });
-  const styleEl = document.getElementById('site-styles');
-  const toggle = document.getElementById('style-toggle');
-  const syncToggle = () => {
-    toggle.textContent = styleEl.disabled ? 'enable styles' : 'disable styles';
-    toggle.setAttribute('aria-pressed', String(styleEl.disabled));
-  };
-  syncToggle();
-  toggle.addEventListener('click', () => {
-    styleEl.disabled = !styleEl.disabled;
-    syncToggle();
-    try { localStorage.setItem('styles', styleEl.disabled ? 'off' : 'on'); } catch (e) {}
-  });
-</script>
-
-<style id="site-styles">
-  {% include "templates/styles.css" %}
-</style>
-<script>
-  // Apply the persisted toggle state before paint to avoid a flash of styles.
-  try { document.getElementById('site-styles').disabled = localStorage.getItem('styles') === 'off'; } catch (e) {}
-</script>
-
-<link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
-<link rel="canonical" href="https://jan.hermann.name">
+{% set page_title = "Jan Hermann" %}
+{% set canonical = "https://jan.hermann.name" %}
+{% include "templates/_head.html" %}
 
 {% macro talk_block(talks, class) %}
   <table class="{{ class }} small">
@@ -106,6 +67,7 @@
     <li><a href="#Software">Software</a>
     <li><a href="#Presentations">Presentations</a>
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
+    <li><a href="/blog/">Notes</a>
   </ul>
 </nav>
 
@@ -283,7 +245,7 @@
   </section>
 </main>
 
-<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; <button type="button" id="style-toggle" aria-pressed="false">disable styles</button></footer>
+{% include "templates/_footer.html" %}
 
 <script type="application/json" id="custom-data">
 {{ custom_data|tojson }}
