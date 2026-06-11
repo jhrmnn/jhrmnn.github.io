@@ -30,12 +30,12 @@
   </table>
 {% endmacro %}
 
-{# Render a list of references given their canonical DOIs, in the given order
+{# Render a list of references given their citation keys, in the given order
    (hubs curate their order to match the blurb's narrative, so no re-sorting). #}
-{% macro pub_rows(dois) %}
+{% macro pub_rows(keys) %}
   <table class="pub">
-    {% for doi in dois %}
-      {% set item = refs_by_id[doi] %}
+    {% for key in keys %}
+      {% set item = refs_by_id[key] %}
       {% if item %}
         {% set title, authors, ref = item|reftomd %}
         <tr>

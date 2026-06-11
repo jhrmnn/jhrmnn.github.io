@@ -1,8 +1,8 @@
 # The homepage spine: tool-hubs, each a dense narrative paragraph (blurb, with
 # inline links to the pieces it ties together) followed by its publications. Pubs
-# are referenced by canonical DOI — the same keys as data/extras.yaml and the ids
-# in build/derived.json. A pub may appear under more than one hub (cross-links).
-# See issue #50.
+# are referenced by citation key — the same ids as data/extras.yaml and
+# build/derived.json (the trailing comment gives the DOI). A pub may appear under
+# more than one hub (cross-links). See issue #50.
 tools:
 - name: Skala
   github: microsoft/skala
@@ -14,12 +14,12 @@ tools:
     density functionals](https://doi.org/10.1063/5.0166432) and ties back to wavefunctions
     via [accurate real-space electron densities from neural networks](https://doi.org/10.1063/5.0236919).
   pubs:
-  - 10.48550/arxiv.2506.14665   # Skala — accurate and scalable XC with deep learning
-  - 10.1063/5.0166432           # delMazo-SevillanoJCP23 — regularizing ML density functionals
-  - 10.1063/5.0236919           # ChengJCP25 — real-space densities (also DeepQMC)
+  - Luise25  # 10.48550/arxiv.2506.14665 — accurate and scalable XC with deep learning
+  - delMazo-SevillanoJCP23  # 10.1063/5.0166432 — regularizing ML density functionals
+  - ChengJCP25  # 10.1063/5.0236919 — real-space densities (also DeepQMC)
   datasets:
-  - 10.1038/s41597-026-07200-8  # Accurate Chemistry Collection
-  - 10.1021/acs.jcim.5c01364    # "mindless" molecules
+  - EhlertSD26  # 10.1038/s41597-026-07200-8 Accurate Chemistry Collection
+  - GasevicJCIM25  # 10.1021/acs.jcim.5c01364 "mindless" molecules
 - name: DeepQMC
   github: deepqmc/deepqmc
   blurb: |
@@ -32,13 +32,13 @@ tools:
     [review of the field](https://doi.org/10.1038/s41570-023-00516-8)). The arc now points
     at a [foundation model of wavefunctions](https://doi.org/10.48550/arxiv.2506.19960).
   pubs:
-  - 10.1038/s41557-020-0544-y   # HermannNC20 — PauliNet
-  - 10.48550/arxiv.2506.19960   # foundation model of wavefunctions
-  - 10.1063/5.0157512           # SchatzleJCP23 — DeepQMC suite
-  - 10.1063/5.0032836           # SchatzleJCP21 — fixed-node limit
-  - 10.1038/s41467-022-35534-5  # EntwistleNC23 — excited states
-  - 10.1038/s41570-023-00516-8  # HermannNRC23 — NN wavefunctions review
-  - 10.1063/5.0236919           # ChengJCP25 — real-space densities (also Skala)
+  - HermannNC20  # 10.1038/s41557-020-0544-y — PauliNet
+  - Foster25  # 10.48550/arxiv.2506.19960 foundation model of wavefunctions
+  - SchatzleJCP23  # 10.1063/5.0157512 — DeepQMC suite
+  - SchatzleJCP21  # 10.1063/5.0032836 — fixed-node limit
+  - EntwistleNC23  # 10.1038/s41467-022-35534-5 — excited states
+  - HermannNRC23  # 10.1038/s41570-023-00516-8 — NN wavefunctions review
+  - ChengJCP25  # 10.1063/5.0236919 — real-space densities (also Skala)
 - name: libMBD
   github: libmbd/libmbd
   blurb: |
@@ -52,27 +52,27 @@ tools:
     several electronic-structure codes. Applications reach from
     [π–π stacked molecules](https://doi.org/10.1038/ncomms14052) to layered materials.
   pubs:
-  - 10.1063/5.0170972           # HermannJCP23 — libMBD package
-  - 10.1103/physrevlett.124.146401  # HermannPRL20 — unified vdW functional
-  - 10.1021/acs.chemrev.6b00446 # HermannCR17 — Chem Rev survey
-  - 10.1021/acs.jctc.7b01172    # HermannJCTC18 — exchange/correlation in vdW
-  - 10.1007/978-3-319-42913-7_6-1   # vdW interactions in material modelling (chapter)
-  - 10.1063/1.4813826           # HermannJCP13 — vdW-DF/CCSD(T) origin
-  - 10.18452/18706              # Hermann18 — PhD thesis
-  - 20.500.11956/52661          # Hermann13 — MSc thesis
-  - 10.1016/j.cattod.2013.09.016    # layered zeolite frameworks (origin)
-  - 10.1016/j.cattod.2012.08.025    # Friedländer reaction in zeolites (origin)
-  - 10.1038/ncomms14052         # HermannNC17 — π–π collective fluctuations
-  - 10.1063/1.4972810           # LiuJCP16
-  - 10.1021/acs.chemmater.6b04190   # ChattopadhyayaCM17
-  - 10.1021/acs.jpclett.9b03716 # CuiJPCL20
-  - 10.1021/acs.jctc.1c00782    # OuyangJCTC21
+  - HermannJCP23  # 10.1063/5.0170972 — libMBD package
+  - HermannPRL20  # 10.1103/physrevlett.124.146401 — unified vdW functional
+  - HermannCR17  # 10.1021/acs.chemrev.6b00446 — Chem Rev survey
+  - HermannJCTC18  # 10.1021/acs.jctc.7b01172 — exchange/correlation in vdW
+  - Hermann18a  # 10.1007/978-3-319-42913-7_6-1 vdW interactions in material modelling (chapter)
+  - HermannJCP13  # 10.1063/1.4813826 — vdW-DF/CCSD(T) origin
+  - Hermann18  # 10.18452/18706 — PhD thesis
+  - Hermann13  # 20.500.11956/52661 — MSc thesis
+  - HermannCT14  # 10.1016/j.cattod.2013.09.016 layered zeolite frameworks (origin)
+  - PolozijCT13  # 10.1016/j.cattod.2012.08.025 Friedländer reaction in zeolites (origin)
+  - HermannNC17  # 10.1038/ncomms14052 — π–π collective fluctuations
+  - LiuJCP16  # 10.1063/1.4972810
+  - ChattopadhyayaCM17  # 10.1021/acs.chemmater.6b04190
+  - CuiJPCL20  # 10.1021/acs.jpclett.9b03716
+  - OuyangJCTC21  # 10.1021/acs.jctc.1c00782
   satellites:   # collapsed "related" — Casimir / fluctuational electrodynamics
-  - 10.1103/physrevlett.118.266802  # VenkataramPRL17
-  - 10.1103/physrevlett.121.045901  # VenkataramPRL18
-  - 10.1126/sciadv.aaw0456      # VenkataramSA19
-  - 10.1103/physrevb.102.085403 # VenkataramPRB20
-  - 10.1038/s41467-020-20473-w  # StohrNC21
+  - VenkataramPRL17  # 10.1103/physrevlett.118.266802
+  - VenkataramPRL18  # 10.1103/physrevlett.121.045901
+  - VenkataramSA19  # 10.1126/sciadv.aaw0456
+  - VenkataramPRB20  # 10.1103/physrevb.102.085403
+  - StohrNC21  # 10.1038/s41467-020-20473-w
 
 # Own tools with real effort but no research arc behind them, and de-emphasized
 # contributor codes, are both derived from the `software` list in data/cv.yaml
@@ -103,5 +103,5 @@ fourth_theme:
 
 # Cross-cutting writing that doesn't sit under a single tool (shown in the fourth theme).
 reviews:
-- 10.1088/2516-1075/ac572f     # KulikES22 — roadmap on ML in electronic structure
-- 10.1007/978-3-030-40245-7_2  # Introduction to material modeling (chapter)
+- KulikES22  # 10.1088/2516-1075/ac572f — roadmap on ML in electronic structure
+- Hermann20  # 10.1007/978-3-030-40245-7_2 Introduction to material modeling (chapter)

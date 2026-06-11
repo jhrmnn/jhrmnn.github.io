@@ -264,16 +264,18 @@ def citation_key(item):
 
 
 def assign_citation_keys(refs):
-    """Set a unique ``citation-key`` on each reference. When the derived key
-    collides, the earliest (by date, then DOI) keeps the bare key and the rest
-    get a lowercase ``a``/``b``/... suffix, as Better BibTeX does."""
+    """Set a unique human-readable ``id`` (the citation key) on each reference.
+    When the derived key collides, the earliest (by date, then canonical DOI)
+    keeps the bare key and the rest get a lowercase ``a``/``b``/... suffix, as
+    Better BibTeX does. The canonical DOI/handle stays in ``canonical-doi`` as
+    the stable cross-source join key."""
     groups = {}
     for ref in refs:
         groups.setdefault(citation_key(ref), []).append(ref)
     for base, group in groups.items():
-        group.sort(key=lambda r: (r['issued']['date-parts'][0], r['id']))
+        group.sort(key=lambda r: (r['issued']['date-parts'][0], r['canonical-doi']))
         for i, ref in enumerate(group):
-            ref['citation-key'] = base + ('' if i == 0 else chr(ord('a') + i - 1))
+            ref['id'] = base + ('' if i == 0 else chr(ord('a') + i - 1))
 
 
 def fetch_references(cache):
@@ -282,9 +284,10 @@ def fetch_references(cache):
     refs = []
     for it in items:
         it = dict(it)
-        # Key each reference by its canonical DOI: the stable join key for
-        # ref_extras/keypubs.
-        it['id'] = canonical_doi(it['DOI'], cache)
+        # The canonical DOI/handle is the stable cross-source join key
+        # (check_sources/check_derived); the citation key assigned below is the
+        # human-readable id used by ref_extras/keypubs/tools and pandoc.
+        it['canonical-doi'] = canonical_doi(it['DOI'], cache)
         # Zotero emits year as int for full dates but str for year-only ones;
         # normalize so date-parts sort and compare consistently.
         for field in ('issued', 'accessed', 'submitted'):

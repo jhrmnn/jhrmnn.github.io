@@ -55,7 +55,12 @@ def scholar_value(derived):
 
 
 def refs_by_id(derived):
-    return {r['id']: r for r in derived.get('references', [])}
+    # Join on the canonical DOI/handle, the identifier stable across runs and
+    # across the id->citation-key migration (older artifacts carry it in `id`,
+    # newer ones in `canonical-doi`).
+    return {
+        (r.get('canonical-doi') or r['id']): r for r in derived.get('references', [])
+    }
 
 
 def check(old, new):  # noqa: C901
