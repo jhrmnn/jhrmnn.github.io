@@ -179,18 +179,6 @@ def classify_talk(title):
     return None
 
 
-def split_software(software, hub_repos):
-    """Partition the software list into the homepage's footer tiers. Hub repos
-    are rendered as hubs and skipped here; a creator of any other repo is an
-    "other tool", and everything else a "contributes to" line."""
-    other, contributes = [], []
-    for item in software:
-        if item.get('github') in hub_repos:
-            continue
-        (other if item.get('role') == 'creator' else contributes).append(item)
-    return other, contributes
-
-
 def check_completeness(ctx):
     """Fail the build if any fetched publication, software entry, or titled talk
     would silently not appear on the homepage. Publications and talks are
@@ -198,10 +186,12 @@ def check_completeness(ctx):
     a green build."""
     problems = []
 
-    # A publication is placed by being cited in hubs.md or named as a software
-    # program paper; everything else would silently not appear on the homepage.
+    # The prose cites paper references (by their fetched id) and software (by its
+    # `cite` key); a publication is also placed by being named as a program paper.
     hubs_md = Path(HUBS_MD).read_text()
-    claimed = set(cited_keys(hubs_md))
+    cited = set(cited_keys(hubs_md))
+    software_cites = {s['cite'] for s in ctx.get('software', []) if 'cite' in s}
+    claimed = cited - software_cites
     claimed.update(s['paper'] for s in ctx.get('software', []) if 'paper' in s)
     ref_ids = {r['id'] for r in ctx['references']}
     if orphans := ref_ids - claimed:
@@ -212,6 +202,13 @@ def check_completeness(ctx):
     if dangling := claimed - ref_ids:
         problems.append(
             f'references absent from fetched data: {", ".join(sorted(dangling))}'
+        )
+    # A [@key] that is neither a fetched reference nor a software `cite` resolves
+    # to nothing (pandoc would render it blank); fail loudly instead.
+    if unknown := cited - ref_ids - software_cites:
+        problems.append(
+            'citation keys matching no reference or software cite: '
+            f'{", ".join(sorted(unknown))}'
         )
 
     hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
@@ -260,14 +257,34 @@ def unhubbed_talks(presentations):
 CSL_STYLE = 'assets/superscript.csl'
 
 
-def write_bibliography(refs, path):
-    """Write the references as a CSL-JSON bibliography for pandoc. Drops the
-    Zotero short-title fields (shortTitle/title-short): with them present,
-    citeproc returns the title-short where the journal's short form belongs."""
+def software_csl(software):
+    """Synthetic CSL-JSON items for the citable software entries (those with a
+    `cite` key), so citeproc numbers `[@cite]` in the prose in the same sequence
+    as the paper references. Only the id matters for the in-text number; the
+    title/URL are filler — the generated bibliography is discarded and software
+    rows are rendered by the template in the site's own format."""
+    return [
+        {
+            'id': s['cite'],
+            'type': 'software',
+            'title': s['name'],
+            'URL': s.get('url') or f'https://github.com/{s["github"]}',
+        }
+        for s in software
+        if 'cite' in s
+    ]
+
+
+def write_bibliography(refs, software, path):
+    """Write the references (plus citable software) as a CSL-JSON bibliography
+    for pandoc. Drops the Zotero short-title fields (shortTitle/title-short):
+    with them present, citeproc returns the title-short where the journal's short
+    form belongs."""
     items = [
         {k: v for k, v in r.items() if k not in ('shortTitle', 'title-short')}
         for r in refs
     ]
+    items.extend(software_csl(software))
     Path(path).write_text(json.dumps(items, ensure_ascii=False))
 
 
@@ -323,7 +340,7 @@ def render_hub_sections(ctx):
     a `theme` class for the fourth section) and its reference set from the
     [@key]s its prose cites. Sets ctx['sections'] (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
-    write_bibliography(ctx['references'], bib)
+    write_bibliography(ctx['references'], ctx.get('software', []), bib)
     html = run_pandoc(Path(HUBS_MD).read_text(), bib)
 
     # Global numbering from the generated bibliography's entry order; then drop it.
@@ -463,17 +480,16 @@ def render(template, ctx, **kwargs):
             item['pdf_notice'] = extras['notice']
         if item['id'] in ctx['keypubs']:
             item['star'] = True
-    # Lookups for the tool-hub homepage: a reference by DOI, a software entry by
-    # its GitHub repo (for star counts), the footer tiers derived from the
-    # software list, and talks bucketed into the hubs.
+    # Lookups for the tool-hub homepage: a reference by id, a software entry by
+    # its GitHub repo (hub-header star counts) and by its `cite` key (numbered
+    # rows mixed into the reference lists), and talks bucketed into the hubs.
     ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
     ctx['software_by_github'] = {
         s['github']: s for s in ctx.get('software', []) if 'github' in s
     }
-    hub_repos = {t['github'] for t in ctx.get('tools', [])}
-    ctx['other_tools'], ctx['contributes'] = split_software(
-        ctx.get('software', []), hub_repos
-    )
+    ctx['software_by_cite'] = {
+        s['cite']: s for s in ctx.get('software', []) if 'cite' in s
+    }
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
     ctx['theme_talks'] = unhubbed_talks(ctx.get('presentations', {}))
     check_completeness(ctx)

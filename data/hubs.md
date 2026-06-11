@@ -47,12 +47,11 @@ and fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 # Codes, tools & writing {#more .theme}
 
 Beyond the three flagships, the connective tissue. I build smaller standalone
-tools — [Pyberny](https://github.com/jhrmnn/pyberny), a molecular geometry
-optimizer, and [Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf),
-a framework for reproducible computational science — and contribute to the
-community electronic-structure codes the methods above plug into:
-[FHI-aims](https://fhi-aims.org), [PySCF](https://pyscf.org),
-[DFTB+](https://dftbplus.org), and [QCEngine](https://github.com/MolSSI/QCEngine).
-The same breadth runs through survey writing, from a roadmap on machine learning in
-electronic structure [@KulikES22] to an introduction to material modeling [@Hermann20],
-and the assorted invited seminars below.
+tools — Pyberny [@pyberny], a molecular geometry optimizer, and
+[Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf), a framework for
+reproducible computational science — and contribute to the community
+electronic-structure codes the methods above plug into: FHI-aims [@fhiaims],
+PySCF [@pyscf], DFTB+ [@dftbplus], and QCEngine [@qcengine]. The same breadth runs
+through survey writing, from a roadmap on machine learning in electronic structure
+[@KulikES22] to an introduction to material modeling [@Hermann20], and the assorted
+invited seminars below.

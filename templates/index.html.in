@@ -30,9 +30,10 @@
   </table>
 {% endmacro %}
 
-{# The section's reference list in the site's own format (title · authors · ref ·
-   PDF · Scholar count), each row carrying its global citation number. `keys` is
-   pre-ordered by that number in render.py. #}
+{# The section's numbered list in the site's own format, each row carrying its
+   global citation number. `keys` is pre-ordered by that number in render.py and
+   mixes paper references (title · authors · ref · PDF · Scholar count) with
+   software (name · role · description/program-paper · stars), rendered by type. #}
 {% macro ref_list(keys) %}
   <table class="pub">
     {% for key in keys %}
@@ -50,15 +51,29 @@
           </td>
           <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
         </tr>
+      {% else %}
+        {% set sw = software_by_cite[key] %}
+        {% if sw %}
+          {% set p = refs_by_id[sw.paper] if sw.paper %}
+          <tr>
+            <td class="cnum">{{ cite_num[key] }}</td>
+            <td class="article software">
+              <strong><a href="{{ sw.url or 'https://github.com/' ~ sw.github }}">{{ sw.name }}</a></strong>&nbsp;&middot; <em>{% if sw.role == 'creator' %}built{% else %}contributor{% endif %}</em>
+              {%- if sw.description %}&nbsp;&middot; {{ sw.description }}{% endif %}
+              {%- if p %}&nbsp;&middot; <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
+            </td>
+            <td>{% if sw.stars %}{{ sw.stars }} {% include "assets/github-star.svg" %}{% endif %}</td>
+          </tr>
+        {% endif %}
       {% endif %}
     {% endfor %}
   </table>
 {% endmacro %}
 
 {# A homepage section parsed from data/hubs.md (render_hub_sections): the
-   pandoc-rendered prose (with superscript citations), the section's reference
-   list, and collapsed talks. A hub carries a `github` repo; the fourth `theme`
-   section instead carries the software/contributor list. #}
+   pandoc-rendered prose (with superscript citations), the section's numbered
+   list (paper references and any cited software, interleaved), and collapsed
+   talks. A hub carries a `github` repo shown in its header. #}
 {% macro section_block(sec) %}
   {% set talks = theme_talks if sec.theme else hub_talks[sec.name] %}
   <section id="{{ sec.id }}" class="hub">
@@ -69,18 +84,6 @@
     </h2>
     <div class="miniarticle">{{ sec.html }}</div>
     {{ ref_list(sec.refs) }}
-    {% if sec.theme %}
-      <ul class="theme-tools">
-        {% for item in other_tools %}
-          <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
-        {% endfor %}
-        {% for item in contributes %}
-          {% set p = refs_by_id[item.paper] if item.paper %}
-          <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>contributor</em>{% if p %}&nbsp;&middot;
-            <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
-        {% endfor %}
-      </ul>
-    {% endif %}
     {% if talks %}
       <details class="hub-extra">
         <summary>Talks ({{ talks|length }})</summary>
