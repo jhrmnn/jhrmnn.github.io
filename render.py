@@ -211,12 +211,23 @@ def check_completeness(ctx):
             f'{", ".join(sorted(unknown))}'
         )
 
+    # Each hub names its anchor software repo in the <h1> github="…" attribute.
+    # That software must exist and be cited in the section by its `cite` key,
+    # else its repo link and star count — now a numbered row, not a header —
+    # would silently not appear.
     hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
-    sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
-    if missing := hub_repos - sw_repos:
-        problems.append(
-            f'hub repos missing from the software list: {", ".join(sorted(missing))}'
-        )
+    sw_by_github = {s['github']: s for s in ctx.get('software', []) if 'github' in s}
+    for repo in sorted(hub_repos):
+        s = sw_by_github.get(repo)
+        if not s:
+            problems.append(f'hub repo missing from the software list: {repo}')
+        elif not s.get('cite'):
+            problems.append(f'hub anchor software has no `cite` key: {repo}')
+        elif s['cite'] not in cited:
+            problems.append(
+                f'hub anchor software not cited in its section: {repo} '
+                f'(cite it as [@{s["cite"]}] so its row appears)'
+            )
 
     for talks in ctx.get('presentations', {}).values():
         for talk in talks:
@@ -481,12 +492,9 @@ def render(template, ctx, **kwargs):
         if item['id'] in ctx['keypubs']:
             item['star'] = True
     # Lookups for the tool-hub homepage: a reference by id, a software entry by
-    # its GitHub repo (hub-header star counts) and by its `cite` key (numbered
-    # rows mixed into the reference lists), and talks bucketed into the hubs.
+    # its `cite` key (numbered rows mixed into the reference lists), and talks
+    # bucketed into the hubs.
     ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
-    ctx['software_by_github'] = {
-        s['github']: s for s in ctx.get('software', []) if 'github' in s
-    }
     ctx['software_by_cite'] = {
         s['cite']: s for s in ctx.get('software', []) if 'cite' in s
     }

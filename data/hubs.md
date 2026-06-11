@@ -11,7 +11,7 @@ program papers live in data/cv.yaml. See issue #50.
 
 # Skala {#Skala github="microsoft/skala"}
 
-Machine-learned exchange–correlation. [Skala](https://github.com/microsoft/skala)
+Machine-learned exchange–correlation. Skala [@skala]
 learns the exchange–correlation functional of Kohn–Sham DFT directly from data,
 reaching hybrid-functional accuracy at semi-local cost [@Luise25]. The thread runs
 through a variational principle for regularizing machine-learned density
@@ -21,7 +21,7 @@ benchmarked on dedicated reference datasets [@EhlertSD26; @GasevicJCIM25].
 
 # DeepQMC {#DeepQMC github="deepqmc/deepqmc"}
 
-Neural-network wavefunctions. [DeepQMC](https://github.com/deepqmc/deepqmc) began with
+Neural-network wavefunctions. DeepQMC [@deepqmc] began with
 PauliNet [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy
 through variational Monte Carlo; it converged to the fixed-node limit [@SchatzleJCP21],
 reached excited states [@EntwistleNC23], and grew into a general open-source suite
@@ -37,7 +37,7 @@ vdW-DF/CCSD(T) correction scheme [@HermannJCP13] for zeolites [@HermannCT14;
 interactions [@HermannPRL20] — two theses [@Hermann13; @Hermann18] and a *Chemical
 Reviews* survey [@HermannCR17], with the exchange–correlation balance worked out along
 the way [@HermannJCTC18; @Hermann18a]. Packaged as
-[libMBD](https://github.com/libmbd/libmbd), a scalable many-body dispersion library
+libMBD [@libmbd], a scalable many-body dispersion library
 [@HermannJCP23] now embedded in several electronic-structure codes, it underpins
 applications from π–π stacked molecules [@HermannNC17] through molecular crystals and
 layered materials [@LiuJCP16; @ChattopadhyayaCM17; @CuiJPCL20; @OuyangJCTC21] to Casimir
