@@ -65,7 +65,7 @@ $(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
 	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
 $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64 \
-	templates/_head.html templates/_footer.html
+	templates/_head.html templates/_footer.html assets/superscript.csl
 
 %.pdf: %.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<

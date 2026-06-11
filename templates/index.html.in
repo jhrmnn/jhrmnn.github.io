@@ -55,21 +55,36 @@
   </table>
 {% endmacro %}
 
-{# A tool-hub: name + repo, the pandoc-rendered prose (with superscript citations),
-   the section's reference list, then collapsed talks. The prose HTML and the
-   global numbering come from render.py (render_hub_sections). #}
-{% macro hub_block(tool) %}
-  {% set repo = software_by_github[tool.github] %}
-  <section id="{{ tool.name }}" class="hub">
-    <h2>{{ tool.name }}
-      <a class="hub-repo small" href="https://github.com/{{ tool.github }}">{{ tool.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+{# A homepage section parsed from data/hubs.md (render_hub_sections): the
+   pandoc-rendered prose (with superscript citations), the section's reference
+   list, and collapsed talks. A hub carries a `github` repo; the fourth `theme`
+   section instead carries the software/contributor list. #}
+{% macro section_block(sec) %}
+  {% set talks = theme_talks if sec.theme else hub_talks[sec.name] %}
+  <section id="{{ sec.id }}" class="hub">
+    <h2>{{ sec.name }}
+      {%- if sec.github %}{% set repo = software_by_github[sec.github] %}
+      <a class="hub-repo small" href="https://github.com/{{ sec.github }}">{{ sec.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+      {%- endif %}
     </h2>
-    <div class="miniarticle">{{ hub_html[tool.name] }}</div>
-    {{ ref_list(hub_refs[tool.name]) }}
-    {% if hub_talks[tool.name] %}
+    <div class="miniarticle">{{ sec.html }}</div>
+    {{ ref_list(sec.refs) }}
+    {% if sec.theme %}
+      <ul class="theme-tools">
+        {% for item in other_tools %}
+          <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
+        {% endfor %}
+        {% for item in contributes %}
+          {% set p = refs_by_id[item.paper] if item.paper %}
+          <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>contributor</em>{% if p %}&nbsp;&middot;
+            <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+    {% if talks %}
       <details class="hub-extra">
-        <summary>Talks ({{ hub_talks[tool.name]|length }})</summary>
-        {{ talk_block(hub_talks[tool.name], "talks small") }}
+        <summary>Talks ({{ talks|length }})</summary>
+        {{ talk_block(talks, "talks small") }}
       </details>
     {% endif %}
   </section>
@@ -90,8 +105,7 @@
 
 <nav aria-label="Sections">
   <ul>
-    {% for tool in tools %}<li><a href="#{{ tool.name }}">{{ tool.name }}</a>{% endfor %}
-    <li><a href="#{{ fourth_theme.id }}">{{ fourth_theme.name }}</a>
+    {% for sec in sections %}<li><a href="#{{ sec.id }}">{{ sec.name }}</a>{% endfor %}
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
@@ -127,31 +141,9 @@
     they share one aim: making electronic structure more accurate, by adding the missing
     physics by hand or by learning it.
 
-  {% for tool in tools %}
-    {{ hub_block(tool) }}
+  {% for sec in sections %}
+    {{ section_block(sec) }}
   {% endfor %}
-
-  <section id="{{ fourth_theme.id }}" class="hub">
-    <h2>{{ fourth_theme.name }}</h2>
-    <div class="miniarticle">{{ theme_html }}</div>
-    {{ ref_list(theme_refs) }}
-    <ul class="theme-tools">
-      {% for item in other_tools %}
-        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
-      {% endfor %}
-      {% for item in contributes %}
-        {% set p = refs_by_id[item.paper] if item.paper %}
-        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>contributor</em>{% if p %}&nbsp;&middot;
-          <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
-      {% endfor %}
-    </ul>
-    {% if theme_talks %}
-      <details class="hub-extra">
-        <summary>Talks ({{ theme_talks|length }})</summary>
-        {{ talk_block(theme_talks, "talks small") }}
-      </details>
-    {% endif %}
-  </section>
 
   <section id="CV" aria-label="CV">
     <h2>Employment</h2>

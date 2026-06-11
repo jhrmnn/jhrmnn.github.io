@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 from datetime import datetime
+from html import unescape
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -197,24 +198,23 @@ def check_completeness(ctx):
     a green build."""
     problems = []
 
-    claimed = set()
-    for tool in ctx.get('tools', []):
-        for key in ('pubs', 'datasets', 'satellites'):
-            claimed.update(tool.get(key, []))
-    claimed.update(ctx.get('reviews', []))
+    # A publication is placed by being cited in hubs.md or named as a software
+    # program paper; everything else would silently not appear on the homepage.
+    hubs_md = Path(HUBS_MD).read_text()
+    claimed = set(cited_keys(hubs_md))
     claimed.update(s['paper'] for s in ctx.get('software', []) if 'paper' in s)
     ref_ids = {r['id'] for r in ctx['references']}
     if orphans := ref_ids - claimed:
         problems.append(
-            'publications surfaced nowhere (add to a hub, review, or program '
-            f'paper): {", ".join(sorted(orphans))}'
+            'publications cited nowhere (cite them in data/hubs.md or name them '
+            f'as a program paper): {", ".join(sorted(orphans))}'
         )
     if dangling := claimed - ref_ids:
         problems.append(
-            f'referenced DOIs absent from fetched data: {", ".join(sorted(dangling))}'
+            f'references absent from fetched data: {", ".join(sorted(dangling))}'
         )
 
-    hub_repos = {t['github'] for t in ctx.get('tools', [])}
+    hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
     sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
     if missing := hub_repos - sw_repos:
         problems.append(
@@ -292,49 +292,57 @@ def section_keys(tool):
     return [k for field in ('pubs', 'datasets', 'satellites') for k in tool.get(field, [])]
 
 
+HUBS_MD = 'data/hubs.md'
+
+
+def cited_keys(md_text):
+    """Citation keys referenced in the hubs markdown (deduped, in appearance
+    order). Used by the completeness check, which must run without invoking
+    pandoc (it also runs for the CV templates). HTML comments are stripped first
+    so a `[@key]` written in documentation doesn't count, matching pandoc."""
+    md_text = re.sub(r'<!--.*?-->', '', md_text, flags=re.S)
+    keys = re.findall(r'@([A-Za-z0-9_][\w:.#$%&+?<>~/-]*)', md_text)
+    return list(dict.fromkeys(keys))
+
+
 def render_hub_sections(ctx):
-    """Process the four homepage sections (three hubs + the fourth theme) as one
-    pandoc document so citation numbers run consecutively across them. Pandoc is
-    used as a numbering engine: we keep the prose it renders (with superscript
-    citations) and read the citation->number map from the order of its generated
-    bibliography, then discard that bibliography — the reference lists themselves
-    are rendered by the template in the site's own format, just carrying the
-    number. Sets ctx['hub_html']/['theme_html'] (prose), ctx['cite_num']
-    (key -> global number) and ctx['hub_refs']/['theme_refs'] (each section's
-    keys ordered by that number)."""
+    """Render the homepage sections from data/hubs.md. The whole file (all
+    sections) goes through pandoc + citeproc in one pass so citation numbers run
+    consecutively across sections. Pandoc is the numbering engine: we keep the
+    prose it renders (with superscript citations), read the key->number map from
+    its generated bibliography's order, then discard that bibliography — the
+    reference lists are rendered by the template in the site's own format. Each
+    section's structure comes from its <h1> header attributes (id, github repo,
+    a `theme` class for the fourth section) and its reference set from the
+    [@key]s its prose cites. Sets ctx['sections'] (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
+    html = run_pandoc(Path(HUBS_MD).read_text(), bib)
 
-    sections = [(t['name'], t['blurb'], section_keys(t)) for t in ctx.get('tools', [])]
-    theme = ctx.get('fourth_theme')
-    if theme:
-        sections.append((theme['name'], theme['blurb'], list(ctx.get('reviews', []))))
-
-    # One document: a global `nocite` (so every section's papers are numbered
-    # even if the prose doesn't cite one) followed by the four sections.
-    all_keys = list(dict.fromkeys(k for _, _, keys in sections for k in keys))
-    front = '---\nnocite: |\n  ' + ', '.join(f'@{k}' for k in all_keys) + '\n---\n\n'
-    body = '\n\n'.join(f'# {name}\n\n{blurb}' for name, blurb, _ in sections)
-    html = run_pandoc(front + body, bib)
-
-    # Read the global numbering from the generated bibliography's entry order,
-    # then drop the bibliography (we render our own reference lists).
+    # Global numbering from the generated bibliography's entry order; then drop it.
     refs = re.search(r'<div id="refs".*</div>', html, re.S)
     order = re.findall(r'id="ref-([^"]+)"', refs.group(0)) if refs else []
     ctx['cite_num'] = {key: i + 1 for i, key in enumerate(order)}
+    by_number = lambda k: ctx['cite_num'].get(k, len(order) + 1)
     prose = html[: refs.start()] if refs else html
 
-    # Split the prose back into the four sections (one <h1> heading each).
-    chunks = [p.strip() for p in re.split(r'<h1\b[^>]*>.*?</h1>', prose, flags=re.S)[1:]]
-    by_number = lambda k: ctx['cite_num'].get(k, len(order) + 1)
-    ctx['hub_html'], ctx['hub_refs'] = {}, {}
-    for (name, _, keys), chunk in zip(sections, chunks):
-        if theme and name == theme['name']:
-            ctx['theme_html'] = Markup(chunk)
-            ctx['theme_refs'] = sorted(keys, key=by_number)
-        else:
-            ctx['hub_html'][name] = Markup(chunk)
-            ctx['hub_refs'][name] = sorted(keys, key=by_number)
+    # Split into (header, body) per <h1>; read structure from header attributes
+    # and the section's references from the citations its body carries.
+    parts = re.split(r'(<h1\b[^>]*>.*?</h1>)', prose, flags=re.S)
+    sections = []
+    for header, body in zip(parts[1::2], parts[2::2]):
+        attr = lambda name: (re.search(rf'\b{name}="([^"]+)"', header) or (None, None))[1]
+        cited = [k for dc in re.findall(r'data-cites="([^"]+)"', body) for k in dc.split()]
+        cls = attr('class') or ''
+        sections.append({
+            'id': attr('id'),
+            'name': unescape(re.sub(r'<[^>]+>', '', re.search(r'<h1\b[^>]*>(.*?)</h1>', header, re.S).group(1)).strip()),
+            'github': attr('data-github'),
+            'theme': 'theme' in cls.split(),
+            'html': Markup(body.strip()),
+            'refs': sorted(dict.fromkeys(cited), key=by_number),
+        })
+    ctx['sections'] = sections
 
 
 def apply_derived(ctx, derived):
