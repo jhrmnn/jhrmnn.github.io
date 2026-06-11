@@ -271,20 +271,12 @@ def write_bibliography(refs, path):
     Path(path).write_text(json.dumps(items, ensure_ascii=False))
 
 
-def pandoc_section(blurb, keys, bib_path):
-    """Render a section's markdown (prose with [@key] citations) to HTML via
-    pandoc + citeproc, with the section's full reference set forced into the
-    bibliography via `nocite` (so a paper appears even if the prose doesn't
-    cite it). Returns prose with superscript citations followed by the numbered
-    reference list. Citeproc's per-section element ids are stripped so the four
-    sections don't collide on the page."""
-    front = ''
-    if keys:
-        front = '---\nnocite: |\n  ' + ', '.join(f'@{k}' for k in keys) + '\n---\n'
+def run_pandoc(markdown, bib_path):
+    """Run pandoc + citeproc on a markdown document, returning the HTML."""
     proc = subprocess.run(
         ['pandoc', '--citeproc', '--csl', CSL_STYLE, '--bibliography', bib_path,
          '-f', 'markdown', '-t', 'html5'],
-        input=front + blurb,
+        input=markdown,
         capture_output=True,
         text=True,
         check=True,
@@ -292,25 +284,57 @@ def pandoc_section(blurb, keys, bib_path):
     # citeproc reports an unresolved [@key] on stderr but still exits 0; treat it
     # as an error so a typo'd citation fails the build instead of rendering blank.
     if 'not found' in proc.stderr.lower():
-        raise SystemExit(f'error: pandoc citeproc reported unresolved citations:\n{proc.stderr}')
-    return Markup(re.sub(r' id="ref[^"]*"', '', proc.stdout))
+        raise SystemExit(f'error: pandoc reported unresolved citations:\n{proc.stderr}')
+    return proc.stdout
+
+
+def section_keys(tool):
+    return [k for field in ('pubs', 'datasets', 'satellites') for k in tool.get(field, [])]
 
 
 def render_hub_sections(ctx):
-    """Build the four miniarticle HTML blobs (three hubs + the fourth theme),
-    each prose-plus-references, for the homepage."""
+    """Process the four homepage sections (three hubs + the fourth theme) as one
+    pandoc document so citation numbers run consecutively across them. Pandoc is
+    used as a numbering engine: we keep the prose it renders (with superscript
+    citations) and read the citation->number map from the order of its generated
+    bibliography, then discard that bibliography — the reference lists themselves
+    are rendered by the template in the site's own format, just carrying the
+    number. Sets ctx['hub_html']/['theme_html'] (prose), ctx['cite_num']
+    (key -> global number) and ctx['hub_refs']/['theme_refs'] (each section's
+    keys ordered by that number)."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
-    ctx['hub_html'] = {
-        tool['name']: pandoc_section(
-            tool['blurb'],
-            [k for field in ('pubs', 'datasets', 'satellites') for k in tool.get(field, [])],
-            bib,
-        )
-        for tool in ctx.get('tools', [])
-    }
-    if theme := ctx.get('fourth_theme'):
-        ctx['theme_html'] = pandoc_section(theme['blurb'], ctx.get('reviews', []), bib)
+
+    sections = [(t['name'], t['blurb'], section_keys(t)) for t in ctx.get('tools', [])]
+    theme = ctx.get('fourth_theme')
+    if theme:
+        sections.append((theme['name'], theme['blurb'], list(ctx.get('reviews', []))))
+
+    # One document: a global `nocite` (so every section's papers are numbered
+    # even if the prose doesn't cite one) followed by the four sections.
+    all_keys = list(dict.fromkeys(k for _, _, keys in sections for k in keys))
+    front = '---\nnocite: |\n  ' + ', '.join(f'@{k}' for k in all_keys) + '\n---\n\n'
+    body = '\n\n'.join(f'# {name}\n\n{blurb}' for name, blurb, _ in sections)
+    html = run_pandoc(front + body, bib)
+
+    # Read the global numbering from the generated bibliography's entry order,
+    # then drop the bibliography (we render our own reference lists).
+    refs = re.search(r'<div id="refs".*</div>', html, re.S)
+    order = re.findall(r'id="ref-([^"]+)"', refs.group(0)) if refs else []
+    ctx['cite_num'] = {key: i + 1 for i, key in enumerate(order)}
+    prose = html[: refs.start()] if refs else html
+
+    # Split the prose back into the four sections (one <h1> heading each).
+    chunks = [p.strip() for p in re.split(r'<h1\b[^>]*>.*?</h1>', prose, flags=re.S)[1:]]
+    by_number = lambda k: ctx['cite_num'].get(k, len(order) + 1)
+    ctx['hub_html'], ctx['hub_refs'] = {}, {}
+    for (name, _, keys), chunk in zip(sections, chunks):
+        if theme and name == theme['name']:
+            ctx['theme_html'] = Markup(chunk)
+            ctx['theme_refs'] = sorted(keys, key=by_number)
+        else:
+            ctx['hub_html'][name] = Markup(chunk)
+            ctx['hub_refs'][name] = sorted(keys, key=by_number)
 
 
 def apply_derived(ctx, derived):

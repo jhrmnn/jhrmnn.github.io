@@ -30,9 +30,34 @@
   </table>
 {% endmacro %}
 
-{# A tool-hub: name + repo, then the pandoc-rendered miniarticle (narrative prose
-   with superscript citations + its numbered reference list), then collapsed talks.
-   The miniarticle HTML is built in render.py (render_hub_sections). #}
+{# The section's reference list in the site's own format (title · authors · ref ·
+   PDF · Scholar count), each row carrying its global citation number. `keys` is
+   pre-ordered by that number in render.py. #}
+{% macro ref_list(keys) %}
+  <table class="pub">
+    {% for key in keys %}
+      {% set item = refs_by_id[key] %}
+      {% if item %}
+        {% set title, authors, ref = item|reftomd %}
+        <tr>
+          <td class="cnum">{{ cite_num[key] }}</td>
+          <td class="article">
+            {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
+            {%- if item.pdf_url -%}
+              &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
+              {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
+            {%- endif %}
+          </td>
+          <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
+        </tr>
+      {% endif %}
+    {% endfor %}
+  </table>
+{% endmacro %}
+
+{# A tool-hub: name + repo, the pandoc-rendered prose (with superscript citations),
+   the section's reference list, then collapsed talks. The prose HTML and the
+   global numbering come from render.py (render_hub_sections). #}
 {% macro hub_block(tool) %}
   {% set repo = software_by_github[tool.github] %}
   <section id="{{ tool.name }}" class="hub">
@@ -40,6 +65,7 @@
       <a class="hub-repo small" href="https://github.com/{{ tool.github }}">{{ tool.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
     </h2>
     <div class="miniarticle">{{ hub_html[tool.name] }}</div>
+    {{ ref_list(hub_refs[tool.name]) }}
     {% if hub_talks[tool.name] %}
       <details class="hub-extra">
         <summary>Talks ({{ hub_talks[tool.name]|length }})</summary>
@@ -108,6 +134,7 @@
   <section id="{{ fourth_theme.id }}" class="hub">
     <h2>{{ fourth_theme.name }}</h2>
     <div class="miniarticle">{{ theme_html }}</div>
+    {{ ref_list(theme_refs) }}
     <ul class="theme-tools">
       {% for item in other_tools %}
         <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
