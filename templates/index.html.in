@@ -30,51 +30,16 @@
   </table>
 {% endmacro %}
 
-{# Render a list of references given their citation keys, in the given order
-   (hubs curate their order to match the blurb's narrative, so no re-sorting). #}
-{% macro pub_rows(keys) %}
-  <table class="pub">
-    {% for key in keys %}
-      {% set item = refs_by_id[key] %}
-      {% if item %}
-        {% set title, authors, ref = item|reftomd %}
-        <tr>
-          <td class="article">
-            {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
-            {%- if item.pdf_url -%}
-              &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
-              {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
-            {%- endif %}
-          </td>
-          <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
-        </tr>
-      {% endif %}
-    {% endfor %}
-  </table>
-{% endmacro %}
-
-{# A tool-hub: name + repo, a narrative blurb, its publications, and collapsed
-   datasets / related-work / talks. #}
+{# A tool-hub: name + repo, then the pandoc-rendered miniarticle (narrative prose
+   with superscript citations + its numbered reference list), then collapsed talks.
+   The miniarticle HTML is built in render.py (render_hub_sections). #}
 {% macro hub_block(tool) %}
   {% set repo = software_by_github[tool.github] %}
   <section id="{{ tool.name }}" class="hub">
     <h2>{{ tool.name }}
       <a class="hub-repo small" href="https://github.com/{{ tool.github }}">{{ tool.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
     </h2>
-    <p class="hub-blurb">{{ tool.blurb }}</p>
-    {{ pub_rows(tool.pubs) }}
-    {% if tool.datasets %}
-      <details class="hub-extra">
-        <summary>Datasets</summary>
-        {{ pub_rows(tool.datasets) }}
-      </details>
-    {% endif %}
-    {% if tool.satellites %}
-      <details class="hub-extra">
-        <summary>Related &middot; Casimir &amp; fluctuational electrodynamics</summary>
-        {{ pub_rows(tool.satellites) }}
-      </details>
-    {% endif %}
+    <div class="miniarticle">{{ hub_html[tool.name] }}</div>
     {% if hub_talks[tool.name] %}
       <details class="hub-extra">
         <summary>Talks ({{ hub_talks[tool.name]|length }})</summary>
@@ -134,7 +99,7 @@
   <p id="tools-lead">My work clusters around a handful of tools, each tying together its
     method papers, applications, and talks. Threaded physics-first to learning-first,
     they share one aim: making electronic structure more accurate, by adding the missing
-    physics by hand or by learning it. <span class="small">(→ citations from Google Scholar.)</span>
+    physics by hand or by learning it.
 
   {% for tool in tools %}
     {{ hub_block(tool) }}
@@ -142,7 +107,7 @@
 
   <section id="{{ fourth_theme.id }}" class="hub">
     <h2>{{ fourth_theme.name }}</h2>
-    <p class="hub-blurb">{{ fourth_theme.blurb }}</p>
+    <div class="miniarticle">{{ theme_html }}</div>
     <ul class="theme-tools">
       {% for item in other_tools %}
         <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>built</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if item.stars %}&nbsp;&middot; {{ item.stars }} {% include "assets/github-star.svg" %}{% endif %}
@@ -153,12 +118,6 @@
           <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
       {% endfor %}
     </ul>
-    {% if reviews %}
-      <details class="hub-extra">
-        <summary>Reviews &amp; roadmaps</summary>
-        {{ pub_rows(reviews) }}
-      </details>
-    {% endif %}
     {% if theme_talks %}
       <details class="hub-extra">
         <summary>Talks ({{ theme_talks|length }})</summary>

@@ -9,10 +9,11 @@ tools:
   blurb: |
     Machine-learned exchange–correlation. [Skala](https://github.com/microsoft/skala)
     learns the exchange–correlation functional of Kohn–Sham DFT directly from data,
-    reaching [hybrid-functional accuracy at semi-local cost](https://doi.org/10.48550/arxiv.2506.14665).
-    The thread runs through a [variational principle for regularizing machine-learned
-    density functionals](https://doi.org/10.1063/5.0166432) and ties back to wavefunctions
-    via [accurate real-space electron densities from neural networks](https://doi.org/10.1063/5.0236919).
+    reaching hybrid-functional accuracy at semi-local cost [@Luise25]. The thread runs
+    through a variational principle for regularizing machine-learned density
+    functionals [@delMazo-SevillanoJCP23] and ties back to wavefunctions via accurate
+    real-space electron densities from neural networks [@ChengJCP25], trained and
+    benchmarked on dedicated reference datasets [@EhlertSD26; @GasevicJCIM25].
   pubs:
   - Luise25  # 10.48550/arxiv.2506.14665 — accurate and scalable XC with deep learning
   - delMazo-SevillanoJCP23  # 10.1063/5.0166432 — regularizing ML density functionals
@@ -24,13 +25,11 @@ tools:
   github: deepqmc/deepqmc
   blurb: |
     Neural-network wavefunctions. [DeepQMC](https://github.com/deepqmc/deepqmc) began with
-    [PauliNet](https://doi.org/10.1038/s41557-020-0544-y), the first deep-learning *ansatz*
-    to reach chemical accuracy through variational Monte Carlo; it
-    [converged to the fixed-node limit](https://doi.org/10.1063/5.0032836), reached
-    [excited states](https://doi.org/10.1038/s41467-022-35534-5), and grew into a general
-    [open-source suite](https://doi.org/10.1063/5.0157512) (with a
-    [review of the field](https://doi.org/10.1038/s41570-023-00516-8)). The arc now points
-    at a [foundation model of wavefunctions](https://doi.org/10.48550/arxiv.2506.19960).
+    PauliNet [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy
+    through variational Monte Carlo; it converged to the fixed-node limit [@SchatzleJCP21],
+    reached excited states [@EntwistleNC23], and grew into a general open-source suite
+    [@SchatzleJCP23] (with a review of the field [@HermannNRC23]). The arc now points at a
+    foundation model of wavefunctions [@Foster25].
   pubs:
   - HermannNC20  # 10.1038/s41557-020-0544-y — PauliNet
   - Foster25  # 10.48550/arxiv.2506.19960 foundation model of wavefunctions
@@ -43,14 +42,17 @@ tools:
   github: libmbd/libmbd
   blurb: |
     Many-body dispersion and van der Waals interactions. The itch started with a
-    [vdW-DF/CCSD(T) correction scheme](https://doi.org/10.1063/1.4813826) for
-    [zeolites](https://doi.org/10.1016/j.cattod.2013.09.016) and grew into a
-    [unified density-functional model of van der Waals interactions](https://doi.org/10.1103/physrevlett.124.146401)
-    — two theses and a [*Chemical Reviews* survey](https://doi.org/10.1021/acs.chemrev.6b00446) —
-    packaged as [libMBD](https://github.com/libmbd/libmbd), a
-    [scalable many-body dispersion library](https://doi.org/10.1063/5.0170972) now embedded in
-    several electronic-structure codes. Applications reach from
-    [π–π stacked molecules](https://doi.org/10.1038/ncomms14052) to layered materials.
+    vdW-DF/CCSD(T) correction scheme [@HermannJCP13] for zeolites [@HermannCT14;
+    @PolozijCT13] and grew into a unified density-functional model of van der Waals
+    interactions [@HermannPRL20] — two theses [@Hermann13; @Hermann18] and a *Chemical
+    Reviews* survey [@HermannCR17], with the exchange–correlation balance worked out along
+    the way [@HermannJCTC18; @Hermann18a]. Packaged as
+    [libMBD](https://github.com/libmbd/libmbd), a scalable many-body dispersion library
+    [@HermannJCP23] now embedded in several electronic-structure codes, it underpins
+    applications from π–π stacked molecules [@HermannNC17] through molecular crystals and
+    layered materials [@LiuJCP16; @ChattopadhyayaCM17; @CuiJPCL20; @OuyangJCTC21] to Casimir
+    and fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
+    @VenkataramSA19; @VenkataramPRB20; @StohrNC21].
   pubs:
   - HermannJCP23  # 10.1063/5.0170972 — libMBD package
   - HermannPRL20  # 10.1103/physrevlett.124.146401 — unified vdW functional
@@ -96,9 +98,8 @@ fourth_theme:
     community electronic-structure codes the methods above plug into:
     [FHI-aims](https://fhi-aims.org), [PySCF](https://pyscf.org),
     [DFTB+](https://dftbplus.org), and [QCEngine](https://github.com/MolSSI/QCEngine).
-    The same breadth runs through survey writing, from a
-    [roadmap on machine learning in electronic structure](https://doi.org/10.1088/2516-1075/ac572f)
-    to an [introduction to material modeling](https://doi.org/10.1007/978-3-030-40245-7_2),
+    The same breadth runs through survey writing, from a roadmap on machine learning in
+    electronic structure [@KulikES22] to an introduction to material modeling [@Hermann20],
     and the assorted invited seminars below.
 
 # Cross-cutting writing that doesn't sit under a single tool (shown in the fourth theme).

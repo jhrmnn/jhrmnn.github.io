@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -256,6 +257,62 @@ def unhubbed_talks(presentations):
     ]
 
 
+CSL_STYLE = 'assets/superscript.csl'
+
+
+def write_bibliography(refs, path):
+    """Write the references as a CSL-JSON bibliography for pandoc. Drops the
+    Zotero short-title fields (shortTitle/title-short): with them present,
+    citeproc returns the title-short where the journal's short form belongs."""
+    items = [
+        {k: v for k, v in r.items() if k not in ('shortTitle', 'title-short')}
+        for r in refs
+    ]
+    Path(path).write_text(json.dumps(items, ensure_ascii=False))
+
+
+def pandoc_section(blurb, keys, bib_path):
+    """Render a section's markdown (prose with [@key] citations) to HTML via
+    pandoc + citeproc, with the section's full reference set forced into the
+    bibliography via `nocite` (so a paper appears even if the prose doesn't
+    cite it). Returns prose with superscript citations followed by the numbered
+    reference list. Citeproc's per-section element ids are stripped so the four
+    sections don't collide on the page."""
+    front = ''
+    if keys:
+        front = '---\nnocite: |\n  ' + ', '.join(f'@{k}' for k in keys) + '\n---\n'
+    proc = subprocess.run(
+        ['pandoc', '--citeproc', '--csl', CSL_STYLE, '--bibliography', bib_path,
+         '-f', 'markdown', '-t', 'html5'],
+        input=front + blurb,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    # citeproc reports an unresolved [@key] on stderr but still exits 0; treat it
+    # as an error so a typo'd citation fails the build instead of rendering blank.
+    if 'not found' in proc.stderr.lower():
+        raise SystemExit(f'error: pandoc citeproc reported unresolved citations:\n{proc.stderr}')
+    return Markup(re.sub(r' id="ref[^"]*"', '', proc.stdout))
+
+
+def render_hub_sections(ctx):
+    """Build the four miniarticle HTML blobs (three hubs + the fourth theme),
+    each prose-plus-references, for the homepage."""
+    bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
+    write_bibliography(ctx['references'], bib)
+    ctx['hub_html'] = {
+        tool['name']: pandoc_section(
+            tool['blurb'],
+            [k for field in ('pubs', 'datasets', 'satellites') for k in tool.get(field, [])],
+            bib,
+        )
+        for tool in ctx.get('tools', [])
+    }
+    if theme := ctx.get('fourth_theme'):
+        ctx['theme_html'] = pandoc_section(theme['blurb'], ctx.get('reviews', []), bib)
+
+
 def apply_derived(ctx, derived):
     software = derived.get('software', {})
     for item in ctx['software']:
@@ -381,6 +438,8 @@ def render(template, ctx, **kwargs):
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
     ctx['theme_talks'] = unhubbed_talks(ctx.get('presentations', {}))
     check_completeness(ctx)
+    if 'index' in template.name:
+        render_hub_sections(ctx)
     env = make_env(template.name)
     template = env.get_template(str(template))
     doc = template.render(ctx)

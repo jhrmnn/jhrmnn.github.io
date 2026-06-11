@@ -4,6 +4,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
         entr \
         make \
         latexmk \
+        pandoc \
         pipx \
         python3-pip \
         python3-venv \

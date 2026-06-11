@@ -122,6 +122,30 @@ footer {
     margin: 0 0 0.6em 0;
 }
 
+.miniarticle > p {
+    line-height: 1.45;
+    margin: 0 0 0.7em 0;
+}
+
+.miniarticle .citation sup {
+    font-size: 0.75em;
+}
+
+.miniarticle .csl-bib-body {
+    font-size: 0.85em;
+}
+
+.miniarticle .csl-entry {
+    display: flex;
+    margin: 0.15em 0;
+}
+
+.miniarticle .csl-left-margin {
+    min-width: 1.8em;
+    padding-right: 0.4em;
+    text-align: right;
+}
+
 .hub-extra {
     margin: 0.3em 0 0 1em;
     font-size: 0.95em;
