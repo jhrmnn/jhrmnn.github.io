@@ -305,6 +305,23 @@ def cited_keys(md_text):
     return list(dict.fromkeys(keys))
 
 
+def move_citations_after_punctuation(html):
+    """Pandoc drops the superscript citation exactly where its [@key] sits in the
+    prose, so a citation written before a sentence's period renders before it
+    (`...cost<sup>1</sup>.`). House style puts the marker after the punctuation;
+    swap any citation span that directly precedes a run of clause/sentence
+    punctuation so it follows it instead (`...cost.<sup>1</sup>`). The space the
+    prose puts before the citation (`cost [@key].`) is dropped so the punctuation
+    binds tight to the word (`cost.`) rather than floating (`cost .`). A citation
+    closing a parenthetical (`...field<sup>23</sup>).`) is left inside the
+    parentheses, since `)` is not in the punctuation set."""
+    return re.sub(
+        r'\s*(<span class="citation"[^>]*>.*?</span>)([.,;:!?]+)',
+        r'\2\1',
+        html,
+    )
+
+
 def render_hub_sections(ctx):
     """Render the homepage sections from data/hubs.md. The whole file (all
     sections) goes through pandoc + citeproc in one pass so citation numbers run
@@ -324,7 +341,7 @@ def render_hub_sections(ctx):
     order = re.findall(r'id="ref-([^"]+)"', refs.group(0)) if refs else []
     ctx['cite_num'] = {key: i + 1 for i, key in enumerate(order)}
     by_number = lambda k: ctx['cite_num'].get(k, len(order) + 1)
-    prose = html[: refs.start()] if refs else html
+    prose = move_citations_after_punctuation(html[: refs.start()] if refs else html)
 
     # Split into (header, body) per <h1>; read structure from header attributes
     # and the section's references from the citations its body carries.
