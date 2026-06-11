@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlencode
@@ -237,6 +238,44 @@ def canonical_doi(doi, cache):
     return doi.lower()
 
 
+def _ascii_fold(s):
+    """Drop diacritics (Stöhr -> Stohr, Schätzle -> Schatzle), matching the
+    transliteration Better BibTeX applies when building citation keys."""
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode()
+
+
+def citation_key(item):
+    """A human-readable key in the form <Surname><JournalInitials><YY>, e.g.
+    ``HermannNC20``: the first author's surname, the upper-case initials of the
+    abbreviated journal (omitted when the work has no such short title — a
+    preprint, thesis or book chapter), and the two-digit year. Reproduces the
+    historical Better BibTeX keys, which the Zotero web API does not expose.
+    Callers disambiguate collisions with a suffix."""
+    author = (item.get('author') or item.get('editor') or [{}])[0]
+    surname = _ascii_fold(
+        (author.get('non-dropping-particle', '') + author.get('family', '')).replace(
+            ' ', ''
+        )
+    )
+    short = item.get('container-title-short')
+    initials = ''.join(w[0] for w in short.split() if w[:1].isupper()) if short else ''
+    year = str(item['issued']['date-parts'][0][0])[-2:]
+    return f'{surname}{initials}{year}'
+
+
+def assign_citation_keys(refs):
+    """Set a unique ``citation-key`` on each reference. When the derived key
+    collides, the earliest (by date, then DOI) keeps the bare key and the rest
+    get a lowercase ``a``/``b``/... suffix, as Better BibTeX does."""
+    groups = {}
+    for ref in refs:
+        groups.setdefault(citation_key(ref), []).append(ref)
+    for base, group in groups.items():
+        group.sort(key=lambda r: (r['issued']['date-parts'][0], r['id']))
+        for i, ref in enumerate(group):
+            ref['citation-key'] = base + ('' if i == 0 else chr(ord('a') + i - 1))
+
+
 def fetch_references(cache):
     items = cache.get(ZOTERO_REFS_URL)['items']
     _ensure_nltk()
@@ -262,6 +301,7 @@ def fetch_references(cache):
         ):
             it['container-title-short'] = abbreviate_journal(it['container-title'])
         refs.append(it)
+    assign_citation_keys(refs)
     return refs
 
 
