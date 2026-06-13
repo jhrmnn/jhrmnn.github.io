@@ -135,10 +135,10 @@
 
   </div>
 
-  <p id="tools-lead">My work clusters around a handful of tools, each tying together its
-    method papers, applications, and talks. Threaded physics-first to learning-first,
-    they share one aim: making electronic structure more accurate, by adding the missing
-    physics by hand or by learning it.
+  <p id="tools-lead">I build quantum-chemistry tools that others build on, tracing an
+    arc from hand-crafted physics modeling of van der Waals dispersion, to physics-driven
+    machine learning of wavefunctions, to data-driven machine learning of the
+    exchange–correlation functional.
 
   {% for sec in sections %}
     {{ section_block(sec) }}
