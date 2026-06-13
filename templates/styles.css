@@ -101,7 +101,6 @@ footer {
 }
 
 #tools-lead {
-    color: #666;
     margin-bottom: 0.5em;
 }
 
@@ -142,7 +141,6 @@ footer {
 }
 
 @media (prefers-color-scheme: dark) {
-    #tools-lead,
     .hub-extra summary {
         color: #999;
     }
