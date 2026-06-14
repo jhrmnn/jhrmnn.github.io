@@ -186,12 +186,10 @@ def check_completeness(ctx):
     a green build."""
     problems = []
 
-    # The prose cites paper references (by their fetched id) and software (by its
-    # `cite` key); a publication is also placed by being named as a program paper.
+    # A publication is placed by being cited in hubs.md or named as a software
+    # program paper; everything else would silently not appear on the homepage.
     hubs_md = Path(HUBS_MD).read_text()
-    cited = set(cited_keys(hubs_md))
-    software_cites = {s['cite'] for s in ctx.get('software', []) if 'cite' in s}
-    claimed = cited - software_cites
+    claimed = set(cited_keys(hubs_md))
     claimed.update(s['paper'] for s in ctx.get('software', []) if 'paper' in s)
     ref_ids = {r['id'] for r in ctx['references']}
     if orphans := ref_ids - claimed:
@@ -203,31 +201,15 @@ def check_completeness(ctx):
         problems.append(
             f'references absent from fetched data: {", ".join(sorted(dangling))}'
         )
-    # A [@key] that is neither a fetched reference nor a software `cite` resolves
-    # to nothing (pandoc would render it blank); fail loudly instead.
-    if unknown := cited - ref_ids - software_cites:
-        problems.append(
-            'citation keys matching no reference or software cite: '
-            f'{", ".join(sorted(unknown))}'
-        )
 
-    # Each hub names its anchor software repo in the <h1> github="…" attribute.
-    # That software must exist and be cited in the section by its `cite` key,
-    # else its repo link and star count — now a numbered row, not a header —
-    # would silently not appear.
+    # Each hub names its anchor software repo in the <h1> github="…" attribute;
+    # it must resolve to a software entry (rendered as the section's tool list).
     hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
-    sw_by_github = {s['github']: s for s in ctx.get('software', []) if 'github' in s}
-    for repo in sorted(hub_repos):
-        s = sw_by_github.get(repo)
-        if not s:
-            problems.append(f'hub repo missing from the software list: {repo}')
-        elif not s.get('cite'):
-            problems.append(f'hub anchor software has no `cite` key: {repo}')
-        elif s['cite'] not in cited:
-            problems.append(
-                f'hub anchor software not cited in its section: {repo} '
-                f'(cite it as [@{s["cite"]}] so its row appears)'
-            )
+    sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
+    if missing := hub_repos - sw_repos:
+        problems.append(
+            f'hub repos missing from the software list: {", ".join(sorted(missing))}'
+        )
 
     for talks in ctx.get('presentations', {}).values():
         for talk in talks:
@@ -268,34 +250,14 @@ def unhubbed_talks(presentations):
 CSL_STYLE = 'assets/superscript.csl'
 
 
-def software_csl(software):
-    """Synthetic CSL-JSON items for the citable software entries (those with a
-    `cite` key), so citeproc numbers `[@cite]` in the prose in the same sequence
-    as the paper references. Only the id matters for the in-text number; the
-    title/URL are filler — the generated bibliography is discarded and software
-    rows are rendered by the template in the site's own format."""
-    return [
-        {
-            'id': s['cite'],
-            'type': 'software',
-            'title': s['name'],
-            'URL': s.get('url') or f'https://github.com/{s["github"]}',
-        }
-        for s in software
-        if 'cite' in s
-    ]
-
-
-def write_bibliography(refs, software, path):
-    """Write the references (plus citable software) as a CSL-JSON bibliography
-    for pandoc. Drops the Zotero short-title fields (shortTitle/title-short):
-    with them present, citeproc returns the title-short where the journal's short
-    form belongs."""
+def write_bibliography(refs, path):
+    """Write the references as a CSL-JSON bibliography for pandoc. Drops the
+    Zotero short-title fields (shortTitle/title-short): with them present,
+    citeproc returns the title-short where the journal's short form belongs."""
     items = [
         {k: v for k, v in r.items() if k not in ('shortTitle', 'title-short')}
         for r in refs
     ]
-    items.extend(software_csl(software))
     Path(path).write_text(json.dumps(items, ensure_ascii=False))
 
 
@@ -348,10 +310,12 @@ def render_hub_sections(ctx):
     its generated bibliography's order, then discard that bibliography — the
     reference lists are rendered by the template in the site's own format. Each
     section's structure comes from its <h1> header attributes (id, github repo,
-    a `theme` class for the fourth section) and its reference set from the
-    [@key]s its prose cites. Sets ctx['sections'] (ordered) and ctx['cite_num']."""
+    a `theme` class for the fourth section), its publications from the [@key]s its
+    prose cites, and its injected tool list from the software entries (a hub's one
+    anchor tool by repo, the rest under the theme section). Sets ctx['sections']
+    (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
-    write_bibliography(ctx['references'], ctx.get('software', []), bib)
+    write_bibliography(ctx['references'], bib)
     html = run_pandoc(Path(HUBS_MD).read_text(), bib)
 
     # Global numbering from the generated bibliography's entry order; then drop it.
@@ -377,6 +341,22 @@ def render_hub_sections(ctx):
             'html': Markup(body.strip()),
             'refs': sorted(dict.fromkeys(cited), key=by_number),
         })
+
+    # Inject each section's tool list (kept out of the prose and the numbering): a
+    # hub shows the one tool named in its github= header attribute; the theme
+    # section gathers every remaining tool.
+    hub_githubs = {sec['github'] for sec in sections if sec['github']}
+    for sec in sections:
+        if sec['github']:
+            sec['software'] = [
+                t for t in ctx['software'] if t.get('github') == sec['github']
+            ]
+        elif sec['theme']:
+            sec['software'] = [
+                t for t in ctx['software'] if t.get('github') not in hub_githubs
+            ]
+        else:
+            sec['software'] = []
     ctx['sections'] = sections
 
 
@@ -491,13 +471,9 @@ def render(template, ctx, **kwargs):
             item['pdf_notice'] = extras['notice']
         if item['id'] in ctx['keypubs']:
             item['star'] = True
-    # Lookups for the tool-hub homepage: a reference by id, a software entry by
-    # its `cite` key (numbered rows mixed into the reference lists), and talks
-    # bucketed into the hubs.
+    # Lookups for the tool-hub homepage: a reference by id, and talks bucketed
+    # into the hubs.
     ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
-    ctx['software_by_cite'] = {
-        s['cite']: s for s in ctx.get('software', []) if 'cite' in s
-    }
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
     ctx['theme_talks'] = unhubbed_talks(ctx.get('presentations', {}))
     check_completeness(ctx)

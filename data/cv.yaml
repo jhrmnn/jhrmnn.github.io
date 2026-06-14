@@ -154,39 +154,31 @@ outreach:
   what: Co-organized [FYKOS](https://fykos.org), physics competition for high school students
 software:
 - name: DeepQMC
-  cite: deepqmc
   role: creator
   github: deepqmc/deepqmc
 - name: libMBD
-  cite: libmbd
   role: creator
   github: libmbd/libmbd
 - name: Pyberny
-  cite: pyberny
   role: creator
   github: jhrmnn/pyberny
 - name: Skala
-  cite: skala
   role: contributor
   github: microsoft/skala
 - name: FHI-aims
-  cite: fhiaims
   role: core contributor
   url: https://fhi-aims.org
   description: All-electron electronic-structure calculations (Fortran)
   paper: Abbott25  # 10.48550/arxiv.2505.00125
 - name: PySCF
-  cite: pyscf
   url: https://pyscf.org
   role: contributor
   paper: SunJCP20  # 10.1063/5.0006074
 - name: DFTB+
-  cite: dftbplus
   role: contributor
   url: https://dftbplus.org
   paper: HourahineJCP20  # 10.1063/1.5143190
 - name: QCEngine
-  cite: qcengine
   role: contributor
   url: https://github.com/MolSSI/QCEngine
   paper: SmithJCP21  # 10.1063/5.0059356

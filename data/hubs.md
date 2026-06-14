@@ -1,18 +1,19 @@
 <!--
-The homepage spine: one section per tool-hub plus a final `.theme` section, each
-a dense narrative paragraph with [@key] citations. The section's reference list is
-exactly the works its prose cites; numbering runs consecutively across all sections
-(render.py runs this through pandoc + citeproc). Header attributes carry the anchor
-id and, for a hub, its GitHub repo, whose anchor tool must be cited in the section
-(its repo link and star count ride that numbered row, not the header). A paper or
-tool appears under a section because the prose cites it — cross-list by citing it in
-both. The software/tool list, talks and program papers live in data/cv.yaml. See
-issue #50.
+The homepage spine: only the per-section headings and prose live here; the tool
+list, publications and talks are injected by render.py. Each section is a dense
+narrative paragraph with [@key] citations to publications — its publication list
+is exactly the works its prose cites, numbered consecutively across all sections
+(render.py runs the whole file through pandoc + citeproc in one pass). Header
+attributes carry the anchor id and, for a hub, its GitHub repo, which picks the
+matching software entry for the injected tool list above the prose. A paper
+appears under a section because the prose cites it — cross-list by citing it
+in both. The software/tool list, talks and program papers live in data/cv.yaml.
+See issue #50.
 -->
 
 # Skala {#Skala github="microsoft/skala"}
 
-Exchange–correlation, learned from data. Skala [@skala] learns the
+Exchange–correlation, learned from data. Skala learns the
 exchange–correlation functional of Kohn–Sham DFT, reaching hybrid-functional
 accuracy at semi-local cost [@Luise25]. The thread runs through a variational
 principle for regularizing machine-learned density functionals
@@ -22,7 +23,7 @@ dedicated reference datasets [@EhlertSD26; @GasevicJCIM25].
 
 # DeepQMC {#DeepQMC github="deepqmc/deepqmc"}
 
-Wavefunctions, learned from physics. DeepQMC [@deepqmc] began with PauliNet
+Wavefunctions, learned from physics. DeepQMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
 variational Monte Carlo — the wavefunction optimized against the Schrödinger
 equation itself, with no reference data. It converged to the fixed-node limit
@@ -39,7 +40,7 @@ correction scheme [@HermannJCP13] for zeolites [@HermannCT14; @PolozijCT13] and 
 into a unified density-functional model of van der Waals interactions
 [@HermannPRL20; @Hermann13; @Hermann18; @HermannCR17], with the exchange–correlation
 balance worked out along the way [@HermannJCTC18; @Hermann18a]. Packaged as
-libMBD [@libmbd], a scalable many-body dispersion library [@HermannJCP23] now
+libMBD, a scalable many-body dispersion library [@HermannJCP23] now
 embedded in several electronic-structure codes, it underpins applications from π–π
 stacked molecules [@HermannNC17] through molecular crystals and layered materials
 [@LiuJCP16; @ChattopadhyayaCM17; @CuiJPCL20; @OuyangJCTC21] to Casimir and
@@ -48,12 +49,10 @@ fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 
 # Codes, tools & writing {#more .theme}
 
-Beyond the three flagships, the connective tissue. I build smaller standalone
-tools — Pyberny [@pyberny], a molecular geometry optimizer, and
+Beyond the three flagships, the connective tissue. Alongside the standalone tools
+and community electronic-structure codes above — plus
 [Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf), a framework for
-reproducible computational science — and contribute to the community
-electronic-structure codes the methods above plug into: FHI-aims [@fhiaims],
-PySCF [@pyscf], DFTB+ [@dftbplus], and QCEngine [@qcengine]. The same breadth runs
-through survey writing, from a roadmap on machine learning in electronic structure
-[@KulikES22] to an introduction to material modeling [@Hermann20], and the assorted
-invited seminars below.
+reproducible computational science — the same breadth runs through survey
+writing, from a roadmap on machine learning in electronic structure [@KulikES22]
+to an introduction to material modeling [@Hermann20], and the assorted invited
+seminars below.
