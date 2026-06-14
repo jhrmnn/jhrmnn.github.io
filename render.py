@@ -202,7 +202,7 @@ def check_completeness(ctx):
         )
 
     # Each hub names its tool's repo in the <h1> github="…" attribute (shown in
-    # the heading); it must resolve to a software entry for the link and stars.
+    # its tool list); it must resolve to a software entry for the link and stars.
     hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
     sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
     if missing := hub_repos - sw_repos:
@@ -310,8 +310,8 @@ def render_hub_sections(ctx):
     reference lists are rendered by the template in the site's own format. Each
     section's structure comes from its <h1> header attributes (id, github repo,
     a `theme` class for the fourth section) and its publications from the [@key]s
-    its prose cites; a hub shows its github tool in the heading, while the theme
-    section gets an injected list of every other tool. Sets ctx['sections']
+    its prose cites; a hub lists its github tool just after the heading, while the
+    theme section gets an injected list of every other tool. Sets ctx['sections']
     (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
@@ -345,14 +345,21 @@ def render_hub_sections(ctx):
             'refs': sorted(dict.fromkeys(cited), key=by_number),
         })
 
-    # A hub shows its one tool in the heading (the github= repo, rendered with its
-    # star count); only the theme section gets an injected tool list, gathering
-    # every tool not anchored to a hub.
+    # Each hub lists its one anchor tool (the github= repo) just after the
+    # heading; the theme section instead lists every tool not anchored to a hub.
+    # Both render through the same software list, so hubs and the theme present
+    # their tools identically.
+    sw_by_github = {t['github']: t for t in ctx['software'] if 'github' in t}
     hub_githubs = {sec['github'] for sec in sections if sec['github']}
     for sec in sections:
-        sec['software'] = [
-            t for t in ctx['software'] if t.get('github') not in hub_githubs
-        ] if sec['theme'] else []
+        if sec['theme']:
+            sec['software'] = [
+                t for t in ctx['software'] if t.get('github') not in hub_githubs
+            ]
+        elif sec['github'] and sec['github'] in sw_by_github:
+            sec['software'] = [sw_by_github[sec['github']]]
+        else:
+            sec['software'] = []
     ctx['sections'] = sections
 
 
@@ -467,13 +474,9 @@ def render(template, ctx, **kwargs):
             item['pdf_notice'] = extras['notice']
         if item['id'] in ctx['keypubs']:
             item['star'] = True
-    # Lookups for the tool-hub homepage: a reference by id, a software entry by
-    # its GitHub repo (for the hub heading's star count), and talks bucketed into
-    # the hubs.
+    # Lookups for the tool-hub homepage: a reference by id, and talks bucketed
+    # into the hubs.
     ctx['refs_by_id'] = {item['id']: item for item in ctx['references']}
-    ctx['software_by_github'] = {
-        s['github']: s for s in ctx.get('software', []) if 'github' in s
-    }
     ctx['hub_talks'] = group_talks_by_hub(ctx.get('presentations', {}))
     ctx['theme_talks'] = unhubbed_talks(ctx.get('presentations', {}))
     check_completeness(ctx)

@@ -5,9 +5,9 @@ narrative paragraph with [@key] citations to publications — its publication li
 is exactly the works its prose cites, numbered consecutively across all sections
 (render.py runs the whole file through pandoc + citeproc in one pass). The lead
 paragraph before the first heading is the homepage intro. Header attributes carry
-the anchor id and, for a hub, its GitHub repo, shown in the heading with its star
-count; the `.theme` section instead gets an injected list of every tool not
-anchored to a hub. A paper appears under a section because the prose cites it —
+the anchor id and, for a hub, its GitHub repo, listed just after the heading with
+its star count; the `.theme` section instead gets an injected list of every tool
+not anchored to a hub. A paper appears under a section because the prose cites it —
 cross-list by citing it in both. The software/tool list and talks live in
 data/cv.yaml. See issue #50.
 -->
