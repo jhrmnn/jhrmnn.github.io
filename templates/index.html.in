@@ -142,10 +142,7 @@
 
   </div>
 
-  <p id="tools-lead">I build quantum-chemistry tools that others build on, tracing an
-    arc from hand-crafted physics modeling of van der Waals dispersion, to physics-driven
-    machine learning of wavefunctions, to data-driven machine learning of the
-    exchange–correlation functional.
+  {% if tools_lead %}<div id="tools-lead">{{ tools_lead }}</div>{% endif %}
 
   {% for sec in sections %}
     {{ section_block(sec) }}

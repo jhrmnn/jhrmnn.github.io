@@ -3,13 +3,19 @@ The homepage spine: only the per-section headings and prose live here; the tool
 list, publications and talks are injected by render.py. Each section is a dense
 narrative paragraph with [@key] citations to publications — its publication list
 is exactly the works its prose cites, numbered consecutively across all sections
-(render.py runs the whole file through pandoc + citeproc in one pass). Header
-attributes carry the anchor id and, for a hub, its GitHub repo, shown in the
-heading with its star count; the `.theme` section instead gets an injected list of
-every tool not anchored to a hub. A paper appears under a section because the prose
-cites it — cross-list by citing it in both. The software/tool list and talks live
-in data/cv.yaml. See issue #50.
+(render.py runs the whole file through pandoc + citeproc in one pass). The lead
+paragraph before the first heading is the homepage intro. Header attributes carry
+the anchor id and, for a hub, its GitHub repo, shown in the heading with its star
+count; the `.theme` section instead gets an injected list of every tool not
+anchored to a hub. A paper appears under a section because the prose cites it —
+cross-list by citing it in both. The software/tool list and talks live in
+data/cv.yaml. See issue #50.
 -->
+
+I build quantum-chemistry tools that others build on, tracing an arc from
+hand-crafted physics modeling of van der Waals dispersion, to physics-driven
+machine learning of wavefunctions, to data-driven machine learning of the
+exchange–correlation functional.
 
 # Density functional theory {#Skala github="microsoft/skala"}
 

@@ -100,7 +100,7 @@ footer {
     font-size: 0.95em;
 }
 
-#tools-lead {
+#tools-lead > p {
     margin-bottom: 0.5em;
 }
 

@@ -315,7 +315,9 @@ def render_hub_sections(ctx):
     (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
-    html = run_pandoc(Path(HUBS_MD).read_text(), bib)
+    # Drop the documentation comment so it neither reaches the page nor the lead.
+    md = re.sub(r'<!--.*?-->', '', Path(HUBS_MD).read_text(), flags=re.S)
+    html = run_pandoc(md, bib)
 
     # Global numbering from the generated bibliography's entry order; then drop it.
     refs = re.search(r'<div id="refs".*</div>', html, re.S)
@@ -325,8 +327,10 @@ def render_hub_sections(ctx):
     prose = html[: refs.start()] if refs else html
 
     # Split into (header, body) per <h1>; read structure from header attributes
-    # and the section's references from the citations its body carries.
+    # and the section's references from the citations its body carries. Anything
+    # before the first <h1> is the lead paragraph (the homepage intro).
     parts = re.split(r'(<h1\b[^>]*>.*?</h1>)', prose, flags=re.S)
+    ctx['tools_lead'] = Markup(parts[0].strip())
     sections = []
     for header, body in zip(parts[1::2], parts[2::2]):
         attr = lambda name: (re.search(rf'\b{name}="([^"]+)"', header) or (None, None))[1]
