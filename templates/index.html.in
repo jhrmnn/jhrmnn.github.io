@@ -55,10 +55,10 @@
   </table>
 {% endmacro %}
 
-{# A section's tool list — injected, kept out of the prose and the numbering: the
-   hub's anchor tool, or every standalone/contributed tool for the theme section.
-   Rendered as on main: name · role · stars inline, description on its own line.
-   Program papers are not shown here — they appear in the section's publications. #}
+{# The theme section's tool list — injected, kept out of the prose and the
+   numbering. Rendered as on main: name · role · stars inline, description on its
+   own line. Program papers are not shown here — they appear in the publications.
+   Hubs carry their one tool in the heading instead, so their list is empty. #}
 {% macro software_list(items) %}
   {% if items %}
     <ul class="tools">
@@ -72,13 +72,18 @@
 {% endmacro %}
 
 {# A homepage section parsed from data/hubs.md (render_hub_sections). Only the
-   heading and prose come from the markdown; the rest is injected — the tool
-   list, then the prose (with superscript citations), then its numbered
-   publications, then collapsed talks. #}
+   heading and prose come from the markdown; the rest is injected. A hub heading
+   carries its tool's repo link and star count; the theme section instead gets an
+   injected tool list. Then the prose (with superscript citations), the numbered
+   publications, and collapsed talks. #}
 {% macro section_block(sec) %}
   {% set talks = theme_talks if sec.theme else hub_talks[sec.name] %}
   <section id="{{ sec.id }}" class="hub">
-    <h2>{{ sec.name }}</h2>
+    <h2>{{ sec.name }}
+      {%- if sec.github %}{% set repo = software_by_github[sec.github] %}
+      <a class="hub-repo small" href="https://github.com/{{ sec.github }}">{{ sec.github }}</a>{% if repo and repo.stars %}&nbsp;<em class="small">{{ repo.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+      {%- endif %}
+    </h2>
     {{ software_list(sec.software) }}
     <div class="miniarticle">{{ sec.html }}</div>
     {{ ref_list(sec.refs) }}
