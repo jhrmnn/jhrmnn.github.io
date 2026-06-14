@@ -49,10 +49,10 @@ fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 
 # Codes, tools & writing {#more .theme}
 
-Beyond the three flagships, the connective tissue. Alongside the standalone tools
-and community electronic-structure codes above — plus
+Beyond the three flagships, the connective tissue. I build standalone tools and
 [Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf), a framework for
-reproducible computational science — the same breadth runs through survey
-writing, from a roadmap on machine learning in electronic structure [@KulikES22]
-to an introduction to material modeling [@Hermann20], and the assorted invited
-seminars below.
+reproducible computational science, and contribute to community
+electronic-structure codes, each with its own program paper [@Abbott25; @SunJCP20;
+@HourahineJCP20; @SmithJCP21]. The same breadth runs through survey writing, from a
+roadmap on machine learning in electronic structure [@KulikES22] to an introduction
+to material modeling [@Hermann20], and the assorted invited seminars below.
