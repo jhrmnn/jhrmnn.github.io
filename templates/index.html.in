@@ -77,7 +77,7 @@
    injected tool list. Then the prose (with superscript citations), the numbered
    publications, and collapsed talks. #}
 {% macro section_block(sec) %}
-  {% set talks = theme_talks if sec.theme else hub_talks[sec.name] %}
+  {% set talks = theme_talks if sec.theme else hub_talks[sec.id] %}
   <section id="{{ sec.id }}" class="hub">
     <h2>{{ sec.name }}
       {%- if sec.github %}{% set repo = software_by_github[sec.github] %}
