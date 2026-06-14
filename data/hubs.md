@@ -3,15 +3,15 @@ The homepage spine: only the per-section headings and prose live here; the tool
 list, publications and talks are injected by render.py. Each section is a dense
 narrative paragraph with [@key] citations to publications — its publication list
 is exactly the works its prose cites, numbered consecutively across all sections
-(render.py runs the whole file through pandoc + citeproc in one pass). Header
-attributes carry the anchor id and, for a hub, its GitHub repo, which picks the
-matching software entry for the injected tool list above the prose. A paper
-appears under a section because the prose cites it — cross-list by citing it
-in both. The software/tool list, talks and program papers live in data/cv.yaml.
-See issue #50.
+(render.py runs the whole file through pandoc + citeproc in one pass). The header
+carries the anchor id; a hub heading also names a software entry (matched by name),
+which fills the injected tool list above the prose, and the `.theme` section
+gathers every remaining tool. A paper appears under a section because the prose
+cites it — cross-list by citing it in both. The software/tool list and talks live
+in data/cv.yaml. See issue #50.
 -->
 
-# Skala {#Skala github="microsoft/skala"}
+# Skala {#Skala}
 
 Exchange–correlation, learned from data. Skala learns the
 exchange–correlation functional of Kohn–Sham DFT, reaching hybrid-functional
@@ -21,7 +21,7 @@ principle for regularizing machine-learned density functionals
 electron densities from neural networks [@ChengJCP25], trained and benchmarked on
 dedicated reference datasets [@EhlertSD26; @GasevicJCIM25].
 
-# DeepQMC {#DeepQMC github="deepqmc/deepqmc"}
+# DeepQMC {#DeepQMC}
 
 Wavefunctions, learned from physics. DeepQMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
@@ -33,7 +33,7 @@ Those same wavefunctions also yield accurate real-space electron densities
 [@ChengJCP25], and the arc now points at a foundation model of wavefunctions
 [@Foster25].
 
-# libMBD {#libMBD github="libmbd/libmbd"}
+# libMBD {#libMBD}
 
 Van der Waals dispersion, by hand. The itch started with a vdW-DF/CCSD(T)
 correction scheme [@HermannJCP13] for zeolites [@HermannCT14; @PolozijCT13] and grew

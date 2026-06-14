@@ -201,13 +201,14 @@ def check_completeness(ctx):
             f'references absent from fetched data: {", ".join(sorted(dangling))}'
         )
 
-    # Each hub names its anchor software repo in the <h1> github="…" attribute;
-    # it must resolve to a software entry (rendered as the section's tool list).
-    hub_repos = set(re.findall(r'github="([^"]+)"', hubs_md))
-    sw_repos = {s['github'] for s in ctx.get('software', []) if 'github' in s}
-    if missing := hub_repos - sw_repos:
+    # A hub heading names its tool: every non-theme section must match a software
+    # entry by name (that entry fills the section's injected tool list).
+    headings = re.findall(r'^#\s+(.+?)\s*\{([^}]*)\}', hubs_md, re.M)
+    hub_names = {name for name, attrs in headings if '.theme' not in attrs.split()}
+    sw_names = {s['name'] for s in ctx.get('software', [])}
+    if missing := hub_names - sw_names:
         problems.append(
-            f'hub repos missing from the software list: {", ".join(sorted(missing))}'
+            f'hub headings naming no software entry: {", ".join(sorted(missing))}'
         )
 
     for talks in ctx.get('presentations', {}).values():
@@ -308,10 +309,10 @@ def render_hub_sections(ctx):
     prose it renders (with superscript citations), read the key->number map from
     its generated bibliography's order, then discard that bibliography — the
     reference lists are rendered by the template in the site's own format. Each
-    section's structure comes from its <h1> header attributes (id, github repo,
-    a `theme` class for the fourth section), its publications from the [@key]s its
-    prose cites, and its injected tool list from the software entries (a hub's one
-    anchor tool by repo, the rest under the theme section). Sets ctx['sections']
+    section's structure comes from its <h1> header attributes (id, and a `theme`
+    class for the fourth section), its publications from the [@key]s its prose
+    cites, and its injected tool list from the software entries (a hub's one tool
+    matched by heading name, the rest under the theme section). Sets ctx['sections']
     (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
@@ -335,27 +336,24 @@ def render_hub_sections(ctx):
         sections.append({
             'id': attr('id'),
             'name': unescape(re.sub(r'<[^>]+>', '', re.search(r'<h1\b[^>]*>(.*?)</h1>', header, re.S).group(1)).strip()),
-            'github': attr('data-github'),
             'theme': 'theme' in cls.split(),
             'html': Markup(body.strip()),
             'refs': sorted(dict.fromkeys(cited), key=by_number),
         })
 
     # Inject each section's tool list (kept out of the prose and the numbering): a
-    # hub shows the one tool named in its github= header attribute; the theme
-    # section gathers every remaining tool.
-    hub_githubs = {sec['github'] for sec in sections if sec['github']}
+    # hub heading names its one tool (matched by name); the theme section gathers
+    # every remaining tool.
+    hub_names = {sec['name'] for sec in sections if not sec['theme']}
     for sec in sections:
-        if sec['github']:
+        if sec['theme']:
             sec['software'] = [
-                t for t in ctx['software'] if t.get('github') == sec['github']
-            ]
-        elif sec['theme']:
-            sec['software'] = [
-                t for t in ctx['software'] if t.get('github') not in hub_githubs
+                t for t in ctx['software'] if t['name'] not in hub_names
             ]
         else:
-            sec['software'] = []
+            sec['software'] = [
+                t for t in ctx['software'] if t['name'] == sec['name']
+            ]
     ctx['sections'] = sections
 
 
