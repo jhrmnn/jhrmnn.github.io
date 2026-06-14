@@ -316,7 +316,16 @@ def render_hub_sections(ctx):
     (ordered) and ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
-    html = run_pandoc(Path(HUBS_MD).read_text(), bib)
+    # Program papers aren't cited in the prose, but appear as publications under
+    # the section hosting their software. A `nocite` block makes citeproc number
+    # them (consecutively, after the in-text citations) and emit them into the
+    # bibliography we read the numbering from.
+    md = Path(HUBS_MD).read_text()
+    program_papers = [s['paper'] for s in ctx['software'] if s.get('paper')]
+    if program_papers:
+        nocite = ' '.join(f'@{p}' for p in program_papers)
+        md = f'---\nnocite: |\n  {nocite}\n---\n\n{md}'
+    html = run_pandoc(md, bib)
 
     # Global numbering from the generated bibliography's entry order; then drop it.
     refs = re.search(r'<div id="refs".*</div>', html, re.S)
@@ -357,6 +366,9 @@ def render_hub_sections(ctx):
             ]
         else:
             sec['software'] = []
+        # The program papers of the section's tools join its publications list.
+        paper_refs = [t['paper'] for t in sec['software'] if t.get('paper')]
+        sec['refs'] = sorted(dict.fromkeys(sec['refs'] + paper_refs), key=by_number)
     ctx['sections'] = sections
 
 

@@ -57,13 +57,15 @@
 
 {# A section's tool list — injected, kept out of the prose and the numbering: the
    hub's anchor tool, or every standalone/contributed tool for the theme section.
-   Rendered name · role · description · program paper (no star count). #}
+   Rendered as on main: name · role · stars inline, description on its own line.
+   Program papers are not shown here — they appear in the section's publications. #}
 {% macro software_list(items) %}
   {% if items %}
     <ul class="tools">
       {% for item in items %}
-        {% set p = refs_by_id[item.paper] if item.paper %}
-        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot; <em>{% if item.role == 'creator' %}built{% else %}contributor{% endif %}</em>{% if item.description %}&nbsp;&middot; {{ item.description }}{% endif %}{% if p %}&nbsp;&middot; <a href="{% if p.pdf_url %}{{ p.pdf_url }}{% elif p.DOI %}https://doi.org/{{ p.DOI }}{% else %}{{ p.URL }}{% endif %}">program paper</a>{% endif %}
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot;
+          {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+          {% if item.description %}<br>{{ item.description }}{% endif %}
       {% endfor %}
     </ul>
   {% endif %}
