@@ -14,7 +14,7 @@ data/cv.yaml. See issue #50.
 -->
 
 I build quantum-chemistry tools that others build on, tracing an arc from
-hand-crafted physics modeling of van der Waals dispersion, to physics-driven
+hand-crafted physics modeling of long-range correlation, to physics-driven
 machine learning of wavefunctions, to data-driven machine learning of the
 exchange–correlation functional.
 
