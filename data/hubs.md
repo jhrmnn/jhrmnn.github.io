@@ -18,14 +18,14 @@ hand-crafted physics modeling of van der Waals dispersion, to physics-driven
 machine learning of wavefunctions, to data-driven machine learning of the
 exchange–correlation functional.
 
-# Skala {#Skala github="microsoft/skala" nav="DFT"}
+# Density functional theory {#Skala github="microsoft/skala" nav="DFT"}
 
 Exchange–correlation, learned from data. Skala learns the
 exchange–correlation functional of Kohn–Sham DFT, reaching hybrid-functional
 accuracy at semi-local cost [@Luise25]. This thread started by looking at the algorithmic side of things
 [@delMazo-SevillanoJCP23], but it later became evident that the key ingredient is data [@EhlertSD26; @GasevicJCIM25].
 
-# DeepQMC {#DeepQMC github="deepqmc/deepqmc" nav="QMC"}
+# Quantum Monte Carlo {#DeepQMC github="deepqmc/deepqmc" nav="QMC"}
 
 Wavefunctions, learned from physics. Deep QMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
@@ -37,7 +37,7 @@ Those same wavefunctions also yield accurate real-space electron densities
 [@ChengJCP25], and in the latest iteration are encoded in a single foundation model
 [@Foster25].
 
-# libMBD {#libMBD github="libmbd/libmbd" nav="vdW"}
+# Van der Waals dispersion {#libMBD github="libmbd/libmbd" nav="vdW"}
 
 Long-range electron corelation, by hand. The itch started with a vdW-DF/CCSD(T)
 correction scheme [@HermannJCP13; @Hermann13] for zeolites [@HermannCT14; @PolozijCT13] and grew
