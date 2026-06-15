@@ -203,8 +203,8 @@ def check(  # noqa: C901
 
     # Google Scholar auto-indexes extra items (talks, duplicates) we can't
     # curate away, so only require it to cover the Zotero papers (skipping the
-    # check when Scholar data is missing, e.g. a soft block, rather than flagging
-    # every paper), and corroborate the year where Scholar reports one.
+    # check when Scholar data is missing rather than flagging every paper), and
+    # corroborate the year where Scholar reports one.
     if scholar:
         s_titles = {title_key(t) for t in scholar}
         s_years = {title_key(t): y for t, y in scholar_year_by_title.items()}

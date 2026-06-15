@@ -138,50 +138,11 @@ def parse_scholar_venues_html(html):
     }
 
 
-def parse_scholar_profile(path):
-    return parse_scholar_profile_html(path.read_text())
-
-
-def parse_scholar_years(path):
-    return parse_scholar_years_html(path.read_text())
-
-
-def parse_scholar_venues(path):
-    return parse_scholar_venues_html(path.read_text())
-
-
-def published_scholar_citations():
-    try:
-        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
-            'scholar_citations'
-        ]
-    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
-        return {'timestamp': '1970-01-01T00:00:00', 'value': {}}
-
-
 def published_n_reviews():
     try:
         return json.loads(reuse_data.latest_derived_bytes())['n_reviews']
     except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
         return None
-
-
-def published_scholar_years():
-    try:
-        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
-            'scholar_years'
-        ]
-    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
-        return {}
-
-
-def published_scholar_venues():
-    try:
-        return json.loads(reuse_data.latest_derived_bytes())['custom_data'][
-            'scholar_venues'
-        ]
-    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
-        return {}
 
 
 def _ensure_nltk():
@@ -527,47 +488,25 @@ def update_from_web(ctx, cache):  # noqa: C901
             has_errors = True
     if has_errors:
         sys.exit(1)
-    refs_by_key = {
-        reduce_sc(strip_html(item['title'].lower()))[:120]: item
-        for item in ctx['references']
-    }
     if ctx.get("scholar_cites"):
+        refs_by_key = {
+            reduce_sc(strip_html(item['title'].lower()))[:120]: item
+            for item in ctx['references']
+        }
         cites = ctx["scholar_cites"]
-        years = ctx.get("scholar_years", {})
-        venues = ctx.get("scholar_venues", {})
-        ts = datetime.now().isoformat()
-    else:
-        path = Path("assets") / "_Jan Hermann_ - _Google Scholar_.html"
-        scholar_citations = published_scholar_citations()
-        # Prefer the more recent of the committed snapshot and the last published
-        # value, but never carry forward an empty published value (a stale soft
-        # block): fall back to the snapshot so citation numbers don't vanish.
-        if (
-            ts := datetime.fromtimestamp(path.stat().st_mtime).isoformat()
-        ) > scholar_citations["timestamp"] or not scholar_citations["value"]:
-            cites = parse_scholar_profile(path)
-            years = parse_scholar_years(path)
-            venues = parse_scholar_venues(path)
-        else:
-            cites = scholar_citations["value"]
-            ts = scholar_citations["timestamp"]
-            # Older published artifacts predate scholar_years/venues; absent them
-            # the cross-check simply skips Scholar's year/venue corroboration.
-            years = published_scholar_years()
-            venues = published_scholar_venues()
-    ctx["custom_data"]["scholar_citations"] = {
-        "timestamp": ts,
-        "value": cites,
-    }
-    ctx["custom_data"]["scholar_years"] = years
-    ctx["custom_data"]["scholar_venues"] = venues
-    for title, cite in cites.items():
-        key = reduce_sc(title.lower())[:120]
-        # Scholar lists publications that aren't tracked as references here
-        # (and the live profile can surface new ones at any time); only apply
-        # counts to references we actually have.
-        if key in refs_by_key:
-            refs_by_key[key]['cited_by'] = cite
+        ctx["custom_data"]["scholar_citations"] = {
+            "timestamp": datetime.now().isoformat(),
+            "value": cites,
+        }
+        ctx["custom_data"]["scholar_years"] = ctx.get("scholar_years", {})
+        ctx["custom_data"]["scholar_venues"] = ctx.get("scholar_venues", {})
+        for title, cite in cites.items():
+            key = reduce_sc(title.lower())[:120]
+            # Scholar lists publications that aren't tracked as references here
+            # (and the live profile can surface new ones at any time); only apply
+            # counts to references we actually have.
+            if key in refs_by_key:
+                refs_by_key[key]['cited_by'] = cite
 
 
 def extract_derived(ctx):

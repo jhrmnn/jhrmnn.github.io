@@ -92,7 +92,7 @@ jobs:
           fetch=false
           while IFS= read -r f; do
             case "$f" in
-              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock|data/*|"assets/_Jan Hermann_ - _Google Scholar_.html")
+              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock|data/*)
                 fetch=true
                 break
                 ;;
