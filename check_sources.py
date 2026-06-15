@@ -129,7 +129,7 @@ def check(  # noqa: C901
     for ref in refs:
         key = title_key(ref['title'])
         z_titles.add(key)
-        ident = ref.get('id')  # canonical DOI/handle: the join key fetch.py builds
+        ident = ref.get('canonical-doi') or ref.get('id')  # canonical DOI/handle join key
         if ident:
             z_ids.add(ident)
         if not orcid:
@@ -245,11 +245,11 @@ def check_wos(refs, wos):
         status = ZOTERO_STATUS.get(ref.get('type'), ref.get('type'))
         if status in WOS_OPTIONAL_STATUS:
             continue
-        ident = ref.get('id')
+        ident = ref.get('canonical-doi') or ref.get('id')
         if ident and ident not in wos_ids:
             problems.append(f'absent from Web of Science: {ref["title"]!r}')
     # WoS records with no Zotero counterpart, beyond the known-allowed extras.
-    zotero_ids = {ref['id'] for ref in refs if ref.get('id')}
+    zotero_ids = {ref.get('canonical-doi') or ref['id'] for ref in refs if ref.get('canonical-doi') or ref.get('id')}
     for work in wos:
         key = work['id'] or work.get('accession')
         if key in WOS_ALLOWED_EXTRAS:

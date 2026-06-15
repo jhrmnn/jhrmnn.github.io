@@ -31,6 +31,13 @@ import reuse_data
 # intentionally excluded.
 REF_IDENTITY_FIELDS = ('title', 'author', 'issued', 'container-title')
 
+# Google Scholar citation counts wobble run-to-run as the index re-dedupes, so a
+# small dip is noise, not a regression. Tolerate a decrease within both a few
+# citations (covers low-count papers, where 1% rounds below one citation) and 1%
+# of the baseline; a larger collapse still fails.
+CITATION_ABS_TOL = 3
+CITATION_REL_TOL = 0.01
+
 
 def load_baseline():
     """Published derived data for the most recent default-branch ancestor of the
@@ -48,7 +55,12 @@ def scholar_value(derived):
 
 
 def refs_by_id(derived):
-    return {r['id']: r for r in derived.get('references', [])}
+    # Join on the canonical DOI/handle, the identifier stable across runs and
+    # across the id->citation-key migration (older artifacts carry it in `id`,
+    # newer ones in `canonical-doi`).
+    return {
+        (r.get('canonical-doi') or r['id']): r for r in derived.get('references', [])
+    }
 
 
 def check(old, new):  # noqa: C901
@@ -60,11 +72,14 @@ def check(old, new):  # noqa: C901
             if k not in new_keys:
                 problems.append(f'{kind} removed: {k}')
 
-    def decreased(kind, key, old_val, new_val):
+    def decreased(kind, key, old_val, new_val, abs_tol=0, rel_tol=0.0):
         # Only compare when both runs reported a number; a value going missing is
-        # treated as a transient gap (e.g. a Crossref 429), not a decrease.
-        if isinstance(old_val, int) and isinstance(new_val, int) and new_val < old_val:
-            problems.append(f'{kind} decreased: {key} {old_val} -> {new_val}')
+        # treated as a transient gap (e.g. a Crossref 429), not a decrease. A drop
+        # within the tolerance (default none) is noise, not a regression.
+        if isinstance(old_val, int) and isinstance(new_val, int):
+            drop = old_val - new_val
+            if drop > max(abs_tol, rel_tol * old_val):
+                problems.append(f'{kind} decreased: {key} {old_val} -> {new_val}')
 
     # software: repos are append-only; stars only grow.
     old_sw, new_sw = old.get('software', {}), new.get('software', {})
@@ -84,7 +99,14 @@ def check(old, new):  # noqa: C901
         for field in REF_IDENTITY_FIELDS:
             if ref.get(field) != new_ref.get(field):
                 problems.append(f'reference {doi} field changed: {field}')
-        decreased('cited_by', doi, ref.get('cited_by'), new_ref.get('cited_by'))
+        decreased(
+            'cited_by',
+            doi,
+            ref.get('cited_by'),
+            new_ref.get('cited_by'),
+            CITATION_ABS_TOL,
+            CITATION_REL_TOL,
+        )
 
     # n_reviews: monotonic.
     decreased('n_reviews', 'n_reviews', old.get('n_reviews'), new.get('n_reviews'))
@@ -94,7 +116,14 @@ def check(old, new):  # noqa: C901
     removed('scholar citation', old_sc, new_sc)
     for title, count in old_sc.items():
         if title in new_sc:
-            decreased('scholar citation', title, count, new_sc[title])
+            decreased(
+                'scholar citation',
+                title,
+                count,
+                new_sc[title],
+                CITATION_ABS_TOL,
+                CITATION_REL_TOL,
+            )
 
     return problems
 

@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlencode
@@ -237,15 +238,56 @@ def canonical_doi(doi, cache):
     return doi.lower()
 
 
+def _ascii_fold(s):
+    """Drop diacritics (Stöhr -> Stohr, Schätzle -> Schatzle), matching the
+    transliteration Better BibTeX applies when building citation keys."""
+    return unicodedata.normalize('NFKD', s).encode('ascii', 'ignore').decode()
+
+
+def citation_key(item):
+    """A human-readable key in the form <Surname><JournalInitials><YY>, e.g.
+    ``HermannNC20``: the first author's surname, the upper-case initials of the
+    abbreviated journal (omitted when the work has no such short title — a
+    preprint, thesis or book chapter), and the two-digit year. Reproduces the
+    historical Better BibTeX keys, which the Zotero web API does not expose.
+    Callers disambiguate collisions with a suffix."""
+    author = (item.get('author') or item.get('editor') or [{}])[0]
+    surname = _ascii_fold(
+        (author.get('non-dropping-particle', '') + author.get('family', '')).replace(
+            ' ', ''
+        )
+    )
+    short = item.get('container-title-short')
+    initials = ''.join(w[0] for w in short.split() if w[:1].isupper()) if short else ''
+    year = str(item['issued']['date-parts'][0][0])[-2:]
+    return f'{surname}{initials}{year}'
+
+
+def assign_citation_keys(refs):
+    """Set a unique human-readable ``id`` (the citation key) on each reference.
+    When the derived key collides, the earliest (by date, then canonical DOI)
+    keeps the bare key and the rest get a lowercase ``a``/``b``/... suffix, as
+    Better BibTeX does. The canonical DOI/handle stays in ``canonical-doi`` as
+    the stable cross-source join key."""
+    groups = {}
+    for ref in refs:
+        groups.setdefault(citation_key(ref), []).append(ref)
+    for base, group in groups.items():
+        group.sort(key=lambda r: (r['issued']['date-parts'][0], r['canonical-doi']))
+        for i, ref in enumerate(group):
+            ref['id'] = base + ('' if i == 0 else chr(ord('a') + i - 1))
+
+
 def fetch_references(cache):
     items = cache.get(ZOTERO_REFS_URL)['items']
     _ensure_nltk()
     refs = []
     for it in items:
         it = dict(it)
-        # Key each reference by its canonical DOI: the stable join key for
-        # ref_extras/keypubs.
-        it['id'] = canonical_doi(it['DOI'], cache)
+        # The canonical DOI/handle is the stable cross-source join key
+        # (check_sources/check_derived); the citation key assigned below is the
+        # human-readable id used by ref_extras/keypubs/tools and pandoc.
+        it['canonical-doi'] = canonical_doi(it['DOI'], cache)
         # Zotero emits year as int for full dates but str for year-only ones;
         # normalize so date-parts sort and compare consistently.
         for field in ('issued', 'accessed', 'submitted'):
@@ -262,6 +304,7 @@ def fetch_references(cache):
         ):
             it['container-title-short'] = abbreviate_journal(it['container-title'])
         refs.append(it)
+    assign_citation_keys(refs)
     return refs
 
 

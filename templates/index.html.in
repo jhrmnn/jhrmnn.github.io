@@ -30,22 +30,66 @@
   </table>
 {% endmacro %}
 
-{% macro pub_block(types, by_year=false) %}
+{# The section's publications in the site's own format (title · authors · ref ·
+   PDF · Scholar count), each row carrying its global citation number. `keys` is
+   pre-ordered by that number in render.py. #}
+{% macro ref_list(keys) %}
   <table class="pub">
-    {% for item in references|selectattr("type", "in", types)|sortrefs %}
-      {% set title, authors, ref = item|reftomd %}
-      <tr>
-        <td class="article">
-          {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
-          {%- if item.pdf_url -%}
-            &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
-            {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
-          {%- endif %}
-        </td>
-        <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
-      </tr>
+    {% for key in keys %}
+      {% set item = refs_by_id[key] %}
+      {% if item %}
+        {% set title, authors, ref = item|reftomd %}
+        <tr>
+          <td class="cnum">{{ cite_num[key] }}</td>
+          <td class="article">
+            {{ title }}&nbsp;&middot; {{ authors }}&nbsp;&middot; {{ ref}}
+            {%- if item.pdf_url -%}
+              &nbsp;<a href="{{ item.pdf_url }}" class="pdf">{% include "assets/file-pdf-solid.svg" %}</a>{%- if item.pdf_notice %}<span class="notice-star">*</span>{% endif %}
+              {%- if item.pdf_notice %}<p class="notice">*{{ item.pdf_notice }}{% endif %}
+            {%- endif %}
+          </td>
+          <td>{% if item.cited_by %}{{ item.cited_by }}{% endif %}</td>
+        </tr>
+      {% endif %}
     {% endfor %}
   </table>
+{% endmacro %}
+
+{# A section's tool list — injected, kept out of the prose and the numbering.
+   Rendered as on main: name · role · stars inline, description on its own line.
+   Program papers are not shown here — they appear in the publications. A hub
+   lists its one anchor tool; the theme section lists every unhubbed tool. #}
+{% macro software_list(items) %}
+  {% if items %}
+    <ul class="tools">
+      {% for item in items %}
+        <li><strong><a href="{{ item.url or 'https://github.com/' ~ item.github }}">{{ item.name }}</a></strong>&nbsp;&middot;
+          {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
+          {% if item.description %}<br>{{ item.description }}{% endif %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}
+
+{# A homepage section parsed from data/hubs.md (render_hub_sections). Only the
+   heading and prose come from the markdown; the rest is injected. Just after the
+   heading comes the tool list — a hub's one anchor tool, or the theme section's
+   list of every unhubbed tool. Then the prose (with superscript citations), the
+   numbered publications, and collapsed talks. #}
+{% macro section_block(sec) %}
+  {% set talks = theme_talks if sec.theme else hub_talks[sec.id] %}
+  <section id="{{ sec.id }}" class="hub">
+    <h3>{{ sec.name }}</h3>
+    {{ software_list(sec.software) }}
+    <div class="miniarticle">{{ sec.html }}</div>
+    {{ ref_list(sec.refs) }}
+    {% if talks %}
+      <details class="hub-extra">
+        <summary>Talks ({{ talks|length }})</summary>
+        {{ talk_block(talks, "talks small") }}
+      </details>
+    {% endif %}
+  </section>
 {% endmacro %}
 
 {% macro dl_block(items, defs) %}
@@ -63,9 +107,7 @@
 
 <nav aria-label="Sections">
   <ul>
-    <li><a href="#Publications">Publications</a>
-    <li><a href="#Software">Software</a>
-    <li><a href="#Presentations">Presentations</a>
+    <li><a href="#Works">Works</a> ({% for sec in sections if not sec.theme %}{% if not loop.first %} &middot; {% endif %}<a href="#{{ sec.id }}">{{ sec.nav }}</a>{% endfor %})
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
@@ -96,49 +138,12 @@
 
   </div>
 
-  <section id="Publications">
-    <h2>Publications</h2>
+  <h2 id="Works">Works</h2>
+  {% if tools_lead %}<div id="tools-lead">{{ tools_lead }}</div>{% endif %}
 
-    <ul><li>Citation numbers (→) from Google Scholar</ul>
-
-    <h3>Research articles</h3>
-    {{ pub_block(["article-journal", "article"], by_year=true) }}
-
-    <h3>Book chapters</h3>
-    {{ pub_block(["chapter"]) }}
-
-    <h3>Theses</h3>
-    {{ pub_block(["thesis"]) }}
-  </section>
-
-  <section id="Software">
-    <h2>Software</h2>
-
-    <ul>
-      {% for item in software %}
-        <li>
-            <strong><a href="{{ item.url }}">{{ item.name }}</a></strong>&nbsp;&middot;
-            {{ item.role }}{% if item.stars %}&nbsp;&middot; <em>{{ item.stars }} {% include "assets/github-star.svg" %}</em>{% endif %}
-            {% if item.description %}<br>{{ item.description}}{% endif %}
-      {% endfor %}
-    </ul>
-  </section>
-
-  <section id="Presentations">
-    <h2>Presentations</h2>
-
-    <h3>Invited conference talks</h3>
-    {{ talk_block(presentations.invited, "talks") }}
-
-    <h3>Contributed conference talks</h3>
-    {{ talk_block(presentations.contributed, "talks") }}
-
-    <h3>Conference poster presentations</h3>
-    {{ talk_block(presentations.posters, "talks") }}
-
-    <h3>Invited seminars</h3>
-    {{ talk_block(presentations.seminars, "talks") }}
-  </section>
+  {% for sec in sections %}
+    {{ section_block(sec) }}
+  {% endfor %}
 
   <section id="CV" aria-label="CV">
     <h2>Employment</h2>
@@ -216,41 +221,6 @@
     <ul>
       {% for item in activity %}<li>{{ item }}{% endfor %}
     </ul>
-
-    <h2>Teaching & mentoring</h2>
-
-    <h3>Professional mentorship</h3>
-    <table class="cvblock small">
-      {% for item in mentorship %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.who }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-
-    <h3>Lectures for students</h3>
-    {{ talk_block(lectures, "talks small") }}
-
-    <h3>Doctoral committees</h3>
-    <table class="cvblock small">
-      {% for item in defense %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.who }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-
-    <h2>Public outreach</h2>
-    <table class="cvblock small">
-      {% for item in outreach %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.what }}</td>
-        </tr>
-      {% endfor %}
-    </table>
   </section>
 </main>
 

@@ -50,6 +50,11 @@ def strip_html(str):
 
 
 def load_ctx(paths):
-    # References are fetched from Zotero into the derived artifact; the static
-    # context files are all YAML.
-    return dict(x for c in paths for x in yaml.safe_load(c.read_text()).items())
+    # The static context files are YAML/JSON; other data files (e.g. the
+    # hubs.md miniarticle source, read directly by render.py) are skipped.
+    return dict(
+        x
+        for c in paths
+        if c.suffix in ('.yaml', '.yml', '.json')
+        for x in yaml.safe_load(c.read_text()).items()
+    )
