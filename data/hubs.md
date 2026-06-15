@@ -51,12 +51,12 @@ stacked molecules [@HermannNC17] through molecular crystals and layered material
 fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 @VenkataramSA19; @VenkataramPRB20; @StohrNC21].
 
-# Codes, tools & writing {#more .theme}
+# Ecosystem {#more .theme}
 
-Beyond the three flagships, the connective tissue. I build standalone tools and
-[Mona](https://pub.hrmnn.net/ec/8024310f/2018-11-28-fhi-talk.pdf), a framework for
-reproducible computational science, and contribute to community
-electronic-structure codes, each with its own program paper [@Abbott25; @SunJCP20;
-@HourahineJCP20; @SmithJCP21]. The same breadth runs through survey writing, from a
-roadmap on machine learning in electronic structure [@KulikES22] to an introduction
-to material modeling [@Hermann20], and the assorted invited seminars below.
+No tool stands alone. libMBD is built into FHI-aims, DFTB+, and other
+electronic-structure codes; Pyberny into PySCF and QCEngine — integrations
+reflected in their program papers [@Abbott25; @HourahineJCP20; @SunJCP20;
+@SmithJCP21]. The same connective work runs through survey writing across the
+field, from a roadmap on machine learning in electronic structure [@KulikES22] to
+an introduction to material modeling [@Hermann20], alongside the invited seminars
+below.
