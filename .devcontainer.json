@@ -14,6 +14,10 @@
             ]
         }
     },
-    "onCreateCommand": "wget -nv -O - $FONTS_URL | tar -xzv",
+    "remoteEnv": {
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}",
+        "GITHUB_REPOSITORY": "jhrmnn/jhrmnn.github.io"
+    },
+    "onCreateCommand": "poetry config virtualenvs.in-project true && wget -nv -O - $FONTS_URL | tar -xzv",
     "updateContentCommand": "poetry install --with dev"
 }
