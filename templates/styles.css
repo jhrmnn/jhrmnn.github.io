@@ -124,6 +124,13 @@ footer {
 
 .miniarticle .citation sup {
     font-size: 0.75em;
+    /* Raise via relative offset with zero line-height so the superscript does
+       not enlarge the line box; default vertical-align: super would otherwise
+       make cited lines taller than the rest. */
+    vertical-align: baseline;
+    position: relative;
+    top: -0.5em;
+    line-height: 0;
 }
 
 .hub-extra {
