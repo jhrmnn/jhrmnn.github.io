@@ -39,7 +39,7 @@ Those same wavefunctions also yield accurate real-space electron densities
 
 # Van der Waals dispersion {#libMBD github="libmbd/libmbd" nav="vdW"}
 
-Long-range electron corelation, by hand. The itch started with a vdW-DF/CCSD(T)
+Long-range electron correlation, by hand. The itch started with a vdW-DF/CCSD(T)
 correction scheme [@HermannJCP13; @Hermann13] for zeolites [@HermannCT14; @PolozijCT13] and grew
 into a unified density-functional model of van der Waals interactions
 [@HermannPRL20; @Hermann18; @HermannCR17], with the exchange–correlation
