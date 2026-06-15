@@ -100,28 +100,7 @@ footer {
     font-size: 0.95em;
 }
 
-#tools-lead > p {
-    margin-bottom: 0.5em;
-}
-
-.hub {
-    margin-bottom: 1.6em;
-}
-
-.hub h3 {
-    margin-bottom: 6px;
-}
-
-.hub-blurb {
-    line-height: 1.45;
-    margin: 0 0 0.6em 0;
-}
-
-.miniarticle > p {
-    margin: 0 0 0.7em 0;
-}
-
-.miniarticle .citation sup {
+.citation sup {
     font-size: 0.75em;
     /* Raise via relative offset with zero line-height so the superscript does
        not enlarge the line box; default vertical-align: super would otherwise
@@ -133,7 +112,7 @@ footer {
 }
 
 .hub-extra {
-    margin: 0.3em 0 0 1em;
+    margin: 0.5em 0 0 1em;
     font-size: 0.95em;
 }
 
@@ -359,6 +338,7 @@ tr.heading:not(:first-child) td {
 }
 
 @media (prefers-color-scheme: dark) {
+
     .postmeta,
     .h-feed time {
         color: #999;

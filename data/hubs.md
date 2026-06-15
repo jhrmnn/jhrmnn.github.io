@@ -10,7 +10,7 @@ its star count) and a short `nav` label for the nav bar; the `.theme` section
 instead gets an injected list of every tool not anchored to a hub and stays out of
 the nav bar. A paper appears under a section because the prose cites it —
 cross-list by citing it in both. The software/tool list and talks live in
-data/cv.yaml. See issue #50.
+data/cv.yaml.
 -->
 
 I build quantum-chemistry tools that others build on, tracing an arc from
