@@ -14,6 +14,8 @@
 \usepackage[normalem]{ulem}
 \usepackage{svg}
 \svgpath{{assets/}}
+\usepackage{pifont}
+\newcommand{\bigwhitestar}{\mbox{\ding{73}}}
 
 \setmainfont{Baskerville10Pro}[
   Path = fonts/Baskerville 10 Pro/,
