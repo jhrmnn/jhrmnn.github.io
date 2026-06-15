@@ -2,6 +2,7 @@ FROM ubuntu:24.04
 RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
     DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends \
         entr \
+        git \
         make \
         latexmk \
         pandoc \

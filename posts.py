@@ -70,18 +70,31 @@ def git_dates(path):
     an ActivityPub Update, so a post that's been edited after publication
     actually changes on Mastodon. Without it the re-sent webmention refers to
     an object that looks unchanged and the edit never surfaces. Needs full
-    history at render time (CI checks out with fetch-depth: 0)."""
+    history at render time (CI checks out with fetch-depth: 0) and git present
+    in the render image — without git, checkout falls back to a REST tarball
+    with no .git and every post would silently lose its timestamps.
+
+    `safe.directory=*` defuses git's dubious-ownership guard, which otherwise
+    aborts when the checkout is owned by a different user than the render
+    process (common in containers)."""
     try:
-        out = subprocess.run(
-            ['git', 'log', '--format=%aI', '--', str(path)],
+        proc = subprocess.run(
+            ['git', '-c', 'safe.directory=*', 'log', '--format=%aI', '--', str(path)],
             capture_output=True,
             text=True,
-            check=True,
-        ).stdout.split()
-    except (subprocess.CalledProcessError, FileNotFoundError):
+        )
+    except FileNotFoundError:
+        # git missing entirely (e.g. not installed in the render image): this is
+        # a real misconfiguration, not an untracked post, so make it loud.
+        print(f'warning: git not found; {path} loses its timestamps', file=sys.stderr)
         return None, None
+    if proc.returncode != 0:
+        # Not a git repo (e.g. REST-tarball checkout) or another git error.
+        print(f'warning: git log failed for {path}: {proc.stderr.strip()}', file=sys.stderr)
+        return None, None
+    out = proc.stdout.split()
     if not out:
-        return None, None
+        return None, None  # tracked repo but file not committed yet (local dev)
     return out[-1], out[0]  # git log is newest-first: oldest, newest
 
 
