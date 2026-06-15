@@ -1,0 +1,75 @@
+name: CV
+on:
+  workflow_dispatch:
+    inputs:
+      pic:
+        description: Profile picture path (empty to omit)
+        default: assets/profile-pic.jpeg
+        type: string
+      statement:
+        description: Include personal statement
+        default: false
+        type: boolean
+      stars:
+        description: Mark key publications with stars
+        default: false
+        type: boolean
+      generated:
+        description: URL for the "generated on" link (empty for plain date)
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+  actions: read
+
+jobs:
+  render-cv:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/${{ github.repository }}:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Restore fonts and Poetry cache
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            fonts
+            ~/.cache/pypoetry
+          key: fonts-${{ hashFiles('poetry.lock') }}
+      - name: Get fonts
+        if: "!steps.cache.outputs.cache-hit"
+        run: wget -nv -O - ${{ secrets.FONTS_URL }} | tar -xzv
+      - run: poetry install --only main
+      - name: Resolve latest data run
+        id: data
+        run: |
+          run_id=$(poetry run python reuse_data.py --run-id)
+          echo "run-id=$run_id" >>"$GITHUB_OUTPUT"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download data
+        uses: actions/download-artifact@v4
+        with:
+          name: derived
+          path: build
+          run-id: ${{ steps.data.outputs.run-id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Render and compile CV
+        run: poetry run make _site/cv.pdf
+        env:
+          FLAGS: >-
+            --pic=${{ inputs.pic }}
+            ${{ inputs.statement && '--statement' || '' }}
+            ${{ inputs.stars && '--stars' || '' }}
+            ${{ inputs.generated != '' && format('--generated={0}', inputs.generated) || '' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cv
+          path: _site/cv.pdf
