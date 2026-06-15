@@ -111,19 +111,21 @@ def check(old, new):  # noqa: C901
     # n_reviews: monotonic.
     decreased('n_reviews', 'n_reviews', old.get('n_reviews'), new.get('n_reviews'))
 
-    # Google Scholar citations: titles append-only, counts only grow.
+    # Google Scholar citations: titles append-only, counts only grow. Skip when
+    # Scholar data is absent in the new run (Scholar unreachable), same as WoS.
     old_sc, new_sc = scholar_value(old), scholar_value(new)
-    removed('scholar citation', old_sc, new_sc)
-    for title, count in old_sc.items():
-        if title in new_sc:
-            decreased(
-                'scholar citation',
-                title,
-                count,
-                new_sc[title],
-                CITATION_ABS_TOL,
-                CITATION_REL_TOL,
-            )
+    if new_sc:
+        removed('scholar citation', old_sc, new_sc)
+        for title, count in old_sc.items():
+            if title in new_sc:
+                decreased(
+                    'scholar citation',
+                    title,
+                    count,
+                    new_sc[title],
+                    CITATION_ABS_TOL,
+                    CITATION_REL_TOL,
+                )
 
     return problems
 
