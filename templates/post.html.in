@@ -15,6 +15,7 @@
     {% if post.title %}<h1 class="p-name">{{ post.title }}</h1>{% endif %}
     <p class="postmeta">
       <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
+      {%- if post.updated %} &middot; <time class="dt-updated" datetime="{{ post.updated }}">updated {{ post.updated_display }}</time>{% endif %}
       &middot; by <a class="p-author h-card u-author" href="/">Jan Hermann</a>
     </p>
     <div class="e-content">
