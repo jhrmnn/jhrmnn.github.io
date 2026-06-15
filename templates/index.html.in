@@ -221,41 +221,6 @@
     <ul>
       {% for item in activity %}<li>{{ item }}{% endfor %}
     </ul>
-
-    <h2>Teaching & mentoring</h2>
-
-    <h3>Professional mentorship</h3>
-    <table class="cvblock small">
-      {% for item in mentorship %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.who }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-
-    <h3>Lectures for students</h3>
-    {{ talk_block(lectures, "talks small") }}
-
-    <h3>Doctoral committees</h3>
-    <table class="cvblock small">
-      {% for item in defense %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.who }}</td>
-        </tr>
-      {% endfor %}
-    </table>
-
-    <h2>Public outreach</h2>
-    <table class="cvblock small">
-      {% for item in outreach %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>{{ item.what }}</td>
-        </tr>
-      {% endfor %}
-    </table>
   </section>
 </main>
 
