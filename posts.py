@@ -100,10 +100,14 @@ def parse_post(path):
     # URL segment is the full filename stem (date + slug), e.g.
     # 2026-05-05-consciousness, so the date lives in the permalink too.
     segment = path.stem
-    # An edit federates as an ActivityPub Update only if the h-entry advertises
-    # a newer timestamp than publication. Take it from git: if the post has been
-    # committed more than once, expose the latest commit as dt-updated.
+    # Timestamps come from git: the first commit is publication, the latest is
+    # the last edit. dt-published thus carries a real time (not just the
+    # filename's midnight) and, when a post has been committed more than once,
+    # dt-updated advertises a newer timestamp — which is what makes Bridgy Fed
+    # federate the edit as an ActivityPub Update instead of a silent no-op.
+    # Falls back to the filename date for an as-yet-uncommitted post (local dev).
     first_commit, last_commit = git_dates(path)
+    published = first_commit or date.strftime('%Y-%m-%d')
     updated = last_commit if first_commit and last_commit != first_commit else None
     return {
         'segment': segment,
@@ -117,7 +121,10 @@ def parse_post(path):
         # short, Mastodon-style post). The templates omit p-name when absent so
         # microformats/Bridgy Fed treat it as a note.
         'title': meta.get('title'),
-        'datetime': date.strftime('%Y-%m-%d'),
+        # dt-published timestamp (full ISO-8601 from git); the display string and
+        # the sort key stay on the filename date, which is the canonical day and
+        # already lives in the permalink.
+        'datetime': published,
         'date_display': date.strftime('%-d %B %Y'),
         'date': date,
         # Full ISO-8601 (with time) so each subsequent edit is a distinct value
