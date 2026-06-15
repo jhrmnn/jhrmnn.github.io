@@ -66,8 +66,8 @@ jobs:
         env:
           FLAGS: >-
             --pic=${{ inputs.pic }}
-            ${{ inputs.statement && '--statement' || '' }}
-            ${{ inputs.stars && '--stars' || '' }}
+            ${{ inputs.statement == true && '--statement' || '' }}
+            ${{ inputs.stars == true && '--stars' || '' }}
             ${{ inputs.generated != '' && format('--generated={0}', inputs.generated) || '' }}
       - uses: actions/upload-artifact@v4
         with:
