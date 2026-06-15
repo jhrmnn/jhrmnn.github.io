@@ -10,6 +10,7 @@ out identical in style to the rest of the site.
 """
 import argparse
 import re
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -61,6 +62,29 @@ def md_blocks_to_html(text):
     return '\n'.join(out)
 
 
+def git_dates(path):
+    """First and last git author dates touching `path`, as ISO-8601 strings,
+    or (None, None) if the file isn't tracked yet (e.g. a brand-new post in
+    local dev, or git history unavailable). The last date drives dt-updated:
+    Bridgy Fed reads that timestamp off the h-entry and federates the edit as
+    an ActivityPub Update, so a post that's been edited after publication
+    actually changes on Mastodon. Without it the re-sent webmention refers to
+    an object that looks unchanged and the edit never surfaces. Needs full
+    history at render time (CI checks out with fetch-depth: 0)."""
+    try:
+        out = subprocess.run(
+            ['git', 'log', '--format=%aI', '--', str(path)],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.split()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None, None
+    if not out:
+        return None, None
+    return out[-1], out[0]  # git log is newest-first: oldest, newest
+
+
 def parse_post(path):
     text = path.read_text()
     meta = {}
@@ -76,6 +100,11 @@ def parse_post(path):
     # URL segment is the full filename stem (date + slug), e.g.
     # 2026-05-05-consciousness, so the date lives in the permalink too.
     segment = path.stem
+    # An edit federates as an ActivityPub Update only if the h-entry advertises
+    # a newer timestamp than publication. Take it from git: if the post has been
+    # committed more than once, expose the latest commit as dt-updated.
+    first_commit, last_commit = git_dates(path)
+    updated = last_commit if first_commit and last_commit != first_commit else None
     return {
         'segment': segment,
         # Relative permalink for in-page links and u-url, so navigation works on
@@ -91,6 +120,12 @@ def parse_post(path):
         'datetime': date.strftime('%Y-%m-%d'),
         'date_display': date.strftime('%-d %B %Y'),
         'date': date,
+        # Full ISO-8601 (with time) so each subsequent edit is a distinct value
+        # Bridgy Fed/Mastodon recognise; None when the post hasn't been edited.
+        'updated': updated,
+        'updated_display': (
+            datetime.fromisoformat(updated).strftime('%-d %B %Y') if updated else None
+        ),
         'content_html': Markup(md_blocks_to_html(body)),
     }
 
