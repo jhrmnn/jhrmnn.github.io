@@ -1,3 +1,3 @@
 I was an LLM skeptic until around the start of 2025, when I began using ChatGPT o3 heavily. Before o3, it seemed to me that LLMs offered little value beyond entertainment and a handful of niche applications. The private chain of thought really turned things around.
 
-Then I was an LLMs-for-coding skeptic until around the start of 2026, when I began using Claude Opus 4.6 heavily. Before then, it seemed to me that LLMs offered little value beyond boilerplate and autocomplete that was wrong half the time. Now I don’t write code anymore — though I still read it now and then.
+Then I was an LLMs-for-coding skeptic until around the start of 2026, when I began using Claude Opus 4.6 heavily. Before then, it seemed to me that LLMs offered little value beyond boilerplate and autocomplete that was wrong half the time. Now I don’t write code anymore, though I still read it now and then.
