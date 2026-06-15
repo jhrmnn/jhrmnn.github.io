@@ -309,7 +309,8 @@ def render_hub_sections(ctx):
     its generated bibliography's order, then discard that bibliography — the
     reference lists are rendered by the template in the site's own format. Each
     section's structure comes from its <h1> header attributes (id, github repo,
-    a `theme` class for the fourth section) and its publications from the [@key]s
+    a short `nav` label, a `theme` class for the fourth section) and its
+    publications from the [@key]s
     its prose cites; a hub lists its github tool just after the heading, while the
     theme section gets an injected list of every other tool. Sets ctx['sections']
     (ordered) and ctx['cite_num']."""
@@ -340,6 +341,7 @@ def render_hub_sections(ctx):
             'id': attr('id'),
             'name': unescape(re.sub(r'<[^>]+>', '', re.search(r'<h1\b[^>]*>(.*?)</h1>', header, re.S).group(1)).strip()),
             'github': attr('data-github'),
+            'nav': attr('data-nav'),
             'theme': 'theme' in cls.split(),
             'html': Markup(body.strip()),
             'refs': sorted(dict.fromkeys(cited), key=by_number),

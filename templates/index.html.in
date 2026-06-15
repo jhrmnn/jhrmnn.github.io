@@ -79,7 +79,7 @@
 {% macro section_block(sec) %}
   {% set talks = theme_talks if sec.theme else hub_talks[sec.id] %}
   <section id="{{ sec.id }}" class="hub">
-    <h2>{{ sec.name }}</h2>
+    <h3>{{ sec.name }}</h3>
     {{ software_list(sec.software) }}
     <div class="miniarticle">{{ sec.html }}</div>
     {{ ref_list(sec.refs) }}
@@ -107,7 +107,7 @@
 
 <nav aria-label="Sections">
   <ul>
-    {% for sec in sections %}<li><a href="#{{ sec.id }}">{{ sec.name }}</a>{% endfor %}
+    <li><a href="#Works">Works</a> ({% for sec in sections if not sec.theme %}{% if not loop.first %} &middot; {% endif %}<a href="#{{ sec.id }}">{{ sec.nav }}</a>{% endfor %})
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
@@ -140,6 +140,7 @@
 
   {% if tools_lead %}<div id="tools-lead">{{ tools_lead }}</div>{% endif %}
 
+  <h2 id="Works">Works</h2>
   {% for sec in sections %}
     {{ section_block(sec) }}
   {% endfor %}
