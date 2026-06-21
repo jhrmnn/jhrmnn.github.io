@@ -342,6 +342,51 @@ def fetch_wos(cache):
     return works
 
 
+def fetch_scholar(cache):
+    """Raw HTML of the Google Scholar profile (a single page listing every row).
+
+    Google Scholar blocks datacenter/CI IPs with a 429 "sorry" CAPTCHA, so route
+    through a residential proxy when SCHOLAR_PROXY is set (a full proxy URL, e.g.
+    http://user:pass@gw.dataimpulse.com:823). A fresh connection per attempt
+    rotates the proxy's exit IP, so retrying sheds a flagged IP; there's no point
+    retrying without a proxy, since a datacenter IP stays blocked. Raises on a
+    persistent failure so the caller can degrade like any other source.
+    """
+
+    def func():
+        proxies = None
+        if proxy := os.environ.get('SCHOLAR_PROXY'):
+            proxies = {'http': proxy, 'https': proxy}
+        attempts = SCHOLAR_PROXY_RETRIES if proxies else 1
+        for attempt in range(attempts):
+            try:
+                r = requests.get(
+                    SCHOLAR_PROFILE_URL,
+                    headers=SCHOLAR_HEADERS,
+                    timeout=30,
+                    proxies=proxies,
+                )
+                r.raise_for_status()
+                # A soft block serves a CAPTCHA / "sorry" page with HTTP 200, so
+                # raise_for_status() can't catch it. Detect it from the response
+                # itself -- Google redirects blocked traffic to a /sorry/ page
+                # whose body asks to solve a CAPTCHA -- and retry on a fresh exit
+                # IP; if it never clears, raise rather than parsing a CAPTCHA page.
+                if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
+                    raise requests.exceptions.RequestException(
+                        'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
+                    )
+            except requests.exceptions.RequestException as e:
+                if attempt < attempts - 1:
+                    logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
+                    time.sleep(2)
+                    continue
+                raise
+            return r.text
+
+    return cache.get_custom('scholar', func)
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -400,58 +445,9 @@ def update_from_web(ctx, cache):  # noqa: C901
             return
         r = cache.get(f'https://api.crossref.org/works/{doi}')
         if r:
-            item['cited_by'] = r['message']['is-referenced-by-count']
-
-    def scholar(ctx):
-        def func():
-            # Route through a residential proxy when configured; Scholar blocks
-            # datacenter IPs but lets residential ones through. SCHOLAR_PROXY is
-            # a full proxy URL, e.g. http://user:pass@gw.dataimpulse.com:823.
-            proxies = None
-            if proxy := os.environ.get('SCHOLAR_PROXY'):
-                proxies = {'http': proxy, 'https': proxy}
-            # A fresh connection per attempt rotates the proxy's exit IP, so
-            # retrying sheds a flagged IP. No point retrying without a proxy:
-            # a datacenter IP stays blocked.
-            attempts = SCHOLAR_PROXY_RETRIES if proxies else 1
-            for attempt in range(attempts):
-                try:
-                    r = requests.get(
-                        SCHOLAR_PROFILE_URL,
-                        headers=SCHOLAR_HEADERS,
-                        timeout=30,
-                        proxies=proxies,
-                    )
-                    r.raise_for_status()
-                    # A soft block serves a CAPTCHA / "sorry" page with HTTP 200,
-                    # so raise_for_status() can't catch it. Detect it from the
-                    # response itself -- Google redirects blocked traffic to a
-                    # /sorry/ page and the body asks to solve a CAPTCHA -- and
-                    # retry on a fresh exit IP; if it never clears, raise so the
-                    # snapshot fallback takes over rather than publishing (and
-                    # timestamping) an empty result.
-                    if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
-                        raise requests.exceptions.RequestException(
-                            'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
-                        )
-                except requests.exceptions.RequestException as e:
-                    if attempt < attempts - 1:
-                        logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
-                        time.sleep(2)
-                        continue
-                    raise
-                return r.text
-
-        # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
-        # committed profile snapshot instead of failing the whole fetch.
-        try:
-            html = cache.get_custom('scholar', func)
-        except requests.exceptions.RequestException as e:
-            logging.warning('Could not fetch Google Scholar profile: %r', e)
-        else:
-            ctx['scholar_cites'] = parse_scholar_profile_html(html)
-            ctx['scholar_years'] = parse_scholar_years_html(html)
-            ctx['scholar_venues'] = parse_scholar_venues_html(html)
+            # Recorded for reference only; the citation count shown on the site
+            # (item['cited_by']) comes solely from Google Scholar below.
+            item['crossref_cited_by'] = r['message']['is-referenced-by-count']
 
     ctx['references'] = fetch_references(cache)
     # ORCID only gates the push-to-main cross-check; a transient outage
@@ -469,6 +465,18 @@ def update_from_web(ctx, cache):  # noqa: C901
     except requests.exceptions.RequestException as e:
         logging.warning('Could not fetch Web of Science works: %r', e)
         ctx['wos'] = []
+    # Google Scholar supplies the citation counts shown on the site. A fetch
+    # failure (datacenter/CI IP soft block) leaves the counts unset for this run,
+    # the same way an ORCID or WoS outage leaves those lists empty -- the
+    # publication's cited_by is simply omitted rather than the fetch failing.
+    try:
+        html = fetch_scholar(cache)
+    except requests.exceptions.RequestException as e:
+        logging.warning('Could not fetch Google Scholar profile: %r', e)
+    else:
+        ctx['scholar_cites'] = parse_scholar_profile_html(html)
+        ctx['scholar_years'] = parse_scholar_years_html(html)
+        ctx['scholar_venues'] = parse_scholar_venues_html(html)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
             pool.submit(func, x)
@@ -476,7 +484,6 @@ def update_from_web(ctx, cache):  # noqa: C901
                 *((stars, x) for x in ctx['software']),
                 (reviews, ctx),
                 *((citations, x) for x in ctx['references']),
-                (scholar, ctx),
             ]
         ]
     has_errors = False
