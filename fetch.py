@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import threading
 import time
 import unicodedata
 from datetime import datetime
@@ -54,6 +55,41 @@ ORCID_HEADERS = {'Accept': 'application/json'}
 # paper missing from Zotero (and an unexpected record on the WoS side). The
 # academic record carries the paginated publication-list URL.
 WOS_ACADEMIC_URL = f'https://publons.com/api/v2/academic/{ORCID_ID}/'
+# Crossref serves anonymous clients from a shared "public" pool with a low,
+# variable rate limit (5 req/s when last checked); identifying ourselves with a
+# mailto moves us to the "polite" pool (10 req/s) and lets Crossref reach out
+# instead of blocking. See https://api.crossref.org/swagger-ui/index.html.
+CROSSREF_MAILTO = 'crossref@id.jan.hermann.name'
+# Stay comfortably under the polite-pool ceiling: citations() fans out across the
+# thread pool, so without a gate it would burst well past the limit and earn a
+# 429. Half the advertised limit leaves headroom for a shared CI exit IP.
+CROSSREF_RATE = 5.0  # requests per second
+
+
+class RateLimiter:
+    """Thread-safe gate spacing calls to at most `rate` per second.
+
+    The fetch issues Crossref requests concurrently from the thread pool; each
+    one calls wait() first, which blocks until the next evenly-spaced slot is due
+    so the aggregate rate never exceeds the pool's limit. Spacing (rather than a
+    burst-then-refill bucket) keeps the load steady, which is what the API wants.
+    """
+
+    def __init__(self, rate):
+        self._min_interval = 1.0 / rate
+        self._lock = threading.Lock()
+        self._next = 0.0
+
+    def wait(self):
+        with self._lock:
+            now = time.monotonic()
+            if now < self._next:
+                time.sleep(self._next - now)
+                now = self._next
+            self._next = now + self._min_interval
+
+
+CROSSREF_LIMITER = RateLimiter(CROSSREF_RATE)
 
 
 class Cache:
@@ -62,15 +98,24 @@ class Cache:
         self._store = json.loads(self._file.read_text()) if self._file.exists() else {}
         self._updated = False
 
-    def get(self, url, **kwargs):
+    def get(self, url, *, rate_limiter=None, **kwargs):
         def func():
             for attempt in range(MAX_RETRIES):
+                if rate_limiter:
+                    rate_limiter.wait()
                 r = requests.get(url, timeout=5.0, **kwargs)
                 try:
                     r.raise_for_status()
                 except requests.exceptions.HTTPError as e:
-                    if attempt < MAX_RETRIES - 1 and e.args[0].startswith('500'):
-                        time.sleep(1)
+                    # Retry server errors, and -- on a rate-limited endpoint --
+                    # back off on 429 (honoring Retry-After) as a safety net for
+                    # the gate above rather than failing the whole fetch.
+                    retriable = e.args[0].startswith('500') or (
+                        rate_limiter is not None and r.status_code == 429
+                    )
+                    if attempt < MAX_RETRIES - 1 and retriable:
+                        retry_after = r.headers.get('Retry-After')
+                        time.sleep(float(retry_after) if retry_after else 2**attempt)
                         continue
                     raise
                 else:
@@ -172,6 +217,50 @@ def journal_abbrev(name):
         return abbreviate_journal(name)
     except Exception:
         return name
+
+
+def crossref_record(cache, doi):
+    """Crossref's own metadata for a DOI, or None when it has no record.
+
+    Requests go through the polite pool (mailto) and are gated by CROSSREF_LIMITER
+    to stay within its rate limit. check_sources.py cross-checks the result
+    against Zotero, so a DOI that resolves to a different title/year/venue
+    surfaces as a wrong DOI; the citation count is recorded too but not shown on
+    the site (item['cited_by'] comes solely from Google Scholar).
+    """
+    url = f'https://api.crossref.org/works/{doi}?' + urlencode(
+        {'mailto': CROSSREF_MAILTO}
+    )
+    r = cache.get(url, rate_limiter=CROSSREF_LIMITER)
+    if not r:
+        return None
+    msg = r['message']
+    container = ' '.join(msg.get('container-title') or [])
+
+    def year(field):
+        parts = (msg.get(field) or {}).get('date-parts') or [[]]
+        return str(parts[0][0]) if parts and parts[0] and parts[0][0] else None
+
+    # A paper's online and print years routinely differ, and Zotero may record
+    # either; keep every date Crossref reports so check_sources accepts a match
+    # against any of them rather than flagging the online-vs-print gap.
+    years = sorted(
+        {
+            y
+            for field in ('issued', 'published', 'published-online', 'published-print')
+            for y in (year(field),)
+            if y
+        }
+    )
+    return {
+        'cited_by': msg.get('is-referenced-by-count'),
+        # Crossref splits a subtitle into its own field; Zotero keeps it in the
+        # title, so join them before comparing.
+        'title': ' '.join((msg.get('title') or []) + (msg.get('subtitle') or [])),
+        'years': years,
+        'container-title': container,
+        'container-title-short': journal_abbrev(container),
+    }
 
 
 def canonical_doi(doi, cache):
@@ -421,27 +510,9 @@ def update_from_web(ctx, cache):  # noqa: C901
             return
         if len(doi.split('/')[0].split('.')[1]) != 4:
             return
-        r = cache.get(f'https://api.crossref.org/works/{doi}')
-        if r:
-            # Crossref's own record of this DOI, kept so check_sources.py can
-            # cross-check it against Zotero: a Zotero DOI that resolves to a
-            # different title/year/venue is a wrong DOI. The citation count is
-            # recorded here too but not shown on the site -- item['cited_by']
-            # comes solely from Google Scholar below.
-            msg = r['message']
-            issued = (msg.get('issued') or {}).get('date-parts') or [[]]
-            container = ' '.join(msg.get('container-title') or [])
-            item['crossref'] = {
-                'cited_by': msg.get('is-referenced-by-count'),
-                # Crossref splits a subtitle into its own field; Zotero keeps it
-                # in the title, so join them before comparing.
-                'title': ' '.join(
-                    (msg.get('title') or []) + (msg.get('subtitle') or [])
-                ),
-                'year': str(issued[0][0]) if issued and issued[0] else None,
-                'container-title': container,
-                'container-title-short': journal_abbrev(container),
-            }
+        record = crossref_record(cache, doi)
+        if record:
+            item['crossref'] = record
 
     # Every source is fetched even if an earlier one fails: request errors are
     # collected and reported together at the end, where any of them fails the

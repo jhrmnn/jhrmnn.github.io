@@ -289,10 +289,12 @@ def check_crossref(refs):
             problems.append(
                 f'title differs from Crossref: {ref["title"]!r} vs {c_title!r}'
             )
-        z_year, c_year = ref_year(ref), cr.get('year')
-        if z_year and c_year and z_year != c_year:
+        # Crossref reports several dates (online, print, ...); accept Zotero's
+        # year matching any of them, so an online-vs-print split isn't flagged.
+        z_year, c_years = ref_year(ref), cr.get('years') or []
+        if z_year and c_years and z_year not in c_years:
             problems.append(
-                f'year differs: {ref["title"]!r} Zotero {z_year} vs Crossref {c_year}'
+                f'year differs: {ref["title"]!r} Zotero {z_year} vs Crossref {c_years}'
             )
         # Venue only for journal articles, folded to the ISO-4 abbreviation both
         # sides are reduced to (Zotero stores it, fetch.py abbreviates Crossref).
