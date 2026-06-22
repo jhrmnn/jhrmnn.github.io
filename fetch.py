@@ -6,6 +6,7 @@ import logging
 import os
 import re
 import sys
+import threading
 import time
 import unicodedata
 from datetime import datetime
@@ -13,7 +14,6 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 import requests
-import reuse_data
 from bs4 import BeautifulSoup
 
 from common import load_ctx, reduce_sc, strip_html
@@ -55,6 +55,41 @@ ORCID_HEADERS = {'Accept': 'application/json'}
 # paper missing from Zotero (and an unexpected record on the WoS side). The
 # academic record carries the paginated publication-list URL.
 WOS_ACADEMIC_URL = f'https://publons.com/api/v2/academic/{ORCID_ID}/'
+# Crossref serves anonymous clients from a shared "public" pool with a low,
+# variable rate limit (5 req/s when last checked); identifying ourselves with a
+# mailto moves us to the "polite" pool (10 req/s) and lets Crossref reach out
+# instead of blocking. See https://api.crossref.org/swagger-ui/index.html.
+CROSSREF_MAILTO = 'crossref@id.jan.hermann.name'
+# Stay comfortably under the polite-pool ceiling: citations() fans out across the
+# thread pool, so without a gate it would burst well past the limit and earn a
+# 429. Half the advertised limit leaves headroom for a shared CI exit IP.
+CROSSREF_RATE = 5.0  # requests per second
+
+
+class RateLimiter:
+    """Thread-safe gate spacing calls to at most `rate` per second.
+
+    The fetch issues Crossref requests concurrently from the thread pool; each
+    one calls wait() first, which blocks until the next evenly-spaced slot is due
+    so the aggregate rate never exceeds the pool's limit. Spacing (rather than a
+    burst-then-refill bucket) keeps the load steady, which is what the API wants.
+    """
+
+    def __init__(self, rate):
+        self._min_interval = 1.0 / rate
+        self._lock = threading.Lock()
+        self._next = 0.0
+
+    def wait(self):
+        with self._lock:
+            now = time.monotonic()
+            if now < self._next:
+                time.sleep(self._next - now)
+                now = self._next
+            self._next = now + self._min_interval
+
+
+CROSSREF_LIMITER = RateLimiter(CROSSREF_RATE)
 
 
 class Cache:
@@ -63,18 +98,25 @@ class Cache:
         self._store = json.loads(self._file.read_text()) if self._file.exists() else {}
         self._updated = False
 
-    def get(self, url, **kwargs):
+    def get(self, url, *, rate_limiter=None, **kwargs):
         def func():
             for attempt in range(MAX_RETRIES):
+                if rate_limiter:
+                    rate_limiter.wait()
                 r = requests.get(url, timeout=5.0, **kwargs)
                 try:
                     r.raise_for_status()
                 except requests.exceptions.HTTPError as e:
-                    if attempt < MAX_RETRIES - 1 and e.args[0].startswith('500'):
-                        time.sleep(1)
+                    # Retry server errors, and -- on a rate-limited endpoint --
+                    # back off on 429 (honoring Retry-After) as a safety net for
+                    # the gate above rather than failing the whole fetch.
+                    retriable = e.args[0].startswith('500') or (
+                        rate_limiter is not None and r.status_code == 429
+                    )
+                    if attempt < MAX_RETRIES - 1 and retriable:
+                        retry_after = r.headers.get('Retry-After')
+                        time.sleep(float(retry_after) if retry_after else 2**attempt)
                         continue
-                    elif e.args[0].startswith('429') and 'api.crossref.org' in url:
-                        return {}
                     raise
                 else:
                     break
@@ -138,13 +180,6 @@ def parse_scholar_venues_html(html):
     }
 
 
-def published_n_reviews():
-    try:
-        return json.loads(reuse_data.latest_derived_bytes())['n_reviews']
-    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
-        return None
-
-
 def _ensure_nltk():
     """Make sure the corpora `iso4` needs are present (fetch step only)."""
     import nltk
@@ -182,6 +217,50 @@ def journal_abbrev(name):
         return abbreviate_journal(name)
     except Exception:
         return name
+
+
+def crossref_record(cache, doi):
+    """Crossref's own metadata for a DOI, or None when it has no record.
+
+    Requests go through the polite pool (mailto) and are gated by CROSSREF_LIMITER
+    to stay within its rate limit. check_sources.py cross-checks the result
+    against Zotero, so a DOI that resolves to a different title/year/venue
+    surfaces as a wrong DOI; the citation count is recorded too but not shown on
+    the site (item['cited_by'] comes solely from Google Scholar).
+    """
+    url = f'https://api.crossref.org/works/{doi}?' + urlencode(
+        {'mailto': CROSSREF_MAILTO}
+    )
+    r = cache.get(url, rate_limiter=CROSSREF_LIMITER)
+    if not r:
+        return None
+    msg = r['message']
+    container = ' '.join(msg.get('container-title') or [])
+
+    def year(field):
+        parts = (msg.get(field) or {}).get('date-parts') or [[]]
+        return str(parts[0][0]) if parts and parts[0] and parts[0][0] else None
+
+    # A paper's online and print years routinely differ, and Zotero may record
+    # either; keep every date Crossref reports so check_sources accepts a match
+    # against any of them rather than flagging the online-vs-print gap.
+    years = sorted(
+        {
+            y
+            for field in ('issued', 'published', 'published-online', 'published-print')
+            for y in (year(field),)
+            if y
+        }
+    )
+    return {
+        'cited_by': msg.get('is-referenced-by-count'),
+        # Crossref splits a subtitle into its own field; Zotero keeps it in the
+        # title, so join them before comparing.
+        'title': ' '.join((msg.get('title') or []) + (msg.get('subtitle') or [])),
+        'years': years,
+        'container-title': container,
+        'container-title-short': journal_abbrev(container),
+    }
 
 
 def canonical_doi(doi, cache):
@@ -342,6 +421,51 @@ def fetch_wos(cache):
     return works
 
 
+def fetch_scholar(cache):
+    """Raw HTML of the Google Scholar profile (a single page listing every row).
+
+    Google Scholar blocks datacenter/CI IPs with a 429 "sorry" CAPTCHA, so route
+    through a residential proxy when SCHOLAR_PROXY is set (a full proxy URL, e.g.
+    http://user:pass@gw.dataimpulse.com:823). A fresh connection per attempt
+    rotates the proxy's exit IP, so retrying sheds a flagged IP; there's no point
+    retrying without a proxy, since a datacenter IP stays blocked. Raises on a
+    persistent failure so the caller can degrade like any other source.
+    """
+
+    def func():
+        proxies = None
+        if proxy := os.environ.get('SCHOLAR_PROXY'):
+            proxies = {'http': proxy, 'https': proxy}
+        attempts = SCHOLAR_PROXY_RETRIES if proxies else 1
+        for attempt in range(attempts):
+            try:
+                r = requests.get(
+                    SCHOLAR_PROFILE_URL,
+                    headers=SCHOLAR_HEADERS,
+                    timeout=30,
+                    proxies=proxies,
+                )
+                r.raise_for_status()
+                # A soft block serves a CAPTCHA / "sorry" page with HTTP 200, so
+                # raise_for_status() can't catch it. Detect it from the response
+                # itself -- Google redirects blocked traffic to a /sorry/ page
+                # whose body asks to solve a CAPTCHA -- and retry on a fresh exit
+                # IP; if it never clears, raise rather than parsing a CAPTCHA page.
+                if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
+                    raise requests.exceptions.RequestException(
+                        'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
+                    )
+            except requests.exceptions.RequestException as e:
+                if attempt < attempts - 1:
+                    logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
+                    time.sleep(2)
+                    continue
+                raise
+            return r.text
+
+    return cache.get_custom('scholar', func)
+
+
 def update_from_web(ctx, cache):  # noqa: C901
     def stars(item):
         if 'github' in item:
@@ -365,22 +489,10 @@ def update_from_web(ctx, cache):  # noqa: C901
             )
 
     def reviews(ctx):
-        try:
-            n_reviews = cache.get(
-                WOS_ACADEMIC_URL,
-                headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
-            )['reviews']['pre']['count']
-        except requests.exceptions.HTTPError as e:
-            # Publons/WoS rate-limits with HTTP 429; don't let a transient block
-            # fail the whole fetch (fetch_wos degrades the same way). Fall back
-            # to the last published review count so NUMREV still renders; skip
-            # the replacement entirely only if there's no prior value to reuse.
-            if not e.args[0].startswith('429'):
-                raise
-            logging.warning('Could not fetch Web of Science reviews: %r', e)
-            n_reviews = published_n_reviews()
-            if n_reviews is None:
-                return
+        n_reviews = cache.get(
+            WOS_ACADEMIC_URL,
+            headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
+        )['reviews']['pre']['count']
         ctx['_n_reviews'] = n_reviews
         activity = ctx['activity']
         for i in range(len(activity)):
@@ -398,96 +510,51 @@ def update_from_web(ctx, cache):  # noqa: C901
             return
         if len(doi.split('/')[0].split('.')[1]) != 4:
             return
-        r = cache.get(f'https://api.crossref.org/works/{doi}')
-        if r:
-            item['cited_by'] = r['message']['is-referenced-by-count']
+        record = crossref_record(cache, doi)
+        if record:
+            item['crossref'] = record
 
-    def scholar(ctx):
-        def func():
-            # Route through a residential proxy when configured; Scholar blocks
-            # datacenter IPs but lets residential ones through. SCHOLAR_PROXY is
-            # a full proxy URL, e.g. http://user:pass@gw.dataimpulse.com:823.
-            proxies = None
-            if proxy := os.environ.get('SCHOLAR_PROXY'):
-                proxies = {'http': proxy, 'https': proxy}
-            # A fresh connection per attempt rotates the proxy's exit IP, so
-            # retrying sheds a flagged IP. No point retrying without a proxy:
-            # a datacenter IP stays blocked.
-            attempts = SCHOLAR_PROXY_RETRIES if proxies else 1
-            for attempt in range(attempts):
-                try:
-                    r = requests.get(
-                        SCHOLAR_PROFILE_URL,
-                        headers=SCHOLAR_HEADERS,
-                        timeout=30,
-                        proxies=proxies,
-                    )
-                    r.raise_for_status()
-                    # A soft block serves a CAPTCHA / "sorry" page with HTTP 200,
-                    # so raise_for_status() can't catch it. Detect it from the
-                    # response itself -- Google redirects blocked traffic to a
-                    # /sorry/ page and the body asks to solve a CAPTCHA -- and
-                    # retry on a fresh exit IP; if it never clears, raise so the
-                    # snapshot fallback takes over rather than publishing (and
-                    # timestamping) an empty result.
-                    if '/sorry/' in r.url or 'unusual traffic' in r.text.lower():
-                        raise requests.exceptions.RequestException(
-                            'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
-                        )
-                except requests.exceptions.RequestException as e:
-                    if attempt < attempts - 1:
-                        logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
-                        time.sleep(2)
-                        continue
-                    raise
-                return r.text
+    # Every source is fetched even if an earlier one fails: request errors are
+    # collected and reported together at the end, where any of them fails the
+    # job (so partial/degraded data is never published) -- rather than each
+    # source degrading to empty or aborting the run on the first failure.
+    errors = []
 
-        # Google Scholar blocks datacenter/CI IPs; on failure fall back to the
-        # committed profile snapshot instead of failing the whole fetch.
+    def collect(label, func, *args):
         try:
-            html = cache.get_custom('scholar', func)
+            func(*args)
         except requests.exceptions.RequestException as e:
-            logging.warning('Could not fetch Google Scholar profile: %r', e)
-        else:
-            ctx['scholar_cites'] = parse_scholar_profile_html(html)
-            ctx['scholar_years'] = parse_scholar_years_html(html)
-            ctx['scholar_venues'] = parse_scholar_venues_html(html)
+            errors.append(f'{label}: {e!r}')
 
-    ctx['references'] = fetch_references(cache)
-    # ORCID only gates the push-to-main cross-check; a transient outage
-    # shouldn't fail unrelated fetches, so degrade to an empty list (which
-    # check_sources.py reports as "no ORCID data" on main).
-    try:
-        ctx['orcid'] = fetch_orcid(cache)
-    except requests.exceptions.RequestException as e:
-        logging.warning('Could not fetch ORCID works: %r', e)
-        ctx['orcid'] = []
-    # Same tolerance for Web of Science: a fetch failure leaves an empty list,
-    # which check_sources.py reports as "no Web of Science data" on main.
-    try:
-        ctx['wos'] = fetch_wos(cache)
-    except requests.exceptions.RequestException as e:
-        logging.warning('Could not fetch Web of Science works: %r', e)
-        ctx['wos'] = []
+    # Zotero is the canonical publication list that citations and the Scholar
+    # join key off, so fetch it first; on failure the dependents below just have
+    # nothing to enrich (the collected error still fails the job at the end).
+    ctx['references'] = []
+
+    def scholar():
+        html = fetch_scholar(cache)
+        ctx['scholar_cites'] = parse_scholar_profile_html(html)
+        ctx['scholar_years'] = parse_scholar_years_html(html)
+        ctx['scholar_venues'] = parse_scholar_venues_html(html)
+
+    collect('Zotero references', lambda: ctx.update(references=fetch_references(cache)))
+    collect('ORCID works', lambda: ctx.update(orcid=fetch_orcid(cache)))
+    collect('Web of Science works', lambda: ctx.update(wos=fetch_wos(cache)))
+    collect('Google Scholar profile', scholar)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
-            pool.submit(func, x)
-            for func, x in [
-                *((stars, x) for x in ctx['software']),
-                (reviews, ctx),
-                *((citations, x) for x in ctx['references']),
-                (scholar, ctx),
+            pool.submit(collect, label, func, x)
+            for label, func, x in [
+                *(('GitHub stars', stars, x) for x in ctx['software']),
+                ('Web of Science reviews', reviews, ctx),
+                *(('citations', citations, x) for x in ctx['references']),
             ]
         ]
-    has_errors = False
+    # collect() absorbs the request errors; draining the futures re-raises any
+    # other exception (a bug, not a fetch failure) instead of losing it in a
+    # worker thread.
     for future in concurrent.futures.as_completed(futures):
-        try:
-            future.result()
-        except requests.exceptions.HTTPError as e:
-            logging.error(repr(e))
-            has_errors = True
-    if has_errors:
-        sys.exit(1)
+        future.result()
     if ctx.get("scholar_cites"):
         refs_by_key = {
             reduce_sc(strip_html(item['title'].lower()))[:120]: item
@@ -507,6 +574,15 @@ def update_from_web(ctx, cache):  # noqa: C901
             # counts to references we actually have.
             if key in refs_by_key:
                 refs_by_key[key]['cited_by'] = cite
+    if errors:
+        logging.error('fetch failed; %d source error(s):', len(errors))
+        for err in errors:
+            logging.error('  - %s', err)
+        if summary := os.environ.get('GITHUB_STEP_SUMMARY'):
+            with open(summary, 'a') as f:
+                f.write('### Fetch errors\n')
+                f.writelines(f'- {err}\n' for err in errors)
+        sys.exit(1)
 
 
 def extract_derived(ctx):
