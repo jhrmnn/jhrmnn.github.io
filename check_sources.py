@@ -2,10 +2,10 @@
 """Cross-check that the publication sources agree.
 
 The site's reference list comes from the Zotero "My Publications" library;
-ORCID, Google Scholar and Web of Science are independent records of the same
-publications. This reads a freshly fetched `build/derived.json` and verifies
-that they list the same papers and that, for each paper, ORCID's substance
-matches Zotero's.
+ORCID, Google Scholar, Web of Science and Crossref are independent records of
+the same publications. This reads a freshly fetched `build/derived.json` and
+verifies that they list the same papers and that, for each paper, ORCID's
+substance matches Zotero's.
 
 The only differences tolerated are accents, letter case, and unicode-vs-ascii
 spelling of the same character (see `common.fold_text`); anything else -- a
@@ -24,9 +24,12 @@ Scholar's profile exposes title, year and venue. So:
 - the year is corroborated against both ORCID and Scholar,
 - the venue is compared across all three, folded to a common ISO-4 abbreviation,
 - Scholar must additionally list every Zotero paper,
-- and Web of Science must list every Zotero paper it would index -- i.e. every
+- Web of Science must list every Zotero paper it would index -- i.e. every
   published one, since WoS doesn't index preprints, theses or book chapters --
-  and must carry no unexpected record of its own (see WOS_ALLOWED_EXTRAS).
+  and must carry no unexpected record of its own (see WOS_ALLOWED_EXTRAS),
+- and Crossref's record of each Zotero DOI must agree on title, year and venue
+  (a DOI that resolves to a different work is a wrong DOI in Zotero); Crossref is
+  looked up by the DOI, so unlike the others it can't check presence.
 
 Neither ORCID nor Scholar carries volume/page, so those are not cross-checked.
 """
@@ -129,7 +132,9 @@ def check(  # noqa: C901
     for ref in refs:
         key = title_key(ref['title'])
         z_titles.add(key)
-        ident = ref.get('canonical-doi') or ref.get('id')  # canonical DOI/handle join key
+        ident = ref.get('canonical-doi') or ref.get(
+            'id'
+        )  # canonical DOI/handle join key
         if ident:
             z_ids.add(ident)
         if not orcid:
@@ -249,16 +254,57 @@ def check_wos(refs, wos):
         if ident and ident not in wos_ids:
             problems.append(f'absent from Web of Science: {ref["title"]!r}')
     # WoS records with no Zotero counterpart, beyond the known-allowed extras.
-    zotero_ids = {ref.get('canonical-doi') or ref['id'] for ref in refs if ref.get('canonical-doi') or ref.get('id')}
+    zotero_ids = {
+        ref.get('canonical-doi') or ref['id']
+        for ref in refs
+        if ref.get('canonical-doi') or ref.get('id')
+    }
     for work in wos:
         key = work['id'] or work.get('accession')
         if key in WOS_ALLOWED_EXTRAS:
             continue
         if work['id'] and work['id'] in zotero_ids:
             continue
-        problems.append(
-            f'in Web of Science but not Zotero: {work["title"]!r} ({key})'
-        )
+        problems.append(f'in Web of Science but not Zotero: {work["title"]!r} ({key})')
+    return problems
+
+
+def check_crossref(refs):
+    """Cross-check each Zotero reference against Crossref's record of its DOI.
+
+    fetch.py attaches Crossref's own metadata for the DOI to each reference.
+    Crossref is queried *by* the Zotero DOI, so this can't check presence -- but
+    a DOI that resolves to a different title, year or venue means the Zotero DOI
+    is wrong. Title and venue are folded to the same key the other sources use
+    and the year compared, exactly as in check(). Skipped per-ref when Crossref
+    has no record (no DOI, or a non-Crossref handle). Returns a list of reasons.
+    """
+    problems = []
+    for ref in refs:
+        cr = ref.get('crossref')
+        if not cr:
+            continue
+        c_title = cr.get('title')
+        if c_title and title_key(ref['title']) != title_key(c_title):
+            problems.append(
+                f'title differs from Crossref: {ref["title"]!r} vs {c_title!r}'
+            )
+        z_year, c_year = ref_year(ref), cr.get('year')
+        if z_year and c_year and z_year != c_year:
+            problems.append(
+                f'year differs: {ref["title"]!r} Zotero {z_year} vs Crossref {c_year}'
+            )
+        # Venue only for journal articles, folded to the ISO-4 abbreviation both
+        # sides are reduced to (Zotero stores it, fetch.py abbreviates Crossref).
+        if ref.get('type') == 'article-journal':
+            z_venue, c_venue = ref.get('container-title-short'), cr.get(
+                'container-title-short'
+            )
+            if z_venue and c_venue and title_key(z_venue) != title_key(c_venue):
+                problems.append(
+                    f'venue differs: {ref["title"]!r} Zotero {z_venue!r} '
+                    f'vs Crossref {cr.get("container-title")!r}'
+                )
     return problems
 
 
@@ -275,6 +321,7 @@ def main(args):
         scholar_venues(derived),
     )
     problems += check_wos(derived.get('references', []), derived.get('wos', []))
+    problems += check_crossref(derived.get('references', []))
     if not problems:
         print('publication sources agree')
         return

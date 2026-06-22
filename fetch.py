@@ -423,9 +423,25 @@ def update_from_web(ctx, cache):  # noqa: C901
             return
         r = cache.get(f'https://api.crossref.org/works/{doi}')
         if r:
-            # Recorded for reference only; the citation count shown on the site
-            # (item['cited_by']) comes solely from Google Scholar below.
-            item['crossref_cited_by'] = r['message']['is-referenced-by-count']
+            # Crossref's own record of this DOI, kept so check_sources.py can
+            # cross-check it against Zotero: a Zotero DOI that resolves to a
+            # different title/year/venue is a wrong DOI. The citation count is
+            # recorded here too but not shown on the site -- item['cited_by']
+            # comes solely from Google Scholar below.
+            msg = r['message']
+            issued = (msg.get('issued') or {}).get('date-parts') or [[]]
+            container = ' '.join(msg.get('container-title') or [])
+            item['crossref'] = {
+                'cited_by': msg.get('is-referenced-by-count'),
+                # Crossref splits a subtitle into its own field; Zotero keeps it
+                # in the title, so join them before comparing.
+                'title': ' '.join(
+                    (msg.get('title') or []) + (msg.get('subtitle') or [])
+                ),
+                'year': str(issued[0][0]) if issued and issued[0] else None,
+                'container-title': container,
+                'container-title-short': journal_abbrev(container),
+            }
 
     # Every source is fetched even if an earlier one fails: request errors are
     # collected and reported together at the end, where any of them fails the
