@@ -13,7 +13,6 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 import requests
-import reuse_data
 from bs4 import BeautifulSoup
 
 from common import load_ctx, reduce_sc, strip_html
@@ -73,8 +72,6 @@ class Cache:
                     if attempt < MAX_RETRIES - 1 and e.args[0].startswith('500'):
                         time.sleep(1)
                         continue
-                    elif e.args[0].startswith('429') and 'api.crossref.org' in url:
-                        return {}
                     raise
                 else:
                     break
@@ -136,13 +133,6 @@ def parse_scholar_venues_html(html):
         for title, _, _, venue in _scholar_rows(html)
         if venue
     }
-
-
-def published_n_reviews():
-    try:
-        return json.loads(reuse_data.latest_derived_bytes())['n_reviews']
-    except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
-        return None
 
 
 def _ensure_nltk():
@@ -410,22 +400,10 @@ def update_from_web(ctx, cache):  # noqa: C901
             )
 
     def reviews(ctx):
-        try:
-            n_reviews = cache.get(
-                WOS_ACADEMIC_URL,
-                headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
-            )['reviews']['pre']['count']
-        except requests.exceptions.HTTPError as e:
-            # Publons/WoS rate-limits with HTTP 429; don't let a transient block
-            # fail the whole fetch (fetch_wos degrades the same way). Fall back
-            # to the last published review count so NUMREV still renders; skip
-            # the replacement entirely only if there's no prior value to reuse.
-            if not e.args[0].startswith('429'):
-                raise
-            logging.warning('Could not fetch Web of Science reviews: %r', e)
-            n_reviews = published_n_reviews()
-            if n_reviews is None:
-                return
+        n_reviews = cache.get(
+            WOS_ACADEMIC_URL,
+            headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
+        )['reviews']['pre']['count']
         ctx['_n_reviews'] = n_reviews
         activity = ctx['activity']
         for i in range(len(activity)):
@@ -449,52 +427,47 @@ def update_from_web(ctx, cache):  # noqa: C901
             # (item['cited_by']) comes solely from Google Scholar below.
             item['crossref_cited_by'] = r['message']['is-referenced-by-count']
 
-    ctx['references'] = fetch_references(cache)
-    # ORCID only gates the push-to-main cross-check; a transient outage
-    # shouldn't fail unrelated fetches, so degrade to an empty list (which
-    # check_sources.py reports as "no ORCID data" on main).
-    try:
-        ctx['orcid'] = fetch_orcid(cache)
-    except requests.exceptions.RequestException as e:
-        logging.warning('Could not fetch ORCID works: %r', e)
-        ctx['orcid'] = []
-    # Same tolerance for Web of Science: a fetch failure leaves an empty list,
-    # which check_sources.py reports as "no Web of Science data" on main.
-    try:
-        ctx['wos'] = fetch_wos(cache)
-    except requests.exceptions.RequestException as e:
-        logging.warning('Could not fetch Web of Science works: %r', e)
-        ctx['wos'] = []
-    # Google Scholar supplies the citation counts shown on the site. A fetch
-    # failure (datacenter/CI IP soft block) leaves the counts unset for this run,
-    # the same way an ORCID or WoS outage leaves those lists empty -- the
-    # publication's cited_by is simply omitted rather than the fetch failing.
-    try:
+    # Every source is fetched even if an earlier one fails: request errors are
+    # collected and reported together at the end, where any of them fails the
+    # job (so partial/degraded data is never published) -- rather than each
+    # source degrading to empty or aborting the run on the first failure.
+    errors = []
+
+    def collect(label, func, *args):
+        try:
+            func(*args)
+        except requests.exceptions.RequestException as e:
+            errors.append(f'{label}: {e!r}')
+
+    # Zotero is the canonical publication list that citations and the Scholar
+    # join key off, so fetch it first; on failure the dependents below just have
+    # nothing to enrich (the collected error still fails the job at the end).
+    ctx['references'] = []
+
+    def scholar():
         html = fetch_scholar(cache)
-    except requests.exceptions.RequestException as e:
-        logging.warning('Could not fetch Google Scholar profile: %r', e)
-    else:
         ctx['scholar_cites'] = parse_scholar_profile_html(html)
         ctx['scholar_years'] = parse_scholar_years_html(html)
         ctx['scholar_venues'] = parse_scholar_venues_html(html)
+
+    collect('Zotero references', lambda: ctx.update(references=fetch_references(cache)))
+    collect('ORCID works', lambda: ctx.update(orcid=fetch_orcid(cache)))
+    collect('Web of Science works', lambda: ctx.update(wos=fetch_wos(cache)))
+    collect('Google Scholar profile', scholar)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
-            pool.submit(func, x)
-            for func, x in [
-                *((stars, x) for x in ctx['software']),
-                (reviews, ctx),
-                *((citations, x) for x in ctx['references']),
+            pool.submit(collect, label, func, x)
+            for label, func, x in [
+                *(('GitHub stars', stars, x) for x in ctx['software']),
+                ('Web of Science reviews', reviews, ctx),
+                *(('citations', citations, x) for x in ctx['references']),
             ]
         ]
-    has_errors = False
+    # collect() absorbs the request errors; draining the futures re-raises any
+    # other exception (a bug, not a fetch failure) instead of losing it in a
+    # worker thread.
     for future in concurrent.futures.as_completed(futures):
-        try:
-            future.result()
-        except requests.exceptions.HTTPError as e:
-            logging.error(repr(e))
-            has_errors = True
-    if has_errors:
-        sys.exit(1)
+        future.result()
     if ctx.get("scholar_cites"):
         refs_by_key = {
             reduce_sc(strip_html(item['title'].lower()))[:120]: item
@@ -514,6 +487,15 @@ def update_from_web(ctx, cache):  # noqa: C901
             # counts to references we actually have.
             if key in refs_by_key:
                 refs_by_key[key]['cited_by'] = cite
+    if errors:
+        logging.error('fetch failed; %d source error(s):', len(errors))
+        for err in errors:
+            logging.error('  - %s', err)
+        if summary := os.environ.get('GITHUB_STEP_SUMMARY'):
+            with open(summary, 'a') as f:
+                f.write('### Fetch errors\n')
+                f.writelines(f'- {err}\n' for err in errors)
+        sys.exit(1)
 
 
 def extract_derived(ctx):
