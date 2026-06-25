@@ -42,3 +42,6 @@
 <link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
 <link rel="canonical" href="{{ canonical }}">
 <link rel="webmention" href="https://fed.brid.gy/webmention">
+{#- Self-hosted ActivityPub actor discovery (the Cloudflare Worker). Kept
+    alongside the Bridgy Fed webmention link during the transition. #}
+<link rel="alternate" type="application/activity+json" href="https://jan.hermann.name/ap/actor">

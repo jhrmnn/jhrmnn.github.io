@@ -3,3 +3,9 @@
 /_site/
 /fonts
 __pycache__/
+# Worker / ActivityPub: never commit the actor private key or local secrets.
+/ap_private.pem
+/ap_public.pem
+/.dev.vars
+/node_modules/
+/.wrangler/
