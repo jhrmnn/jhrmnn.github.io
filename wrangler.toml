@@ -1,0 +1,37 @@
+# Cloudflare Worker that serves the static site (Workers Static Assets) and a
+# small single-actor ActivityPub server for jan.hermann.name. The Worker is the
+# request entry point: it handles /.well-known/webfinger and /ap/* itself and
+# falls through to the static assets (the rendered _site/) for everything else.
+name = "jhrmnn-site"
+main = "worker/index.ts"
+compatibility_date = "2025-01-01"
+
+# Workers Static Assets: the render step keeps producing _site/ exactly as
+# before. With a `main` worker present, the default routing serves a static
+# asset directly when one exists at the path and invokes the worker on a miss.
+# The AP routes (/.well-known/webfinger, /ap/*) have no static file, so they
+# fall through to the worker; the worker forwards anything else it receives back
+# to the asset server via env.ASSETS.fetch(request).
+[assets]
+directory = "./_site"
+binding = "ASSETS"
+
+# Non-secret config. The two secrets (AP_PRIVATE_KEY, AP_ADMIN_TOKEN) are NOT
+# here — they are set in the Cloudflare dashboard (Settings -> Variables and
+# Secrets -> type "Secret") after the first deploy.
+[vars]
+DOMAIN = "jan.hermann.name"
+USERNAME = "jan.hermann.name"
+# The actor's PUBLIC key (SPKI PEM). Not secret — it is published in the actor
+# object for any peer to fetch. Paste the contents of ap_public.pem here.
+AP_PUBLIC_KEY = """
+-----BEGIN PUBLIC KEY-----
+REPLACE_WITH_CONTENTS_OF_ap_public.pem
+-----END PUBLIC KEY-----
+"""
+
+# Follower + delivered-note storage. Create the namespace once in the dashboard
+# (or `wrangler kv namespace create FEDI`) and paste its id below.
+[[kv_namespaces]]
+binding = "FEDI"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
