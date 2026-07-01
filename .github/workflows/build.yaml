@@ -257,7 +257,7 @@ jobs:
             case "$f" in
               posts/*.md)
                 stem="$(basename "$f" .md)"
-                urls="$urls https://jan.hermann.name/notes/$stem/"
+                urls="$urls https://hrmnn.net/notes/$stem/"
                 ;;
             esac
           done <<<"$changed"
