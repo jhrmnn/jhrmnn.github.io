@@ -1,6 +1,6 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
 {% set page_title = "Notes · Jan Hermann" %}
-{% set canonical = "https://jan.hermann.name/notes/" %}
+{% set canonical = "https://hrmnn.net/notes/" %}
 {% include "templates/_head.html" %}
 
 <nav aria-label="Sections">

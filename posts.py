@@ -21,7 +21,7 @@ from markupsafe import Markup
 
 from render import finalize_doc, make_env, md_to_html
 
-BASE_URL = 'https://jan.hermann.name'
+BASE_URL = 'https://hrmnn.net'
 FILENAME_RE = re.compile(r'(\d{4})-(\d{2})-(\d{2})-(.+)\.md$')
 BULLET_RE = re.compile(r'[-*]\s')
 ORDERED_RE = re.compile(r'\d+\.\s')

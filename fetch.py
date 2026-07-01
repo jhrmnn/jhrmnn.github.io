@@ -59,7 +59,7 @@ WOS_ACADEMIC_URL = f'https://publons.com/api/v2/academic/{ORCID_ID}/'
 # variable rate limit (5 req/s when last checked); identifying ourselves with a
 # mailto moves us to the "polite" pool (10 req/s) and lets Crossref reach out
 # instead of blocking. See https://api.crossref.org/swagger-ui/index.html.
-CROSSREF_MAILTO = 'crossref@id.jan.hermann.name'
+CROSSREF_MAILTO = 'crossref@id.hrmnn.net'
 # Stay comfortably under the polite-pool ceiling: citations() fans out across the
 # thread pool, so without a gate it would burst well past the limit and earn a
 # 429. Half the advertised limit leaves headroom for a shared CI exit IP.

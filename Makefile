@@ -13,7 +13,7 @@ vpath %.jpeg assets
 .PRECIOUS: %.pdf $(BLDDIR)/%
 .DELETE_ON_ERROR:
 
-all: cv notes
+all: cv notes $(OUTDIR)/CNAME
 
 cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg header-blank.png)
 
