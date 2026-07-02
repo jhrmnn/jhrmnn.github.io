@@ -1,6 +1,7 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
 {% set page_title = "Notes · Jan Hermann" %}
 {% set canonical = "https://hrmnn.net/notes/" %}
+{% set meta_description = "Notes by Jan Hermann." %}
 {% include "templates/_head.html" %}
 
 <nav aria-label="Sections">

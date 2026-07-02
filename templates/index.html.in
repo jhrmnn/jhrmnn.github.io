@@ -1,6 +1,7 @@
 <!-- vim: set ft=jinja sts=2 sw=2: -->
 {% set page_title = "Jan Hermann" %}
 {% set canonical = "https://hrmnn.net" %}
+{% set meta_description = "Jan Hermann — computational chemist and physicist integrating deep learning into quantum chemistry. Tools, publications, talks, and notes." %}
 {% include "templates/_head.html" %}
 
 {% macro talk_block(talks, class) %}
@@ -132,7 +133,7 @@
   <section>  
     <p class="p-note">{{ bio }}
     
-    <p id="profile-pic"><img class="u-photo" src="profile-pic.jpeg" alt="Jan Hermann" height="160">
+    <p id="profile-pic"><img class="u-photo" src="profile-pic-web.jpeg" alt="Jan Hermann" width="160" height="160">
     
     {{ dl_block(links, contact) }}
   </section>

@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic.jpeg header-blank.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.jpeg header-blank.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -72,6 +72,15 @@ $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.
 
 $(OUTDIR) $(BLDDIR):
 	mkdir -p $@
+
+# Regenerate the committed homepage avatar from the full-resolution source.
+# The homepage only needs a small thumbnail (displayed at 160px, 2x for retina),
+# whereas assets/profile-pic.jpeg stays large for the CV PDF (embedded at print
+# size). The result is committed and copied by the normal build, so CI needs no
+# image tooling; run this by hand (needs ImageMagick, e.g. `apt-get install
+# imagemagick`) only when the source photo changes.
+avatar:
+	convert assets/profile-pic.jpeg -auto-orient -strip -resize 320x320 -quality 82 -interlace JPEG assets/profile-pic-web.jpeg
 
 clean:
 	rm -rf $(BLDDIR) $(OUTDIR)
