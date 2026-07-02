@@ -455,6 +455,18 @@ def fetch_scholar(cache):
                     raise requests.exceptions.RequestException(
                         'Scholar served a CAPTCHA/block page (HTTP 200 soft block)'
                     )
+                # A proxy/error page or an unrecognised block variant can return
+                # HTTP 200 with a body that carries no publication rows. Parsing
+                # that yields an empty profile, and an empty scholar_cites is
+                # silently skipped downstream (see update_from_web) -- so the job
+                # would still succeed and publish a citation-less artifact,
+                # wiping every count from the site. Treat "no rows" like a block:
+                # retry on a fresh exit IP, and if it never clears, raise rather
+                # than publishing empty counts.
+                if not parse_scholar_profile_html(r.text):
+                    raise requests.exceptions.RequestException(
+                        'Scholar profile parsed to zero publication rows'
+                    )
             except requests.exceptions.RequestException as e:
                 if attempt < attempts - 1:
                     logging.info('Scholar fetch attempt %d failed: %r', attempt + 1, e)
