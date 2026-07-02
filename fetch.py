@@ -148,7 +148,11 @@ def _scholar_rows(html):
     soup = BeautifulSoup(html, "html.parser")
     for row in soup.select("#gsc_a_t .gsc_a_tr"):
         title = row.select_one(".gsc_a_at").get_text(strip=True)
-        cites = int(row.select_one(".gsc_a_c").get_text(strip=True) or 0)
+        # Scholar renders the count as plain digits, but marks a merged entry's
+        # count with a trailing "*" (the total spans the merged versions) and
+        # groups large counts with commas ("1,234"). Keep only the digits so
+        # neither form crashes int(); an empty cell (no citations) folds to 0.
+        cites = int(re.sub(r'\D', '', row.select_one(".gsc_a_c").get_text(strip=True)) or 0)
         year_cell = row.select_one(".gsc_a_y")
         year = year_cell.get_text(strip=True) if year_cell else ''
         # The second grey line is the venue, e.g. "J. Chem. Inf. Model. 65 (18),
