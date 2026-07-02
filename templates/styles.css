@@ -87,9 +87,11 @@ footer {
 
 /* Give the tightly-packed inline links (section nav, the research/social hub,
    and the links woven through the bio) a ~24px-tall tap target on touch
-   screens, without loosening the deliberately compact CV/publication tables. */
+   screens, without loosening the deliberately compact CV/publication tables.
+   The hub rule targets the whole <dl> so the floated <dt> labels share the
+   taller line box and stay aligned with their <dd> values. */
 nav ul,
-.h-card dd,
+.h-card dl,
 .p-note {
     line-height: 1.6;
 }
