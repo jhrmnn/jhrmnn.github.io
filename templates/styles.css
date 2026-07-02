@@ -52,6 +52,15 @@ dt::after {
     content: ":\00a0";
 }
 
+/* The research/social hub stacks single-link rows (code: GitHub, cycling:
+   Strava, ...) tight enough that each link sits within 24px of the rows above
+   and below, failing the target-size (WCAG 2.5.8) check. Taller rows push the
+   vertical centres past 24px apart; scoped to the whole <dl> so the floated
+   <dt> labels share the line box and stay aligned with their <dd> values. */
+.h-card dl {
+    line-height: 1.6;
+}
+
 address {
     font-style: normal;
 }
