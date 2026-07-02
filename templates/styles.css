@@ -80,20 +80,6 @@ footer {
     font-style: italic;
     text-align: center;
     margin-top: 2em;
-    /* Taller line box so the timestamp link and toggle clear a 24px tap target
-       despite the reduced font size. */
-    line-height: 2;
-}
-
-/* Give the tightly-packed inline links (section nav, the research/social hub,
-   and the links woven through the bio) a ~24px-tall tap target on touch
-   screens, without loosening the deliberately compact CV/publication tables.
-   The hub rule targets the whole <dl> so the floated <dt> labels share the
-   taller line box and stay aligned with their <dd> values. */
-nav ul,
-.h-card dl,
-.p-note {
-    line-height: 1.6;
 }
 
 #style-toggle {
