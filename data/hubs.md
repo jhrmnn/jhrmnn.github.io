@@ -55,7 +55,7 @@ fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 
 No tool stands alone. libMBD is built into FHI-aims, DFTB+, and other
 electronic-structure codes; Pyberny into PySCF and QCEngine — integrations
-reflected in their program papers [@Abbott25; @HourahineJCP20; @SunJCP20;
+reflected in their program papers [@AbbottES26; @HourahineJCP20; @SunJCP20;
 @SmithJCP21]. The same connective work runs through survey writing across the
 field, from a roadmap on machine learning in electronic structure [@KulikES22] to
 an introduction to material modeling [@Hermann20], alongside the invited seminars
