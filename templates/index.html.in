@@ -130,8 +130,13 @@
      instead of falling back to the avatar (u-photo) for its banner. #}
   <img class="u-featured" src="header-blank.png" alt="" hidden>
 
-  <section>  
-    <p class="p-note">{{ bio }}
+  <section>
+    {# Opt out of the Bridgy Fed bridge (fed.brid.gy): the literal `#nobridge`
+       in the h-card note tells fed.brid.gy not to bridge this site into the
+       fediverse (federating directly instead). `hidden` keeps it out of the
+       rendered bio while leaving it in the parsed p-note that fed.brid.gy reads
+       — the same reason the rel=me links above use `hidden`. #}
+    <p class="p-note">{{ bio }}<span hidden> #nobridge</span>
     
     <p id="profile-pic"><img class="u-photo" src="profile-pic-web.jpeg" alt="Jan Hermann" width="160" height="160">
     
