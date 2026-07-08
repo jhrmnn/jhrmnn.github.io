@@ -23,7 +23,7 @@ exchange–correlation functional.
 Exchange–correlation, learned from data. Skala learns the
 exchange–correlation functional of Kohn–Sham DFT, reaching hybrid-functional
 accuracy at semi-local cost [@Luise25]. This thread started by looking at the algorithmic side of things
-[@delMazo-SevillanoJCP23], but it later became evident that the key ingredient is data [@EhlertSD26; @GasevicJCIM25].
+[@delMazo-SevillanoJCP23], but it later became evident that the key ingredient is data [@GasevicJCIM25; @EhlertSD26].
 
 # Quantum Monte Carlo {#DeepQMC github="deepqmc/deepqmc" nav="QMC"}
 
@@ -40,14 +40,14 @@ Those same wavefunctions also yield accurate real-space electron densities
 # Van der Waals dispersion {#libMBD github="libmbd/libmbd" nav="vdW"}
 
 Long-range electron correlation, by hand. The itch started with a vdW-DF/CCSD(T)
-correction scheme [@HermannJCP13; @Hermann13] for zeolites [@HermannCT14; @PolozijCT13] and grew
+correction scheme [@HermannJCP13; @Hermann13] for zeolites [@PolozijCT13; @HermannCT14] and grew
 into a unified density-functional model of van der Waals interactions
-[@HermannPRL20; @Hermann18; @HermannCR17], with the exchange–correlation
+[@HermannCR17; @HermannPRL20; @Hermann18], with the exchange–correlation
 balance worked out along the way [@HermannJCTC18; @Hermann18a]. Packaged as
 libMBD, a scalable many-body dispersion library [@HermannJCP23] now
 embedded in several electronic-structure codes, it underpins applications from π–π
 stacked molecules [@HermannNC17] through molecular crystals and layered materials
-[@LiuJCP16; @ChattopadhyayaCM17; @CuiJPCL20; @OuyangJCTC21] to Casimir and
+[@OuyangJCTC21; @LiuJCP16; @ChattopadhyayaCM17; @CuiJPCL20] to Casimir and
 fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 @VenkataramSA19; @VenkataramPRB20; @StohrNC21].
 
