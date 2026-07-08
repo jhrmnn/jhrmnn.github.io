@@ -29,7 +29,7 @@ accuracy at semi-local cost [@Luise25]. This thread started by looking at the al
 
 Wavefunctions, learned from physics. Deep QMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
-variational Monte Carlo — the wavefunction optimized against the Schrödinger
+variational Monte Carlo—the wavefunction optimized against the Schrödinger
 equation itself, with no reference data. It can be converged to the fixed-node limit
 [@SchatzleJCP21], reach excited states [@EntwistleNC23], and eventually grew into a general
 open-source suite [@SchatzleJCP23] within a fast-developing field [@HermannNRC23].
