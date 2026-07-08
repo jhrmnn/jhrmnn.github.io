@@ -223,49 +223,6 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
-  federate:
-    # Tell Bridgy Fed (https://fed.brid.gy) about posts changed in this push so
-    # they get bridged to the Fediverse. Only on real pushes to main: the daily
-    # data-refresh schedule deploys the same posts and must not re-send them.
-    if: >-
-      !cancelled() &&
-      needs.deploy-github.result == 'success' &&
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: deploy-github
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - run: pip install requests
-      - name: Send webmentions for changed posts
-        run: |
-          # Map each posts/*.md changed since the previous commit to its public
-          # URL (notes/<YYYY-MM-DD-slug>/, i.e. the full filename stem).
-          base="${{ github.event.before }}"
-          if [ -z "$base" ] || ! git rev-parse -q --verify "$base^{commit}" >/dev/null; then
-            changed="$(git ls-files posts)"
-          else
-            changed="$(git diff --name-only "$base" HEAD -- posts)"
-          fi
-          urls=""
-          while IFS= read -r f; do
-            case "$f" in
-              posts/*.md)
-                stem="$(basename "$f" .md)"
-                urls="$urls https://hrmnn.net/notes/$stem/"
-                ;;
-            esac
-          done <<<"$changed"
-          echo "Federating:$urls"
-          # Give the Pages CDN a moment to serve the new pages before Bridgy
-          # fetches them.
-          [ -n "$urls" ] && sleep 30
-          python send_webmentions.py $urls
   deploy-cloudflare:
     # Per-PR preview on Cloudflare Pages. Production stays on GitHub Pages
     # (deploy-github above); this only ever runs for pull requests, so every

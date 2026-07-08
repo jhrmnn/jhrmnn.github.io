@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.jpeg header-blank.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.jpeg)
 
 POSTS = $(wildcard posts/*.md)
 

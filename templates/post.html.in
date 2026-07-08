@@ -15,10 +15,10 @@
     {% if post.title %}<h1 class="p-name">{{ post.title }}</h1>{% endif %}
     <p class="postmeta">
       <a class="u-url" href="{{ post.url }}"><time class="dt-published" datetime="{{ post.datetime }}">{{ post.date_display }}</time></a>
-      {#- Keep dt-updated in the markup whenever the post was edited (Bridgy Fed
-          needs it to federate the edit as an Update), but only show the visible
-          "updated …" badge when it falls on a different day than publication —
-          a same-day edit next to the publish date is just noise. #}
+      {#- Keep dt-updated in the markup whenever the post was edited, but only
+          show the visible "updated …" badge when it falls on a different day
+          than publication — a same-day edit next to the publish date is just
+          noise. #}
       {%- if post.updated %}
         {%- if post.updated_display != post.date_display %} &middot; <time class="dt-updated" datetime="{{ post.updated }}">updated {{ post.updated_display }}</time>
         {%- else %} <time class="dt-updated" datetime="{{ post.updated }}" hidden></time>
@@ -29,9 +29,6 @@
     <div class="e-content">
 {{ post.content_html }}
     </div>
-    <!-- Tells Bridgy Fed to bridge this post to the Fediverse (target of the
-         webmention sent on publish). Hidden; not part of the post content. -->
-    <a class="u-bridgy-fed" href="https://fed.brid.gy/" hidden></a>
   </article>
 </main>
 
