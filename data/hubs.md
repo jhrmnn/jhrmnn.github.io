@@ -50,7 +50,7 @@ stacked molecules [@HermannNC17] through molecular crystals and layered material
 fluctuational-electrodynamics phenomena [@VenkataramPRL17; @VenkataramPRL18;
 @VenkataramSA19; @VenkataramPRB20; @StohrNC21]. The model grew from an itch—a
 vdW-DF/CCSD(T) correction scheme [@HermannJCP13; @Hermann13] for zeolites
-[@PolozijCT13; @HermannCT14]—with the exchange–correlation balance worked out
+[@PolozijCT13; @HermannCT14], with the exchange–correlation balance worked out
 along the way [@HermannJCTC18; @Hermann18a].
 
 # Ecosystem {#more .theme}
