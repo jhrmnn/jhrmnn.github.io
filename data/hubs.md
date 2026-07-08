@@ -41,9 +41,8 @@ Those same wavefunctions also yield accurate real-space electron densities
 
 Long-range electron correlation, by hand. The centerpiece is a unified
 density-functional model of van der Waals interactions that merges many-body
-atomic approaches with nonlocal functionals [@HermannPRL20], with the broader
-landscape of first-principles vdW models — concepts, theory, and applications —
-set out in a comprehensive review [@HermannCR17; @Hermann18]. Packaged as
+atomic approaches with nonlocal functionals [@HermannPRL20], within the wider
+first-principles effort to capture them [@HermannCR17; @Hermann18]. Packaged as
 libMBD, a scalable many-body dispersion library [@HermannJCP23] now
 embedded in several electronic-structure codes, it underpins applications from π–π
 stacked molecules [@HermannNC17] through molecular crystals and layered materials
