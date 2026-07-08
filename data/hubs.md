@@ -30,8 +30,8 @@ accuracy at semi-local cost [@Luise25]. This thread started by looking at the al
 Wavefunctions, learned from physics. Deep QMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
 variational Monte Carlo—the wavefunction optimized against the Schrödinger
-equation itself, with no reference data. It can be converged to the fixed-node limit
-[@SchatzleJCP21], reach excited states [@EntwistleNC23], and eventually grew into a general
+equation itself, with no reference data. It can reach excited states
+[@EntwistleNC23], be converged to the fixed-node limit [@SchatzleJCP21], and eventually grew into a general
 open-source suite [@SchatzleJCP23] within a fast-developing field [@HermannNRC23].
 Those same wavefunctions also yield accurate real-space electron densities
 [@ChengJCP25], and in the latest iteration are encoded in a single foundation model
@@ -39,10 +39,10 @@ Those same wavefunctions also yield accurate real-space electron densities
 
 # Van der Waals dispersion {#libMBD github="libmbd/libmbd" nav="vdW"}
 
-Long-range electron correlation, by hand. The itch started with a vdW-DF/CCSD(T)
-correction scheme [@HermannJCP13; @Hermann13] for zeolites [@PolozijCT13; @HermannCT14] and grew
-into a unified density-functional model of van der Waals interactions
-[@HermannCR17; @HermannPRL20; @Hermann18], with the exchange–correlation
+Long-range electron correlation, by hand. A unified density-functional model of
+van der Waals interactions [@HermannCR17; @HermannPRL20; @Hermann18] grew from an
+itch — a vdW-DF/CCSD(T) correction scheme [@HermannJCP13; @Hermann13] for zeolites
+[@PolozijCT13; @HermannCT14] — with the exchange–correlation
 balance worked out along the way [@HermannJCTC18; @Hermann18a]. Packaged as
 libMBD, a scalable many-body dispersion library [@HermannJCP23] now
 embedded in several electronic-structure codes, it underpins applications from π–π
