@@ -3,8 +3,8 @@
 page at `notes/YYYY-MM-DD-slug/index.html`, plus an h-feed index at
 `notes/index.html`.
 
-The microformats2 markup (h-card on the home page, h-entry here) is what lets
-Bridgy Fed (https://fed.brid.gy) bridge the site into the Fediverse. Reuses the
+Emits IndieWeb microformats2 markup (h-card on the home page, h-entry here) so
+the notes are machine-readable to feed readers and other consumers. Reuses the
 Jinja environment and output normalisation from `render.py` so blog pages come
 out identical in style to the rest of the site.
 """
@@ -65,11 +65,8 @@ def md_blocks_to_html(text):
 def git_dates(path):
     """First and last git author dates touching `path`, as ISO-8601 strings,
     or (None, None) if the file isn't tracked yet (e.g. a brand-new post in
-    local dev, or git history unavailable). The last date drives dt-updated:
-    Bridgy Fed reads that timestamp off the h-entry and federates the edit as
-    an ActivityPub Update, so a post that's been edited after publication
-    actually changes on Mastodon. Without it the re-sent webmention refers to
-    an object that looks unchanged and the edit never surfaces. Needs full
+    local dev, or git history unavailable). The last date drives dt-updated,
+    which surfaces the visible "updated …" badge on an edited post. Needs full
     history at render time (CI checks out with fetch-depth: 0) and git present
     in the render image — without git, checkout falls back to a REST tarball
     with no .git and every post would silently lose its timestamps.
@@ -116,8 +113,7 @@ def parse_post(path):
     # Timestamps come from git: the first commit is publication, the latest is
     # the last edit. dt-published thus carries a real time (not just the
     # filename's midnight) and, when a post has been committed more than once,
-    # dt-updated advertises a newer timestamp — which is what makes Bridgy Fed
-    # federate the edit as an ActivityPub Update instead of a silent no-op.
+    # dt-updated advertises a newer timestamp that drives the "updated" badge.
     # Falls back to the filename date for an as-yet-uncommitted post (local dev).
     first_commit, last_commit = git_dates(path)
     published = first_commit or date.strftime('%Y-%m-%d')
@@ -125,14 +121,13 @@ def parse_post(path):
     return {
         'segment': segment,
         # Relative permalink for in-page links and u-url, so navigation works on
-        # any deployment (production, Cloudflare preview, local). Bridgy Fed
-        # fetches the production page and resolves it against that, so the
-        # federated identity is still the canonical URL below.
+        # any deployment (production, Cloudflare preview, local); the canonical
+        # absolute URL lives below.
         'url': f'/notes/{segment}/',
         'canonical': f'{BASE_URL}/notes/{segment}/',
         # Optional: a post with a title is an article, one without is a note (a
-        # short, Mastodon-style post). The templates omit p-name when absent so
-        # microformats/Bridgy Fed treat it as a note.
+        # short, status-style post). The templates omit p-name when absent so
+        # microformats2 parsers treat it as a note.
         'title': meta.get('title'),
         # dt-published timestamp (full ISO-8601 from git); the display string and
         # the sort key stay on the filename date, which is the canonical day and
@@ -140,8 +135,8 @@ def parse_post(path):
         'datetime': published,
         'date_display': date.strftime('%-d %B %Y'),
         'date': date,
-        # Full ISO-8601 (with time) so each subsequent edit is a distinct value
-        # Bridgy Fed/Mastodon recognise; None when the post hasn't been edited.
+        # Full ISO-8601 (with time) so each subsequent edit is a distinct
+        # dt-updated value; None when the post hasn't been edited.
         'updated': updated,
         'updated_display': (
             datetime.fromisoformat(updated).strftime('%-d %B %Y') if updated else None
