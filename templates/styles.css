@@ -327,12 +327,16 @@ tr.heading:not(:first-child) td {
     line-height: 1.5;
 }
 
-/* Video embeds: fill the content column and keep a 16:9 box on any width. */
+/* Video embeds: fill the content column and keep a 16:9 box on any width.
+   The block margin mirrors a paragraph's, so an embed-only note keeps the same
+   gap under the date that a text note gets from its <p>. */
 .e-content iframe.video {
+    display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
     height: auto;
     border: 0;
+    margin: 1em 0;
 }
 
 .h-feed article.h-entry {
