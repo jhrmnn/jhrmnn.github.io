@@ -1,0 +1,1 @@
+<a class="youtube" href="https://www.youtube.com/watch?v=vFZoSyfPcsw" data-id="vFZoSyfPcsw" aria-label="Play video: Warum wurde Deutschland so hässlich? — Testkanal"><img src="https://i.ytimg.com/vi/vFZoSyfPcsw/hqdefault.jpg" alt="" loading="lazy"></a>
