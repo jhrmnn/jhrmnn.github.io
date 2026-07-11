@@ -18,6 +18,23 @@
       article.removeChild(notice_star);
     }
   });
+  // Upgrade YouTube facades to the real player on click. Until then a note
+  // carries only the poster image, not YouTube's player JS. The injected iframe
+  // uses the cookie-less domain and autoplays since the click is user-initiated.
+  document.querySelectorAll('a.youtube').forEach((facade) => {
+    facade.addEventListener('click', (e) => {
+      e.preventDefault();
+      const iframe = document.createElement('iframe');
+      iframe.className = 'youtube';
+      iframe.src = `https://www.youtube-nocookie.com/embed/${facade.dataset.id}?autoplay=1`;
+      iframe.title = facade.getAttribute('aria-label') || 'YouTube video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.allowFullscreen = true;
+      facade.replaceWith(iframe);
+    });
+  });
+
   const styleEl = document.getElementById('site-styles');
   const toggle = document.getElementById('style-toggle');
   const syncToggle = () => {
