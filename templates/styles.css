@@ -327,6 +327,14 @@ tr.heading:not(:first-child) td {
     line-height: 1.5;
 }
 
+/* Video embeds: fill the content column and keep a 16:9 box on any width. */
+.e-content iframe.video {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+}
+
 .h-feed article.h-entry {
     margin-bottom: 1.4em;
 }

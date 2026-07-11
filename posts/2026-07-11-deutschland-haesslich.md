@@ -1,0 +1,1 @@
+<iframe class="video" src="https://www.youtube.com/embed/vFZoSyfPcsw" title="Warum wurde Deutschland so hässlich? — Testkanal" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

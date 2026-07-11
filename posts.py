@@ -38,7 +38,14 @@ def md_blocks_to_html(text):
         lines = [ln for ln in block.splitlines() if ln.strip()]
         if not lines:
             continue
-        if all(ln.lstrip().startswith('#') for ln in lines):
+        if lines[0].lstrip().startswith('<'):
+            # Raw block-level HTML (e.g. a video embed): emit verbatim, skipping
+            # both the paragraph wrap and the inline `md_to_html` pass. The inline
+            # pass would otherwise mangle tag attributes — the smart-quote rule
+            # pairs the `"` across adjacent attributes, turning `src="…" title="…"`
+            # into `src="…“ title=”…"`. Mirrors how Markdown treats block HTML.
+            out.append(block.strip())
+        elif all(ln.lstrip().startswith('#') for ln in lines):
             for ln in lines:
                 level = len(ln) - len(ln.lstrip('#'))
                 tag = f'h{min(level + 1, 6)}'
