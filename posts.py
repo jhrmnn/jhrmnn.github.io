@@ -62,6 +62,28 @@ def md_blocks_to_html(text):
     return '\n'.join(out)
 
 
+def extract_leading_title(body):
+    """When a post carries no explicit `title` metadata, promote a leading
+    level-1 Markdown heading (`# ...`) to the post title and strip it from the
+    body, so a note can name itself inline instead of in front matter. Only a
+    single leading `#` qualifies (a level-1 heading); `##`+ are section headings
+    and stay in the body. Returns (title, body) with the heading removed, or
+    (None, body) unchanged when the first content isn't a level-1 heading."""
+    lines = body.split('\n')
+    i = 0
+    while i < len(lines) and not lines[i].strip():
+        i += 1  # skip any blank lines before the first content
+    if i == len(lines):
+        return None, body
+    first = lines[i].strip()
+    if not first.startswith('#') or first.startswith('##'):
+        return None, body
+    title = first.lstrip('#').strip()
+    if not title:
+        return None, body
+    return title, '\n'.join(lines[i + 1:])
+
+
 def git_dates(path):
     """First and last git author dates touching `path`, as ISO-8601 strings,
     or (None, None) if the file isn't tracked yet (e.g. a brand-new post in
@@ -118,6 +140,11 @@ def parse_post(path):
     first_commit, last_commit = git_dates(path)
     published = first_commit or date.strftime('%Y-%m-%d')
     updated = last_commit if first_commit and last_commit != first_commit else None
+    # An explicit `title:` in front matter wins; otherwise a leading level-1
+    # heading in the body is promoted to the title (and dropped from the body).
+    title = meta.get('title')
+    if title is None:
+        title, body = extract_leading_title(body)
     return {
         'segment': segment,
         # Relative permalink for in-page links and u-url, so navigation works on
@@ -127,8 +154,9 @@ def parse_post(path):
         'canonical': f'{BASE_URL}/notes/{segment}/',
         # Optional: a post with a title is an article, one without is a note (a
         # short, status-style post). The templates omit p-name when absent so
-        # microformats2 parsers treat it as a note.
-        'title': meta.get('title'),
+        # microformats2 parsers treat it as a note. Sourced from `title:` front
+        # matter or a leading level-1 heading (see above).
+        'title': title,
         # dt-published timestamp (full ISO-8601 from git); the display string and
         # the sort key stay on the filename date, which is the canonical day and
         # already lives in the permalink.
