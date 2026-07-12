@@ -1,8 +1,15 @@
 body {
     padding: 0 5px 30px 5px;
     margin: 0 auto;
-    max-width: 45em;
+    /* ~75-character measure — the largest single-column line length still
+       regarded as comfortable (Bringhurst's 45–75 range; ~2 chars per em). */
+    max-width: 37.5em;
     font-family: sans-serif;
+    /* Leading paired to that measure at the smallest defensible value: 1.5 is
+       the WCAG 1.4.8 (AAA) minimum for blocks of text, and a line this wide
+       needs at least this much to track the return sweep. Unitless so it
+       scales per element; set here so spacing is uniform site-wide. */
+    line-height: 1.5;
     -webkit-text-size-adjust: 100%;
 }
 
@@ -56,8 +63,9 @@ dt::after {
    Strava, ...) in one column, tight enough that each link sits within 24px of
    the rows above and below, failing the target-size (WCAG 2.5.8) check. 1.5
    makes each row a 24px line box — the minimum that spaces the vertical centres
-   the required 24px apart; scoped to the whole <dl> so the floated <dt> labels
-   share the line box and stay aligned with their <dd> values. */
+   the required 24px apart. This matches the site-wide line-height, but is kept
+   explicit as a guard: unlike the prose, this row spacing is load-bearing for
+   target size and must not regress if the shared leading ever changes. */
 .h-card dl {
     line-height: 1.5;
 }
@@ -321,10 +329,6 @@ tr.heading:not(:first-child) td {
     color: #666;
     font-size: 0.9em;
     margin-top: -0.4em;
-}
-
-.e-content {
-    line-height: 1.5;
 }
 
 .h-feed article.h-entry {
