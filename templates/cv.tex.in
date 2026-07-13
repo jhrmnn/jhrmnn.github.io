@@ -177,7 +177,7 @@
 <+ for item in employment +>
   && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
   <+ for position in item.positions +>
-  \raggedleft{\color{white}<< position.date|dateformat >>} &&
+  \hfill\color{white}<< position.date|dateformat >> &&
   << position.role >>~$\cdot$ << position.dept >><+ if not loop.last +>\\
   <+ endif +>
   <+ endfor +><+ if not loop.last +>\\[6pt]
@@ -191,7 +191,7 @@
 <+ for item in education +>
   && \textsb{<< item.university >>}<+ if item.location +>, << item.location >><+ endif +> \\
   <+ for degree in item.degrees +>
-    \raggedleft{\color{white}<< degree.date|dateformat >>} &&
+    \hfill\color{white}<< degree.date|dateformat >> &&
     \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.note +>~$\cdot$ \emph{<< degree.note >>}<+ endif +>
     <+ if not loop.last +>\\
     <+ endif +>
