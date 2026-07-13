@@ -1,5 +1,11 @@
 // The "document" side of the actor: WebFinger, the actor (Person) object, the
-// followers/outbox collections, and dereferenceable Notes. All read-only GETs.
+// followers collection, and content negotiation for Notes and the outbox.
+//
+// Notes and the outbox are static build artifacts (posts.py writes
+// notes/<slug>/note.json and ap/outbox.json). The Worker reads them from its own
+// deployed assets and re-serves them with the ActivityPub content type — the post
+// record is the single source of truth, so there is no KV Note store and no HTML
+// re-parsing. KV holds followers only.
 
 import {
   AP_CONTENT_TYPE,
@@ -7,11 +13,15 @@ import {
   Env,
   FOLLOWER_PREFIX,
   Follower,
-  NOTE_PREFIX,
-  PUBLIC,
   apJson,
   urls,
 } from './types';
+
+// Fetch a JSON asset from the deployed static site (bypasses Worker routing).
+async function fetchAsset(request: Request, path: string, env: Env): Promise<Response> {
+  const assetUrl = new URL(path, new URL(request.url).origin);
+  return env.ASSETS.fetch(new Request(assetUrl.toString(), { headers: { accept: 'application/json' } }));
+}
 
 // GET /.well-known/webfinger?resource=acct:<user>@<domain>
 export function webfinger(request: Request, env: Env): Response {
@@ -89,8 +99,13 @@ export async function followersCollection(env: Env): Promise<Response> {
   });
 }
 
-// GET /ap/outbox — MWE: advertise the collection; items are not paged.
-export async function outboxCollection(env: Env): Promise<Response> {
+// GET /ap/outbox — re-serve the static ap/outbox.json with the AP content type.
+export async function outboxCollection(request: Request, env: Env): Promise<Response> {
+  const res = await fetchAsset(request, '/ap/outbox.json', env);
+  if (res.ok) {
+    return new Response(await res.text(), { headers: { 'content-type': AP_CONTENT_TYPE } });
+  }
+  // Fallback: empty collection if the build hasn't produced one yet.
   const u = urls(env);
   return apJson({
     '@context': AS_CONTEXT[0],
@@ -101,30 +116,14 @@ export async function outboxCollection(env: Env): Promise<Response> {
   });
 }
 
-// GET /ap/notes/<slug> — return the stored Note so delivered posts are
-// dereferenceable by remote servers that re-fetch them.
-export async function note(slug: string, env: Env): Promise<Response> {
-  const stored = await env.FEDI.get(`${NOTE_PREFIX}${slug}`, 'json');
-  if (!stored) return new Response('Not found', { status: 404 });
-  return apJson({ '@context': AS_CONTEXT[0], ...(stored as object) });
-}
-
-// Build the Note object for a published post. Stored in KV (so /ap/notes/<slug>
-// can serve it) and wrapped in a Create/Update for delivery.
-export function buildNote(
-  env: Env,
-  post: { slug: string; url: string; contentHtml: string; published: string; updated?: string },
-): Record<string, unknown> {
-  const u = urls(env);
-  return {
-    id: u.note(post.slug),
-    type: 'Note',
-    attributedTo: u.actor,
-    content: post.contentHtml,
-    url: post.url,
-    published: post.published,
-    ...(post.updated ? { updated: post.updated } : {}),
-    to: [PUBLIC],
-    cc: [u.followers],
-  };
+// A post page (/notes/<slug>/) requested as ActivityPub: return its static Note,
+// re-served with the AP content type. `Vary: Accept` so caches key HTML and AS2
+// separately for the same URL.
+export async function noteFromAssets(request: Request, env: Env): Promise<Response> {
+  const pagePath = new URL(request.url).pathname.replace(/\/?$/, '/');
+  const res = await fetchAsset(request, `${pagePath}note.json`, env);
+  if (!res.ok) return new Response('Not found', { status: 404 });
+  return new Response(await res.text(), {
+    headers: { 'content-type': AP_CONTENT_TYPE, vary: 'Accept' },
+  });
 }

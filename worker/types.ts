@@ -33,7 +33,7 @@ export function urls(env: Env) {
     inbox: `${base}/ap/inbox`,
     outbox: `${base}/ap/outbox`,
     followers: `${base}/ap/followers`,
-    note: (slug: string) => `${base}/ap/notes/${slug}`,
+    page: (slug: string) => `${base}/notes/${slug}/`,
     acct: `acct:${env.USERNAME}@${env.DOMAIN}`,
   };
 }
@@ -54,4 +54,3 @@ export interface Follower {
 }
 
 export const FOLLOWER_PREFIX = 'follower:';
-export const NOTE_PREFIX = 'note:';

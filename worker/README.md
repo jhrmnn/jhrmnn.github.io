@@ -10,12 +10,24 @@ static site (Workers Static Assets) and the federation endpoints from one origin
   RSA public key) make `@hrmnn.net@hrmnn.net` resolvable.
 - **Followable** — `POST /ap/inbox` verifies the HTTP signature, stores the
   follower in KV, and returns a signed `Accept`. `Undo` removes them.
-- **Delivers posts** — `POST /ap/admin/deliver` (called by the `federate-native`
-  CI job) stores each Note and fans a signed `Create`/`Update` out to followers.
+- **Delivers posts** — `POST /ap/admin/deliver` (a slug list from the
+  `federate-native` CI job) reads each Note from the deployed static assets and
+  fans a signed `Create`/`Update` out to followers.
 
-Files: `index.ts` (router), `activitypub.ts` (webfinger/actor/collections/notes),
-`inbox.ts` (Follow/Undo + Accept), `deliver.ts` (admin fan-out),
-`httpsig.ts` + `keys.ts` (HTTP Signatures over WebCrypto, no external library).
+### Content model
+
+The compiled post record is the single source of truth. `posts.py` serializes each
+post to both an HTML page **and** a static AS2 Note (`notes/<slug>/note.json`),
+plus a static `ap/outbox.json`. The Worker never builds or stores Notes — it reads
+those artifacts and re-serves them with the ActivityPub content type. A post page
+and its Note share one URL (`/notes/<slug>/`): a browser gets HTML, an
+`Accept: application/activity+json` request gets the Note (`Vary: Accept`). KV
+holds **followers only**.
+
+Files: `index.ts` (router + content negotiation), `activitypub.ts`
+(webfinger/actor/followers, static Note/outbox re-serving), `inbox.ts` (Follow/Undo
++ Accept), `deliver.ts` (read Note from assets, sign, fan out), `httpsig.ts` +
+`keys.ts` (HTTP Signatures over WebCrypto, no external library).
 
 ## One-time setup (owner)
 
@@ -50,10 +62,18 @@ curl "https://hrmnn.net/.well-known/webfinger?resource=acct:hrmnn.net@hrmnn.net"
 curl -H 'accept: application/activity+json' https://hrmnn.net/ap/actor
 ```
 
+Content negotiation on a post page:
+
+```bash
+curl https://hrmnn.net/notes/<slug>/                                 # HTML page
+curl -H 'accept: application/activity+json' https://hrmnn.net/notes/<slug>/   # the Note
+curl https://hrmnn.net/ap/outbox                                     # OrderedCollection
+```
+
 From a Mastodon account, search `@hrmnn.net@hrmnn.net` and Follow;
 `wrangler tail` should show the signature verifying and the `Accept` going out,
 and `/ap/followers` `totalItems` should increment. Push a test post and confirm it
-lands in the follower's timeline and is dereferenceable at `/ap/notes/<slug>`.
+lands in the follower's timeline and that its page URL resolves as a Note.
 
 ## Transition / cutover
 

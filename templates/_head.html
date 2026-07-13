@@ -42,5 +42,6 @@
 
 <link rel="icon" type="image/png" href="data:image/png;base64,{% include "favicon.png.b64" %}">
 <link rel="canonical" href="{{ canonical }}">
-{#- Self-hosted ActivityPub actor discovery (the Cloudflare Worker). #}
-<link rel="alternate" type="application/activity+json" href="https://hrmnn.net/ap/actor">
+{#- ActivityPub discovery: the AS2 representation of this page. On a post it's
+    the Note (same URL, content-negotiated by the Worker); elsewhere the actor. #}
+<link rel="alternate" type="application/activity+json" href="{% if ap_alternate is defined %}{{ ap_alternate }}{% else %}https://hrmnn.net/ap/actor{% endif %}">

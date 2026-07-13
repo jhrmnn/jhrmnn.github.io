@@ -9,6 +9,7 @@ Jinja environment and output normalisation from `render.py` so blog pages come
 out identical in style to the rest of the site.
 """
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -22,6 +23,12 @@ from markupsafe import Markup
 from render import finalize_doc, make_env, md_to_html
 
 BASE_URL = 'https://hrmnn.net'
+# ActivityPub identity, derived from the site. The post record is the ground
+# truth; both the HTML page and the AS2 Note below are serializations of it.
+ACTOR_URL = f'{BASE_URL}/ap/actor'
+FOLLOWERS_URL = f'{BASE_URL}/ap/followers'
+AS_PUBLIC = 'https://www.w3.org/ns/activitystreams#Public'
+AS_CONTEXT = 'https://www.w3.org/ns/activitystreams'
 FILENAME_RE = re.compile(r'(\d{4})-(\d{2})-(\d{2})-(.+)\.md$')
 BULLET_RE = re.compile(r'[-*]\s')
 ORDERED_RE = re.compile(r'\d+\.\s')
@@ -145,6 +152,49 @@ def parse_post(path):
     }
 
 
+def note_json(post):
+    """The canonical ActivityStreams 2.0 Note for a post — the same content the
+    HTML page renders, serialized for the Fediverse. Its `id` is the page URL, so
+    the note and the human page are two representations of one resource (the
+    Worker content-negotiates on that URL). The title, when present, is folded
+    into the content as a leading line, since a Note has no separate title field."""
+    content = str(post['content_html'])
+    if post['title']:
+        content = f'<p><strong>{post["title"]}</strong></p>\n{content}'
+    note = {
+        '@context': AS_CONTEXT,
+        'id': post['canonical'],
+        'type': 'Note',
+        'attributedTo': ACTOR_URL,
+        'url': post['canonical'],
+        'content': content,
+        'published': post['datetime'],
+        'to': [AS_PUBLIC],
+        'cc': [FOLLOWERS_URL],
+    }
+    if post['updated']:
+        note['updated'] = post['updated']
+    return note
+
+
+def create_activity(note):
+    """Wrap a Note in a Create activity for the outbox collection."""
+    return {
+        'id': f'{note["id"]}#create',
+        'type': 'Create',
+        'actor': ACTOR_URL,
+        'published': note['published'],
+        'to': note['to'],
+        'cc': note['cc'],
+        'object': note,
+    }
+
+
+def write_json(obj, dest):
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding='utf-8')
+
+
 def render_to(env, template_name, ctx, dest):
     doc = finalize_doc(env.get_template(template_name).render(ctx), template_name)
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -176,6 +226,7 @@ def main(argv):
     )
 
     env = make_env('templates/post.html.in')  # HTML env, shared with the index
+    notes = []
     for post in posts:
         render_to(
             env,
@@ -183,13 +234,31 @@ def main(argv):
             {'post': post, 'settings': settings},
             a.outdir / 'notes' / post['segment'] / 'index.html',
         )
+        # The AS2 Note lives next to the page as a static artifact; the Worker
+        # serves it under the page URL via content negotiation and reads it at
+        # delivery time. No HTML re-parsing, no drift.
+        note = note_json(post)
+        write_json(note, a.outdir / 'notes' / post['segment'] / 'note.json')
+        notes.append(note)
     render_to(
         env,
         'templates/blog.html.in',
         {'posts': posts, 'settings': settings},
         a.outdir / 'notes' / 'index.html',
     )
-    print(f'rendered {len(posts)} post(s) + blog index', file=sys.stderr)
+    # The actor's outbox: every post's Create, newest first (posts is already
+    # sorted that way). A static OrderedCollection served by the Worker.
+    write_json(
+        {
+            '@context': AS_CONTEXT,
+            'id': f'{BASE_URL}/ap/outbox',
+            'type': 'OrderedCollection',
+            'totalItems': len(notes),
+            'orderedItems': [create_activity(n) for n in notes],
+        },
+        a.outdir / 'ap' / 'outbox.json',
+    )
+    print(f'rendered {len(posts)} post(s) + blog index + AS2 notes', file=sys.stderr)
 
 
 if __name__ == '__main__':

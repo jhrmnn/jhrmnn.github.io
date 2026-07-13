@@ -298,6 +298,8 @@ jobs:
           path: _site
       - uses: cloudflare/wrangler-action@v3
         with:
+          # v4 for the run_worker_first path-list form in wrangler.toml.
+          wranglerVersion: '4'
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
@@ -320,22 +322,20 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/download-artifact@v4
-        with:
-          name: site
-          path: _site
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - run: pip install requests beautifulsoup4
+      - run: pip install requests
       - name: Deliver changed posts to followers
         env:
           AP_ADMIN_TOKEN: ${{ secrets.AP_ADMIN_TOKEN }}
           AP_BASE_URL: ${{ vars.AP_BASE_URL }}
         run: |
           # Map each posts/*.md changed since the previous commit to its slug
-          # (the filename stem), then hand them to federate_native.py, which
-          # reads the rendered content from _site and POSTs to the Worker.
+          # (the filename stem) and hand them to federate_native.py, which just
+          # pings the Worker. The Worker reads each Note from its own deployed
+          # static assets (notes/<slug>/note.json), so nothing here needs the
+          # rendered site — deploy-worker (a dependency) already published them.
           base="${{ github.event.before }}"
           if [ -z "$base" ] || ! git rev-parse -q --verify "$base^{commit}" >/dev/null; then
             changed="$(git ls-files posts)"
@@ -349,7 +349,4 @@ jobs:
             esac
           done <<<"$changed"
           echo "Changed slugs:$slugs"
-          # Give the new pages a moment to be live at the delivery origin before
-          # the Notes (which reference those URLs) go out.
-          [ -n "$slugs" ] && sleep 30 || true
           python federate_native.py $slugs

@@ -7,14 +7,19 @@ main = "worker/index.ts"
 compatibility_date = "2025-01-01"
 
 # Workers Static Assets: the render step keeps producing _site/ exactly as
-# before. With a `main` worker present, the default routing serves a static
-# asset directly when one exists at the path and invokes the worker on a miss.
-# The AP routes (/.well-known/webfinger, /ap/*) have no static file, so they
-# fall through to the worker; the worker forwards anything else it receives back
-# to the asset server via env.ASSETS.fetch(request).
+# before. The worker forwards anything it doesn't handle back to the asset server
+# via env.ASSETS.fetch(request).
+#
+# run_worker_first lists the paths where the worker MUST run before the static
+# asset server, even when a static file exists at that path. /notes/* is here so
+# the worker can content-negotiate a post page: an ActivityPub Accept header
+# returns the Note, otherwise it forwards to the static HTML. (Requires wrangler
+# v4 for the array form; boolean `true` — worker-first for everything — is the
+# fallback.)
 [assets]
 directory = "./_site"
 binding = "ASSETS"
+run_worker_first = ["/notes/*", "/ap/*", "/.well-known/webfinger"]
 
 # Non-secret config. The two secrets (AP_PRIVATE_KEY, AP_ADMIN_TOKEN) are NOT
 # here — they are set in the Cloudflare dashboard (Settings -> Variables and
@@ -30,8 +35,9 @@ REPLACE_WITH_CONTENTS_OF_ap_public.pem
 -----END PUBLIC KEY-----
 """
 
-# Follower + delivered-note storage. Create the namespace once in the dashboard
-# (or `wrangler kv namespace create FEDI`) and paste its id below.
+# Follower storage (Notes are static build artifacts, not KV). Create the
+# namespace once in the dashboard (or `wrangler kv namespace create FEDI`) and
+# paste its id below.
 [[kv_namespaces]]
 binding = "FEDI"
 id = "REPLACE_WITH_KV_NAMESPACE_ID"
