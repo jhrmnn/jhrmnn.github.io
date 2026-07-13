@@ -9,7 +9,7 @@
 \usepackage{longtable}
 \usepackage{enumitem}
 \usepackage{hanging}
-\usepackage{titlesec}
+\usepackage[nobottomtitles*]{titlesec}
 \usepackage{everypage}
 \usepackage[normalem]{ulem}
 \usepackage{svg}
@@ -58,6 +58,11 @@
 \titlespacing*{\section}{5cm}{0pt}{1em}
 \titleformat{\subsection}{\large\sbseries\vspace{0.4em}}{\thesubsection}{}{}
 \titlespacing*{\subsection}{5cm}{0pt}{0.3em}
+% Keep a heading from being stranded at the page bottom: if fewer than this
+% much vertical space remains, titlesec moves the heading to the next page so
+% it stays with the first rows of its block (which live in a page-breaking
+% longtable and would otherwise flow over on their own).
+\renewcommand{\bottomtitlespace}{6\baselineskip}
 
 \setlength{\LTpre}{0pt}
 \setlength{\LTpost}{0pt}
