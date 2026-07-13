@@ -9,6 +9,7 @@
 \usepackage{longtable}
 \usepackage{enumitem}
 \usepackage{hanging}
+\usepackage{needspace}
 \usepackage[nobottomtitles*]{titlesec}
 \usepackage{everypage}
 \usepackage[normalem]{ulem}
@@ -309,6 +310,13 @@
 <+ endfor +>
 \end{cvblock}
 
+% The Presentations header spans a section title, an intro note and a
+% subsection title before the first talk appears. nobottomtitles* only
+% guards a single title, so the header could sit at a page bottom with no
+% actual talk beneath it. Reserve enough room for the whole header plus the
+% first subsection's own bottom-title allowance; otherwise start it on the
+% next page (a conditional replacement for the former hard \newpage).
+\needspace{12\baselineskip}
 \section{Presentations}
 
 \begin{cvblock}%
