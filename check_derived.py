@@ -38,6 +38,14 @@ REF_IDENTITY_FIELDS = ('title', 'author', 'issued', 'container-title')
 CITATION_ABS_TOL = 3
 CITATION_REL_TOL = 0.01
 
+# GitHub stars are not truly monotonic: users unstar, and GitHub prunes stars
+# from spam/deleted accounts, so a small dip is normal churn rather than a fetch
+# regression (e.g. an API hiccup returning a stale low count). Tolerate a
+# decrease within both a few stars and 2% of the baseline; a larger collapse,
+# which would signal a genuinely bad fetch, still fails.
+STARS_ABS_TOL = 5
+STARS_REL_TOL = 0.02
+
 
 def load_baseline():
     """Published derived data for the most recent default-branch ancestor of the
@@ -81,12 +89,19 @@ def check(old, new):  # noqa: C901
             if drop > max(abs_tol, rel_tol * old_val):
                 problems.append(f'{kind} decreased: {key} {old_val} -> {new_val}')
 
-    # software: repos are append-only; stars only grow.
+    # software: repos are append-only; stars grow apart from minor unstar churn.
     old_sw, new_sw = old.get('software', {}), new.get('software', {})
     removed('software', old_sw, new_sw)
     for repo, info in old_sw.items():
         if repo in new_sw:
-            decreased('stars', repo, info.get('stars'), new_sw[repo].get('stars'))
+            decreased(
+                'stars',
+                repo,
+                info.get('stars'),
+                new_sw[repo].get('stars'),
+                STARS_ABS_TOL,
+                STARS_REL_TOL,
+            )
 
     # references: keyed by canonical DOI; append-only, stable identity, cited_by
     # only grows.
