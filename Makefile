@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.jpeg)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -64,8 +64,11 @@ $(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(OUTDIR)
 $(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
 	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
+# assets/profile-pic-web.png is not embedded, but its size feeds the footer's
+# page-weight figure, so a re-dithered avatar has to re-render the page too.
 $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64 \
-	templates/_head.html templates/_footer.html assets/superscript.csl
+	templates/_head.html templates/_footer.html assets/superscript.csl \
+	assets/profile-pic-web.png
 
 %.pdf: %.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
@@ -76,11 +79,18 @@ $(OUTDIR) $(BLDDIR):
 # Regenerate the committed homepage avatar from the full-resolution source.
 # The homepage only needs a small thumbnail (displayed at 160px, 2x for retina),
 # whereas assets/profile-pic.jpeg stays large for the CV PDF (embedded at print
-# size). The result is committed and copied by the normal build, so CI needs no
-# image tooling; run this by hand (needs ImageMagick, e.g. `apt-get install
-# imagemagick`) only when the source photo changes.
+# size). Floyd-Steinberg dithering to one bit takes the thumbnail from 10.6 kB
+# to 3.2 kB and is what gives it the halftone look; PNG is the container to pair
+# it with, since JPEG would ring around the dither pattern and encode larger.
+# `-colors 2 -type Bilevel` selects the error-diffusion path — note that
+# `-monochrome` looks similar but is a different algorithm and flattens the
+# shading to near line art. The result is committed and copied by the normal
+# build, so CI needs no image tooling; run this by hand (needs ImageMagick, e.g.
+# `apt-get install imagemagick`) only when the source photo changes.
 avatar:
-	convert assets/profile-pic.jpeg -auto-orient -strip -resize 320x320 -quality 82 -interlace JPEG assets/profile-pic-web.jpeg
+	convert assets/profile-pic.jpeg -auto-orient -strip -resize 320x320 \
+		-colorspace Gray -dither FloydSteinberg -colors 2 -type Bilevel -depth 1 \
+		-define png:compression-level=9 assets/profile-pic-web.png
 
 clean:
 	rm -rf $(BLDDIR) $(OUTDIR)
