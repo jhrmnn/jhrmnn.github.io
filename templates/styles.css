@@ -300,16 +300,6 @@ tr.heading:not(:first-child) td {
     #style-toggle:hover {
         color: #74a9d8;
     }
-
-    /* The avatar is a 1-bit dither, black on a pure white ground, so on the
-       light page it floats in the text; here it would be a glaring white box.
-       Invert flips it to white-on-black, then `lighten` (per-channel max against
-       the page) lifts that black ground to exactly the background. Both steps
-       are needed — invert alone just trades a white box for a black one. */
-    #profile-pic img {
-        filter: invert(1);
-        mix-blend-mode: lighten;
-    }
 }
 
 [data-tooltip] {
