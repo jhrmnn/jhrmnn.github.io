@@ -127,7 +127,7 @@
        remaining part of the microformats2 note that Bridgy Fed reads. #}
     <p class="p-note">{{ bio }}<span hidden> #nobridge</span>
     
-    <p id="profile-pic"><img class="u-photo" src="profile-pic-web.jpeg" alt="Jan Hermann" width="160" height="160">
+    <p id="profile-pic"><img class="u-photo" src="profile-pic-web.png" alt="Jan Hermann" width="160" height="160">
     
     {{ dl_block(links, contact) }}
   </section>

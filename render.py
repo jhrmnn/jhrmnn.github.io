@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import gzip
 import json
 import os
 import re
@@ -426,9 +427,69 @@ def make_env(name):
     return env
 
 
+# The footer advertises what the page costs to fetch. The token is planted by
+# templates/_footer.html and resolved here, after rendering, because the figure
+# depends on the finished bytes.
+PAGE_WEIGHT_TOKEN = '@@PAGE_WEIGHT@@'
+ASSET_DIR = Path('assets')
+
+
+def subresource_bytes(doc):
+    """Size of the local files the document makes the browser fetch on top of
+    itself. Only <img> qualifies today: the stylesheet, the favicon and the SVG
+    icons are all inlined, so they are already counted in the document's own
+    bytes. Remote URLs and data: URIs are skipped — the first is not ours to
+    count, the second costs no extra request. Counted uncompressed, which is
+    what a server sends for an already-compressed format (gzipping the dithered
+    PNG makes it bigger, so nothing does it)."""
+    total = 0
+    for src in re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', doc):
+        if re.match(r'[a-z][a-z0-9+.-]*:|//', src, re.I):
+            continue
+        asset = ASSET_DIR / Path(src).name
+        if asset.exists():
+            total += asset.stat().st_size
+    return total
+
+
+def stamp_page_weight(doc):
+    """Resolve the footer's page-weight token to what the page costs to fetch.
+
+    Measured compressed, not on-disk: GitHub Pages gzips HTML, so the raw file
+    size overstates what a visitor actually spends — by six times on the
+    homepage, whose bulk is markup that compresses away. A number offered as a
+    transparency gesture should be the one the reader pays, hence the `~`: it is
+    an estimate, since the server picks its own encoder (brotli, where offered,
+    goes lower still, so this errs high rather than flattering).
+
+    The figure sits inside the bytes it reports, so it is solved for rather than
+    measured: each pass recompresses the document with the previous pass's
+    estimate in place. Rounding to whole kB leaves a wide margin — a one-digit
+    change moves the compressed total by about a byte — so this settles on the
+    second pass, but the loop stays bounded and keeps the last estimate if it
+    ever fails to, a footer off by a kB being no reason to fail a build.
+
+    mtime=0 keeps the compressed size deterministic, so an unchanged page does
+    not churn its footer between builds."""
+    if PAGE_WEIGHT_TOKEN not in doc:
+        return doc
+    subresources = subresource_bytes(doc)
+    figure = ''
+    for _ in range(6):
+        candidate = doc.replace(PAGE_WEIGHT_TOKEN, figure).encode()
+        size = len(gzip.compress(candidate, 9, mtime=0)) + subresources
+        settled = f'~{round(size / 1000)} kB'
+        if settled == figure:
+            break
+        figure = settled
+    return doc.replace(PAGE_WEIGHT_TOKEN, figure)
+
+
 def finalize_doc(doc, name):
     """Apply the cross-format output cleanups (quote/punctuation shuffling, and
-    for plain text the unicode-to-ascii fold) and encode to bytes."""
+    for plain text the unicode-to-ascii fold) and encode to bytes. HTML also
+    gets its footer page-weight token resolved here — last, so the figure counts
+    every other transformation."""
     doc = re.sub(r'(?<!\?</a>)”([.,])', r'\1”', doc)
     doc = re.sub(r'”[.,]', r'”', doc)
     doc = re.sub(r"(?<!\?})''([.,])", r"\1''", doc)
@@ -456,7 +517,7 @@ def finalize_doc(doc, name):
         )
         doc = reduce_sc(doc)
         return doc.encode('ascii')
-    return doc.encode()
+    return stamp_page_weight(doc).encode()
 
 
 def render(template, ctx, **kwargs):

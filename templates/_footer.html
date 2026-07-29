@@ -1,2 +1,3 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
-<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; <button type="button" id="style-toggle" aria-pressed="false">disable styles</button></footer>
+{# @@PAGE_WEIGHT@@ is substituted after rendering by render.stamp_page_weight. #}
+<footer>generated at {% if settings.generated %}<a href="{{ settings.generated }}">{{ settings.now }}</a>{% else %}{{ settings.now }}{% endif %} &middot; @@PAGE_WEIGHT@@ &middot; <button type="button" id="style-toggle" aria-pressed="false">disable styles</button></footer>
