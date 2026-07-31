@@ -145,16 +145,18 @@ def sort_refs(refs):
 
 
 # Distribute talks into the homepage tool-hubs by matching their title against a
-# few topic keywords (checked in this order). Talks whose title matches nothing
-# (e.g. untitled seminars) stay out of the hubs but remain in the full CV.
+# few topic keywords (checked in this order). The keys are the hub section ids
+# from data/hubs.md — the template looks up a section's talks by its id. Talks
+# whose title matches nothing (e.g. untitled seminars) stay out of the hubs but
+# remain in the full CV.
 HUB_KEYWORDS = {
-    'Skala': ['skala', 'exchange-correlation', 'exchange–correlation'],
-    'DeepQMC': [
+    'dft': ['skala', 'exchange-correlation', 'exchange–correlation'],
+    'qmc': [
         'schrödinger', 'wave function', 'wavefunction', 'quantum monte carlo',
         'fixed-node', 'deep-learning solution', 'neural network solution',
         'neural-network wave', 'deep neural network',
     ],
-    'libMBD': [
+    'vdw': [
         'van der waals', 'many-body dispersion', 'dispersion', 'libmbd',
         'zeolite', 'faujasite', 'non-local density', 'nonlocal',
         'electron correlation in density', 'charge fluctuations', 'π–π',
