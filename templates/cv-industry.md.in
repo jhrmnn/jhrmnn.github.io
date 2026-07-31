@@ -15,11 +15,16 @@
 {% set nstars = software|selectattr("stars", "defined")|map(attribute="stars")|sum %}
 {{ nstars // 50 * 50 }}+ GitHub stars · shipped in {{ industry.production_codes|length }} production codes · {{ references|length }} publications · {{ "{:,}".format(ncites // 100 * 100) }}+ citations
 
-Berlin, Germany
+{% set parts = [] %}
 {% for key in industry.contact_keys %}
-· [{{ contact[key][0] }}]({{ contact[key][1] }}{{ contact[key][0] }})
-{%- endfor %}
-· [Google Scholar]({{ contact["Google Scholar"][1] }}{{ contact["Google Scholar"][0] }})
+{% set val = contact[key][0] %}
+{% set pre = contact[key][1] %}
+{% set disp = val if pre.startswith("mailto:") else (pre|replace("https://", "")|replace("www.", "")) ~ val %}
+{% set _ = parts.append("[" ~ disp ~ "](" ~ pre ~ val ~ ")") %}
+{% endfor %}
+{% set gs = contact["Google Scholar"] %}
+{% set _ = parts.append("[Google Scholar](" ~ gs[1] ~ gs[0] ~ ")") %}
+Berlin, Germany · {{ parts|join(" · ") }}
 
 {{ industry.summary }}
 
@@ -75,7 +80,8 @@ theses: <https://hrmnn.net/cv.pdf>
 
 {% for item in references|selectattr("type", "in", ["article-journal", "article"])|sortrefs %}
 {% set title, authors, ref = item|reftomd %}
-{{ loop.index }}. {{ title }} · {{ authors }} · {{ ref }}{% if item.cited_by %} · {{ item.cited_by }} citations{% endif %}
+{% set cites = " · " ~ item.cited_by ~ " citations" if item.cited_by else "" %}
+{{ loop.index }}. {{ title }} · {{ authors }} · {{ ref }}{{ cites }}
 {% endfor %}
 
 ## Keywords
