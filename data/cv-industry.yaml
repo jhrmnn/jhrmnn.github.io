@@ -1,8 +1,7 @@
-# Content for the industry CV variants (templates/_cv-industry.tex, rendered by
-# the `tech` and `portal` wrappers). All of it lives under the single top-level
-# key `industry`, because common.load_ctx merges every data/* file into one flat
-# dict where colliding top-level keys silently resolve to whichever file sorts
-# last.
+# Content for the industry CV (templates/cv-industry.tex.in). All of it lives
+# under the single top-level key `industry`, because common.load_ctx merges
+# every data/* file into one flat dict where colliding top-level keys silently
+# resolve to whichever file sorts last.
 #
 # Facts the academic CV also carries (contact, education, awards, software) are
 # reused from cv.yaml through the merged context; this file holds only what is
@@ -148,12 +147,3 @@ industry:
   # Named codes are stronger evidence of industrial adoption than the header's
   # bare count, and PySCF and QCEngine appear nowhere else on the page.
   software_note: FHI-aims, DFTB+, PySCF & QCEngine
-  # Portal build only. The first screen there is an HR match against an
-  # explicit requirement list, so paste the posting's exact strings (methods,
-  # tools, degree) here before submitting and they become findable literal text.
-  portal_keywords: >-
-    Density functional theory (DFT), quantum Monte Carlo, coupled cluster,
-    machine learning, deep learning, neural networks, PyTorch, JAX, Python,
-    Fortran, high-performance computing, Microsoft Azure, computational
-    chemistry, materials science, molecular simulation, open-source software,
-    research leadership, PhD Physics.

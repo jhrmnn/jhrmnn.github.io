@@ -415,11 +415,6 @@ def make_env(name):
 
     elif '.txt' in name:
         finalize = md_to_txt
-    elif '.md' in name:
-        # Markdown output needs no conversion — the YAML source is already
-        # markdown, so values pass through verbatim. Feeds the CV's DOCX
-        # fallback, which pandoc builds from the rendered markdown.
-        finalize = str
     env = Environment(
         loader=FileSystemLoader(['.', os.getenv('BLDDIR')]),
         trim_blocks=True,

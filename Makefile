@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv-industry.docx cv.txt cv.yaml profile-pic-web.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -83,11 +83,6 @@ $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.
 
 %.pdf: %.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
-
-# Word fallback for applicant-tracking systems that ask for .docx or that
-# mangle a PDF. pandoc is already a build dependency (render's citeproc pass).
-%.docx: %.md
-	pandoc -f markdown -t docx -o $@ $<
 
 $(OUTDIR) $(BLDDIR):
 	mkdir -p $@
