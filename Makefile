@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -105,4 +105,5 @@ dev:
 	printf '%s\n' posts.py render.py templates/post.html.in templates/blog.html.in templates/_head.html templates/_footer.html templates/styles.css $(POSTS) | entr make $(OUTDIR)/notes/index.html & \
 	printf '%s\n' render.py templates/cv.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv.txt & \
 	printf '%s\n' render.py templates/cv.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv.pdf & \
+	printf '%s\n' render.py templates/cv-industry.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv-industry.pdf & \
 	python3 -m http.server -b 0.0.0.0 -d $(OUTDIR)
