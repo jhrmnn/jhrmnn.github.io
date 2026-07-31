@@ -12,14 +12,11 @@
 industry:
   tagline: Deep learning for computational chemistry --- research lead in AI for Science
   summary: >-
-    Research leader working at the intersection of deep learning and quantum
-    chemistry, with a track record of taking methods from first idea to
-    published breakthrough to widely adopted open-source software.
-    At Microsoft Research, co-leads the effort behind **Skala**, the first
-    machine-learned density functional competitive with the best hand-crafted
-    methods.
-    Previously founded and led a university research group, and created
-    **PauliNet**, which helped launch the field of deep-learning wavefunctions.
+    Research leader at the intersection of deep learning and quantum chemistry,
+    taking methods from first idea to published breakthrough to widely adopted
+    software. Co-leads **Skala** at Microsoft Research; previously led a
+    university research group and created **PauliNet**, which helped launch the
+    field of deep-learning wavefunctions.
   contact_keys: [email, URL, GitHub, LinkedIn]
   experience:
   - company: Microsoft Research AI for Science
@@ -27,56 +24,47 @@ industry:
     date: Nov 2022-present
     role: Principal Research Manager
     bullets:
-    - Co-lead research behind **[Skala](https://github.com/microsoft/skala)**,
-      the first machine-learned exchange–correlation functional to compete
-      with the best hand-designed DFT methods, reaching near-chemical accuracy
-      for molecules at the cost of semi-local DFT.
-    - Co-led the cross-disciplinary group of 25+ researchers and engineers
-      spanning machine learning, quantum chemistry, and HPC that took Skala
-      from concept to open-source release.
-    - Drove creation of MSR-ACC, a coupled-cluster reference dataset two
-      orders of magnitude larger than previous efforts, computed on Azure at
-      cloud scale and released publicly.
-    - Helped launch the DFT Research Early Access Program, bringing the
-      technology to industrial R&D partners.
+    - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first
+      machine-learned exchange–correlation functional to match the best
+      hand-designed DFT methods at semi-local cost.
+    - Co-led the 25+ researchers and engineers across machine learning,
+      quantum chemistry and HPC who took Skala from concept to open source.
+    - Drove MSR-ACC, a public coupled-cluster dataset two orders of magnitude
+      larger than prior efforts, computed on Azure.
+    - Helped launch the DFT Research Early Access Program with industrial R&D
+      partners.
   - company: ML4MatSci group, Department of Mathematics, Free University of Berlin
     date: Nov 2020-Oct 2022
     role: Junior Research Group Leader
     bullets:
-    - Founded and led a research group on machine learning for materials
-      science; co-PI on the MATH+ project *Deep backflow for accurate solution
-      of the electronic Schrödinger equation* (€160k).
-    - Built the group's program on deep-learning quantum Monte Carlo,
-      extending it to electronic excited states (*Nat. Commun.* 2023), while
-      supervising PhD and MSc students and postdocs.
+    - Founded and led a group on machine learning for materials science;
+      co-PI on a €160k MATH+ project.
+    - Extended deep-learning quantum Monte Carlo to electronic excited states
+      (*Nat. Commun.* 2023) while supervising students and postdocs.
   - company: AI4Science group (F. Noé), Free University of Berlin
     date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     bullets:
-    - Created **PauliNet** (*Nat. Chem.* 2020), the first deep neural-network
-      wavefunction to reach chemical accuracy in variational quantum Monte
-      Carlo, and grew it into
-      **[DeepQMC](https://github.com/deepqmc/deepqmc)**, an open-source
-      framework for the field it helped start.
-    - Concurrently postdoctoral fellow in the Machine Learning group at TU
-      Berlin (K.-R. Müller).
+    - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network
+      wavefunction to reach chemical accuracy, and grew it into
+      **[DeepQMC](https://github.com/deepqmc/deepqmc)**.
+    - Concurrently a fellow in the Machine Learning group at TU Berlin
+      (K.-R. Müller).
   - company: Theoretical Chemical Physics group (A. Tkatchenko), University of Luxembourg
     date: Jan-Dec 2018
     role: Postdoctoral Researcher
     bullets:
-    - Unified atomic many-body dispersion methods with nonlocal density
-      functionals into a single model of van der Waals interactions
-      (*Phys. Rev. Lett.* 2020).
+    - Unified many-body dispersion with nonlocal density functionals into a
+      single model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
   - company: Theory Department, Fritz Haber Institute of the Max Planck Society
     location: Berlin
     date: Oct 2013-Dec 2017
     role: Doctoral Researcher
     bullets:
-    - Developed many-body models of van der Waals interactions and
-      first-authored the field's standard review (*Chem. Rev.* 2017).
-    - Created **[libMBD](https://github.com/libmbd/libmbd)**, a many-body
-      dispersion library embedded in the production codes FHI-aims and DFTB+;
-      core contributor to FHI-aims.
+    - Developed many-body models of van der Waals interactions; first author
+      of the field's standard review (*Chem. Rev.* 2017).
+    - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in
+      the production codes FHI-aims and DFTB+; core contributor to FHI-aims.
   skills:
   - area: Machine learning
     items: deep architectures for molecules & materials, physics-informed priors, large-scale training, PyTorch, JAX
@@ -108,12 +96,26 @@ industry:
     text: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html), Charles University (best science graduate)"
   - year: 2008
     text: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual), Int. Physics Olympiad"
+  # Full author lists are academic convention and cost ~60 words here for no
+  # signal an industry reader can use, so the template prints this explicit
+  # `credit` instead. Keep it factual against the paper's author order.
   selected_pubs:
-  - Luise25
-  - HermannNRC23
-  - HermannNC20
-  - HermannPRL20
-  - HermannCR17
+  - id: Luise25
+    credit: co-author
+  - id: Foster25
+    credit: senior author
+  - id: HermannNRC23
+    credit: first author
+  - id: HermannNC20
+    credit: first author
+  - id: HermannPRL20
+    credit: first author
+    # `title` overrides the fetched one; these two carry academic subtitles
+    # after a colon that cost a line each and say nothing to this reader.
+    title: Density functional model for van der Waals interactions
+  - id: HermannCR17
+    credit: first author
+    title: First-principles models for van der Waals interactions in molecules and materials
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
   # with blurbs shortened from the fetched GitHub descriptions.
   software:

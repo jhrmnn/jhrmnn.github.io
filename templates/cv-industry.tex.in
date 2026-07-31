@@ -170,13 +170,16 @@
 
 \section{Selected publications}
 {\footnotesize
-<+ for key in industry.selected_pubs +>
-<+ set item = refs_by_id[key] +>
+<+ for entry in industry.selected_pubs +>
+<+ set item = refs_by_id[entry.id] +>
 <+ set title, authors, ref = item|reftomd +>
-\hangindent=1.2em\hangafter=1 << title >>~$\cdot$ << authors >>~$\cdot$ << ref >><+ if item.cited_by +>\hfill\mbox{\hspace{0.6em}\color{black!60}<< item.cited_by >>}<+ endif +>\par\vspace{1.5pt}
+% Citation count sits in its own fixed-width gutter rather than after an
+% \hfill, so a title that fills the measure cannot orphan the number onto the
+% next line. Same idea as the academic CV's trailing table column.
+\noindent\parbox[t]{\dimexpr\linewidth-2.6em\relax}{\hangindent=1.2em\hangafter=1 << entry.title|default(title, true) >>~$\cdot$ << ref >>~$\cdot$ \mbox{\emph{<< entry.credit >>}}}\hfill\parbox[t]{2em}{\raggedleft\color{black!60}<+ if item.cited_by +><< item.cited_by >><+ endif +>}\par\vspace{1.5pt}
 <+ endfor +>
 \vspace{0.3em}
-{\color{black!60}Right column: Google Scholar citations. Full academic CV with all << references|length >> works: \href{https://hrmnn.net/cv.pdf}{hrmnn.net/cv.pdf}.}\par
+{\color{black!60}Right column: Google Scholar citations. All << references|length >> works: \href{https://hrmnn.net/cv.pdf}{hrmnn.net/cv.pdf}.}\par
 }
 
 \end{document}
