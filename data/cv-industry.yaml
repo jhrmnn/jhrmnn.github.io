@@ -28,15 +28,16 @@ industry:
     date: Nov 2022-present
     role: Principal Research Manager
     bullets:
-    - "**[Skala](https://github.com/microsoft/skala)** is the first
-      machine-learned exchange–correlation functional to match the best
-      hand-designed DFT methods at semi-local cost, closing a 60-year-old gap
-      in simulation accuracy."
-    # The plan calls for naming the slice owned personally, e.g. "…; owned the
+    # The flagship claim and the attribution arrive together: this is the
+    # sharpest sentence in the document and it should have a name in it.
+    - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first
+      machine-learned exchange–correlation functional to match hand-designed
+      DFT at semi-local cost, closing a 60-year-old accuracy gap.
+    # Still missing the personally owned slice, e.g. "…; owned the
     # <workstream>, delivering <outcome>." That cannot be sourced from public
     # material — fill it in and this bullet gets materially stronger.
-    - Co-led the 25+ researchers and engineers across machine learning, quantum
-      chemistry and HPC who took it from concept to open-source release.
+    - Co-led its 25+ researchers and engineers across machine learning, quantum
+      chemistry and HPC, from concept to open-source release.
     # No leading "~" for "approximately": a bare tilde is a non-breaking space
     # in LaTeX and silently disappears.
     - Drove MSR-ACC, a public reference dataset of about 150,000
@@ -97,9 +98,9 @@ industry:
     detail: Charles University, Prague, 2011
   service:
   - Mentored 7 researchers (PhD, MSc, postdoc)
-  - 25+ invited talks & seminars (Harvard, Caltech, Cambridge)
+  - 25+ invited talks (Harvard, Caltech, Cambridge)
   - 40+ manuscripts reviewed (*Phys. Rev. X*, *Nat. Commun.*)
-  - Doctoral committees at U. Luxembourg & U. Bristol
+  - Doctoral committees (U. Luxembourg, U. Bristol)
   # Compact presentation of cv.yaml's `awards` for the narrow sidebar.
   awards:
   - year: 2021
@@ -144,6 +145,9 @@ industry:
     blurb: many-body dispersion library
   - name: Pyberny
     blurb: molecular geometry optimizer
+  # Named codes are stronger evidence of industrial adoption than the header's
+  # bare count, and PySCF and QCEngine appear nowhere else on the page.
+  software_note: FHI-aims, DFTB+, PySCF & QCEngine
   # Portal build only. The first screen there is an HR match against an
   # explicit requirement list, so paste the posting's exact strings (methods,
   # tools, degree) here before submitting and they become findable literal text.

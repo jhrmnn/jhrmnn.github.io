@@ -1,7 +1,7 @@
-{# DOCX fallback for the portal channel: some enterprise applicant-tracking
-   systems (notably older Taleo installations) parse Word more reliably than
-   PDF, and some ask for it outright. Rendered to markdown from the same
-   `industry` data as the two PDF builds, then converted by pandoc.
+{# Word version of the CV, for applicant-tracking systems that ask for .docx
+   outright rather than a PDF. Single-column and plain, since its only job is to
+   survive a parser. Rendered to markdown from the same `industry` data as the
+   PDF, then converted by pandoc.
 
    Markdown output keeps Jinja's default delimiters, unlike the angle-bracket
    ones the .tex templates use. Values pass through unconverted (render.make_env

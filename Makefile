@@ -15,8 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv-industry-portal.pdf \
-	cv-industry-portal.docx cv.txt cv.yaml profile-pic-web.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv-industry.docx cv.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -70,10 +69,6 @@ $(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
 $(OUTDIR)/index.html: styles.css $(wildcard assets/*.svg) $(BLDDIR)/favicon.png.b64 \
 	templates/_head.html templates/_footer.html assets/superscript.csl \
 	assets/profile-pic-web.png
-
-# Both industry CV builds are the same document: two thin wrappers that set a
-# layout flag and include one shared body, so a body edit has to rebuild both.
-$(BLDDIR)/cv-industry.tex $(BLDDIR)/cv-industry-portal.tex: templates/_cv-industry.tex
 
 %.pdf: %.tex FORCE
 	latexmk -shell-escape -f -pdfxe -outdir=$(dir $@) -interaction=nonstopmode $<
