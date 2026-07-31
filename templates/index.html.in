@@ -108,7 +108,7 @@
 
 <nav aria-label="Sections">
   <ul>
-    <li><a href="#Works">Works</a> ({% for sec in sections if not sec.theme %}{% if not loop.first %} &middot; {% endif %}<a href="#{{ sec.id }}">{{ sec.nav }}</a>{% endfor %})
+    <li><a href="#Works">Works</a> ({% for sec in sections if not sec.theme %}{% if not loop.first %} &middot; {% endif %}<a href="#{{ sec.id }}">{{ sec.id }}</a>{% endfor %})
     <li><a href="#CV">CV</a> (as <a href="cv.pdf">{% include "assets/file-pdf-solid.svg" %}</a>)
     <li><a href="/notes/">Notes</a>
   </ul>
