@@ -1,0 +1,83 @@
+{# DOCX fallback for the portal channel: some enterprise applicant-tracking
+   systems (notably older Taleo installations) parse Word more reliably than
+   PDF, and some ask for it outright. Rendered to markdown from the same
+   `industry` data as the two PDF builds, then converted by pandoc.
+
+   Markdown output keeps Jinja's default delimiters, unlike the angle-bracket
+   ones the .tex templates use. Values pass through unconverted (render.make_env
+   gives `.md` a pass-through finalizer), so the inline markdown in the YAML —
+   links, bold, emphasis — survives into the DOCX as real formatting. #}
+# Dr. Jan Hermann
+
+{{ industry.tagline }}
+
+{% set ncites = custom_data.scholar_citations.value.values()|sum %}
+{% set nstars = software|selectattr("stars", "defined")|map(attribute="stars")|sum %}
+{{ nstars // 50 * 50 }}+ GitHub stars · shipped in {{ industry.production_codes|length }} production codes · {{ references|length }} publications · {{ "{:,}".format(ncites // 100 * 100) }}+ citations
+
+Berlin, Germany
+{% for key in industry.contact_keys %}
+· [{{ contact[key][0] }}]({{ contact[key][1] }}{{ contact[key][0] }})
+{%- endfor %}
+· [Google Scholar]({{ contact["Google Scholar"][1] }}{{ contact["Google Scholar"][0] }})
+
+{{ industry.summary }}
+
+## Experience
+
+{% for job in industry.experience %}
+### {{ job.role }} — {{ job.company }}{% if job.location %}, {{ job.location }}{% endif %}
+
+{{ job.date|dateformat }}
+
+{% for b in job.bullets %}
+- {{ b }}
+{% endfor %}
+
+{% endfor %}
+## Education
+
+{% for deg in industry.education %}
+- **{{ deg.title }}** — {{ deg.detail }}
+{% endfor %}
+
+## Skills
+
+{% for s in industry.skills %}
+- **{{ s.area }}** — {{ s["items"] }}
+{% endfor %}
+
+## Open source
+
+{% for entry in industry.software %}
+{% set item = software|selectattr("name", "equalto", entry.name)|first %}
+- **{{ item.name }}** — {{ entry.blurb }} · {{ item.role }}{% if item.stars %} · {{ item.stars }} stars{% endif %} · <{{ item.url }}>
+{% endfor %}
+
+Shipped inside {{ industry.production_codes|join(", ") }}.
+
+## Awards
+
+{% for item in industry.awards %}
+- **{{ item.year }}** — {{ item.text }}
+{% endfor %}
+
+## Mentoring and service
+
+{% for item in industry.service %}
+- {{ item }}
+{% endfor %}
+
+## Publications
+
+Citation counts from Google Scholar. Complete list including book chapters and
+theses: <https://hrmnn.net/cv.pdf>
+
+{% for item in references|selectattr("type", "in", ["article-journal", "article"])|sortrefs %}
+{% set title, authors, ref = item|reftomd %}
+{{ loop.index }}. {{ title }} · {{ authors }} · {{ ref }}{% if item.cited_by %} · {{ item.cited_by }} citations{% endif %}
+{% endfor %}
+
+## Keywords
+
+{{ industry.portal_keywords }}
