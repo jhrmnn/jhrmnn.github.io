@@ -5,10 +5,10 @@ narrative paragraph with [@key] citations to publications — its publication li
 is exactly the works its prose cites, numbered consecutively across all sections
 (render.py runs the whole file through pandoc + citeproc in one pass). The lead
 paragraph before the first heading is the homepage intro. Header attributes carry
-the anchor id and, for a hub, its GitHub repo (listed just after the heading with
-its star count) and a short `nav` label for the nav bar; the `.theme` section
-instead gets an injected list of every tool not anchored to a hub and stays out of
-the nav bar. A paper appears under a section because the prose cites it —
+the anchor id — a short topic abbreviation that doubles as the section's nav-bar
+label — and, for a hub, its GitHub repo (listed just after the heading with its
+star count); the `.theme` section instead gets an injected list of every tool not
+anchored to a hub and stays out of the nav bar. A paper appears under a section because the prose cites it —
 cross-list by citing it in both. The software/tool list and talks live in
 data/cv.yaml.
 -->
@@ -18,14 +18,14 @@ hand-crafted physics modeling of long-range correlation, to physics-driven
 machine learning of wavefunctions, to data-driven machine learning of the
 exchange–correlation functional.
 
-# Density functional theory {#dft github="microsoft/skala" nav="DFT"}
+# Density functional theory {#DFT github="microsoft/skala"}
 
 Exchange–correlation, learned from data. Skala learns the
 exchange–correlation functional of Kohn–Sham DFT, reaching hybrid-functional
 accuracy at semi-local cost [@Luise25]. This thread started by looking at the algorithmic side of things
 [@delMazo-SevillanoJCP23], but it later became evident that the key ingredient is data [@GasevicJCIM25; @EhlertSD26].
 
-# Quantum Monte Carlo {#qmc github="deepqmc/deepqmc" nav="QMC"}
+# Quantum Monte Carlo {#QMC github="deepqmc/deepqmc"}
 
 Wavefunctions, learned from physics. Deep QMC began with PauliNet
 [@HermannNC20], the first deep-learning *ansatz* to reach chemical accuracy through
@@ -37,7 +37,7 @@ Those same wavefunctions also yield accurate real-space electron densities
 [@ChengJCP25], and in the latest iteration are encoded in a single foundation model
 [@Foster25].
 
-# Van der Waals dispersion {#vdw github="libmbd/libmbd" nav="vdW"}
+# Van der Waals dispersion {#vdW github="libmbd/libmbd"}
 
 Long-range electron correlation, by hand. The centerpiece is a unified
 density-functional model of van der Waals interactions that merges many-body

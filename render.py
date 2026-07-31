@@ -150,13 +150,13 @@ def sort_refs(refs):
 # whose title matches nothing (e.g. untitled seminars) stay out of the hubs but
 # remain in the full CV.
 HUB_KEYWORDS = {
-    'dft': ['skala', 'exchange-correlation', 'exchange–correlation'],
-    'qmc': [
+    'DFT': ['skala', 'exchange-correlation', 'exchange–correlation'],
+    'QMC': [
         'schrödinger', 'wave function', 'wavefunction', 'quantum monte carlo',
         'fixed-node', 'deep-learning solution', 'neural network solution',
         'neural-network wave', 'deep neural network',
     ],
-    'vdw': [
+    'vdW': [
         'van der waals', 'many-body dispersion', 'dispersion', 'libmbd',
         'zeolite', 'faujasite', 'non-local density', 'nonlocal',
         'electron correlation in density', 'charge fluctuations', 'π–π',
@@ -312,11 +312,12 @@ def render_hub_sections(ctx):
     its generated bibliography's order, then discard that bibliography — the
     reference lists are rendered by the template in the site's own format. Each
     section's structure comes from its <h1> header attributes (id, github repo,
-    a short `nav` label, a `theme` class for the fourth section) and its
-    publications from the [@key]s
+    a `theme` class for the fourth section) and its publications from the [@key]s
     its prose cites; a hub lists its github tool just after the heading, while the
-    theme section gets an injected list of every other tool. Sets ctx['sections']
-    (ordered) and ctx['cite_num']."""
+    theme section gets an injected list of every other tool. The id is a short
+    topic abbreviation that the nav bar shows as the section's label, so a hub
+    needs no separate nav name. Sets ctx['sections'] (ordered) and
+    ctx['cite_num']."""
     bib = str(Path(os.getenv('BLDDIR', 'build')) / 'refs.csl.json')
     write_bibliography(ctx['references'], bib)
     # Drop the documentation comment so it neither reaches the page nor the lead.
@@ -344,7 +345,6 @@ def render_hub_sections(ctx):
             'id': attr('id'),
             'name': unescape(re.sub(r'<[^>]+>', '', re.search(r'<h1\b[^>]*>(.*?)</h1>', header, re.S).group(1)).strip()),
             'github': attr('data-github'),
-            'nav': attr('data-nav'),
             'theme': 'theme' in cls.split(),
             'html': Markup(body.strip()),
             'refs': sorted(dict.fromkeys(cited), key=by_number),
