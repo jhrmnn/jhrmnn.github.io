@@ -1,0 +1,128 @@
+# Content for the industry CV variant (templates/cv-industry.tex.in). All of
+# it lives under the single top-level key `industry`, because common.load_ctx
+# merges every data/* file into one flat dict where colliding top-level keys
+# silently resolve to whichever file sorts last.
+#
+# Facts the academic CV also carries (contact, education, awards, software)
+# are reused from cv.yaml through the merged context; this file holds only
+# what is specific to the industry telling: the summary, per-role achievement
+# bullets, skills, and the publication selection. Publication IDs come from
+# derived.json references[].id (the citation-key scheme of extras.yaml
+# keypubs, <Surname><JournalInitials><YY>).
+industry:
+  tagline: Deep learning for computational chemistry --- research lead in AI for Science
+  summary: >-
+    Research leader working at the intersection of deep learning and quantum
+    chemistry, with a track record of taking methods from first idea to
+    published breakthrough to widely adopted open-source software.
+    At Microsoft Research, co-leads the effort behind **Skala**, the first
+    machine-learned density functional competitive with the best hand-crafted
+    methods.
+    Previously founded and led a university research group, and created
+    **PauliNet**, which helped launch the field of deep-learning wavefunctions.
+  contact_keys: [email, URL, GitHub, LinkedIn]
+  experience:
+  - company: Microsoft Research AI for Science
+    location: Berlin
+    date: Nov 2022-present
+    role: Principal Research Manager
+    bullets:
+    - Co-lead research behind **[Skala](https://github.com/microsoft/skala)**,
+      the first machine-learned exchange–correlation functional to compete
+      with the best hand-designed DFT methods, reaching near-chemical accuracy
+      for molecules at the cost of semi-local DFT.
+    - Co-led the cross-disciplinary group of 25+ researchers and engineers
+      spanning machine learning, quantum chemistry, and HPC that took Skala
+      from concept to open-source release.
+    - Drove creation of MSR-ACC, a coupled-cluster reference dataset two
+      orders of magnitude larger than previous efforts, computed on Azure at
+      cloud scale and released publicly.
+    - Helped launch the DFT Research Early Access Program, bringing the
+      technology to industrial R&D partners.
+  - company: ML4MatSci group, Department of Mathematics, Free University of Berlin
+    date: Nov 2020-Oct 2022
+    role: Junior Research Group Leader
+    bullets:
+    - Founded and led a research group on machine learning for materials
+      science; co-PI on the MATH+ project *Deep backflow for accurate solution
+      of the electronic Schrödinger equation* (€160k).
+    - Built the group's program on deep-learning quantum Monte Carlo,
+      extending it to electronic excited states (*Nat. Commun.* 2023), while
+      supervising PhD and MSc students and postdocs.
+  - company: AI4Science group (F. Noé), Free University of Berlin
+    date: Jan 2019-Oct 2020
+    role: Postdoctoral Researcher
+    bullets:
+    - Created **PauliNet** (*Nat. Chem.* 2020), the first deep neural-network
+      wavefunction to reach chemical accuracy in variational quantum Monte
+      Carlo, and grew it into
+      **[DeepQMC](https://github.com/deepqmc/deepqmc)**, an open-source
+      framework for the field it helped start.
+    - Concurrently postdoctoral fellow in the Machine Learning group at TU
+      Berlin (K.-R. Müller).
+  - company: Theoretical Chemical Physics group (A. Tkatchenko), University of Luxembourg
+    date: Jan-Dec 2018
+    role: Postdoctoral Researcher
+    bullets:
+    - Unified atomic many-body dispersion methods with nonlocal density
+      functionals into a single model of van der Waals interactions
+      (*Phys. Rev. Lett.* 2020).
+  - company: Theory Department, Fritz Haber Institute of the Max Planck Society
+    location: Berlin
+    date: Oct 2013-Dec 2017
+    role: Doctoral Researcher
+    bullets:
+    - Developed many-body models of van der Waals interactions and
+      first-authored the field's standard review (*Chem. Rev.* 2017).
+    - Created **[libMBD](https://github.com/libmbd/libmbd)**, a many-body
+      dispersion library embedded in the production codes FHI-aims and DFTB+;
+      core contributor to FHI-aims.
+  skills:
+  - area: Machine learning
+    items: deep architectures for molecules & materials, physics-informed priors, large-scale training, PyTorch, JAX
+  - area: Quantum chemistry
+    items: DFT, variational quantum Monte Carlo, coupled cluster, electronic-structure software
+  - area: Engineering
+    items: Python scientific stack, Fortran, HPC & cloud compute (Azure), open-source maintainership
+  - area: Leadership
+    items: research management, cross-team delivery, mentoring, scientific communication
+  # Compact presentation of cv.yaml's `education` for the narrow sidebar:
+  # abbreviated institutions, degrees of a school merged.
+  education:
+  - title: Ph.D. Physics
+    detail: Humboldt University of Berlin, 2017 (*summa cum laude*)
+  - title: M.S. Molecular Modeling
+    detail: Charles University, Prague, 2013
+  - title: B.S. Physics & B.S. Chemistry
+    detail: Charles University, Prague, 2011
+  service:
+  - Mentored 7 early-career researchers (PhD, MSc, postdoc)
+  - 25+ invited talks & seminars, incl. at Harvard, Caltech & Cambridge
+  - 40+ manuscripts reviewed for journals incl. *Phys. Rev. X* & *Nat. Commun.*
+  - Doctoral committees at U. Luxembourg & U. Bristol
+  # Compact presentation of cv.yaml's `awards` for the narrow sidebar.
+  awards:
+  - year: 2021
+    text: Marie Skłodowska-Curie Fellowship *(relinquished)*
+  - year: 2014
+    text: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html), Charles University (best science graduate)"
+  - year: 2008
+    text: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual), Int. Physics Olympiad"
+  selected_pubs:
+  - Luise25
+  - HermannNRC23
+  - HermannNC20
+  - HermannPRL20
+  - HermannCR17
+  # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
+  # with blurbs shortened from the fetched GitHub descriptions.
+  software:
+  - name: DeepQMC
+    blurb: deep-learning quantum Monte Carlo
+  - name: Skala
+    blurb: deep-learned XC functional for DFT
+  - name: libMBD
+    blurb: many-body dispersion library
+  - name: Pyberny
+    blurb: molecular geometry optimizer
+  software_note: libMBD and Pyberny also ship inside FHI-aims, DFTB+, PySCF & QCEngine.
