@@ -1,44 +1,56 @@
-# Content for the industry CV variant (templates/cv-industry.tex.in). All of
-# it lives under the single top-level key `industry`, because common.load_ctx
-# merges every data/* file into one flat dict where colliding top-level keys
-# silently resolve to whichever file sorts last.
+# Content for the industry CV variants (templates/_cv-industry.tex, rendered by
+# the `tech` and `portal` wrappers). All of it lives under the single top-level
+# key `industry`, because common.load_ctx merges every data/* file into one flat
+# dict where colliding top-level keys silently resolve to whichever file sorts
+# last.
 #
-# Facts the academic CV also carries (contact, education, awards, software)
-# are reused from cv.yaml through the merged context; this file holds only
-# what is specific to the industry telling: the summary, per-role achievement
-# bullets, skills, and the publication selection. Publication IDs come from
-# derived.json references[].id (the citation-key scheme of extras.yaml
-# keypubs, <Surname><JournalInitials><YY>).
+# Facts the academic CV also carries (contact, education, awards, software) are
+# reused from cv.yaml through the merged context; this file holds only what is
+# specific to the industry telling: the summary, per-role achievement bullets,
+# skills, and the publication selection. Publication IDs come from
+# derived.json references[].id (the citation-key scheme of extras.yaml keypubs,
+# <Surname><JournalInitials><YY>).
 industry:
   tagline: Deep learning for computational chemistry --- research lead in AI for Science
   summary: >-
     Research leader at the intersection of deep learning and quantum chemistry,
-    taking methods from first idea to published breakthrough to widely adopted
-    software. Co-leads **Skala** at Microsoft Research; previously led a
+    taking methods from first idea to breakthrough to widely adopted software. Co-leads **Skala** at Microsoft Research; previously led a
     university research group and created **PauliNet**, which helped launch the
     field of deep-learning wavefunctions.
   contact_keys: [email, URL, GitHub, LinkedIn]
+  # Header metrics, adoption first: stars and production-code adoption read to
+  # both an industry screener and a research reviewer, whereas citation totals
+  # are academic-committee currency. Counts other than this list are live.
+  production_codes: [FHI-aims, DFTB+, PySCF, QCEngine]
   experience:
   - company: Microsoft Research AI for Science
     location: Berlin
     date: Nov 2022-present
     role: Principal Research Manager
     bullets:
-    - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first
+    - "**[Skala](https://github.com/microsoft/skala)** is the first
       machine-learned exchange–correlation functional to match the best
-      hand-designed DFT methods at semi-local cost.
-    - Co-led the 25+ researchers and engineers across machine learning,
-      quantum chemistry and HPC who took Skala from concept to open source.
-    - Drove MSR-ACC, a public coupled-cluster dataset two orders of magnitude
-      larger than prior efforts, computed on Azure.
-    - Helped launch the DFT Research Early Access Program with industrial R&D
-      partners.
+      hand-designed DFT methods at semi-local cost, closing a 60-year-old gap
+      in simulation accuracy."
+    # The plan calls for naming the slice owned personally, e.g. "…; owned the
+    # <workstream>, delivering <outcome>." That cannot be sourced from public
+    # material — fill it in and this bullet gets materially stronger.
+    - Co-led the 25+ researchers and engineers across machine learning, quantum
+      chemistry and HPC who took it from concept to open-source release.
+    # No leading "~" for "approximately": a bare tilde is a non-breaking space
+    # in LaTeX and silently disappears.
+    - Drove MSR-ACC, a public reference dataset of about 150,000
+      coupled-cluster energies computed on Azure, two orders of magnitude
+      beyond prior efforts.
+    # Quoted: the ": " inside would otherwise scan as a YAML mapping.
+    - "Took the technology to industrial R&D through the DFT Research Early
+      Access Program (first partner: Flagship Pioneering)."
   - company: ML4MatSci group, Department of Mathematics, Free University of Berlin
     date: Nov 2020-Oct 2022
     role: Junior Research Group Leader
     bullets:
-    - Founded and led a group on machine learning for materials science;
-      co-PI on a €160k MATH+ project.
+    - Founded and led a group on machine learning for materials science; co-PI
+      on a competitively funded MATH+ project.
     - Extended deep-learning quantum Monte Carlo to electronic excited states
       (*Nat. Commun.* 2023) while supervising students and postdocs.
   - company: AI4Science group (F. Noé), Free University of Berlin
@@ -48,14 +60,14 @@ industry:
     - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network
       wavefunction to reach chemical accuracy, and grew it into
       **[DeepQMC](https://github.com/deepqmc/deepqmc)**.
-    - Concurrently a fellow in the Machine Learning group at TU Berlin
+    - Concurrently a fellow in TU Berlin's Machine Learning group
       (K.-R. Müller).
   - company: Theoretical Chemical Physics group (A. Tkatchenko), University of Luxembourg
     date: Jan-Dec 2018
     role: Postdoctoral Researcher
     bullets:
-    - Unified many-body dispersion with nonlocal density functionals into a
-      single model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
+    - Unified many-body dispersion with nonlocal density functionals into one
+      model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
   - company: Theory Department, Fritz Haber Institute of the Max Planck Society
     location: Berlin
     date: Oct 2013-Dec 2017
@@ -64,16 +76,16 @@ industry:
     - Developed many-body models of van der Waals interactions; first author
       of the field's standard review (*Chem. Rev.* 2017).
     - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in
-      the production codes FHI-aims and DFTB+; core contributor to FHI-aims.
+      FHI-aims and DFTB+; core contributor to FHI-aims.
+  # No `Leadership` area: it read as generic filler next to the specific
+  # entries, and Experience already carries the claim.
   skills:
   - area: Machine learning
-    items: deep architectures for molecules & materials, physics-informed priors, large-scale training, PyTorch, JAX
+    items: deep architectures for molecules & materials, physics-informed priors, PyTorch, JAX
   - area: Quantum chemistry
-    items: DFT, variational quantum Monte Carlo, coupled cluster, electronic-structure software
+    items: DFT, quantum Monte Carlo, coupled cluster, electronic-structure software
   - area: Engineering
-    items: Python scientific stack, Fortran, HPC & cloud compute (Azure), open-source maintainership
-  - area: Leadership
-    items: research management, cross-team delivery, mentoring, scientific communication
+    items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
   # Compact presentation of cv.yaml's `education` for the narrow sidebar:
   # abbreviated institutions, degrees of a school merged.
   education:
@@ -84,37 +96,42 @@ industry:
   - title: B.S. Physics & B.S. Chemistry
     detail: Charles University, Prague, 2011
   service:
-  - Mentored 7 early-career researchers (PhD, MSc, postdoc)
-  - 25+ invited talks & seminars, incl. at Harvard, Caltech & Cambridge
-  - 40+ manuscripts reviewed for journals incl. *Phys. Rev. X* & *Nat. Commun.*
+  - Mentored 7 researchers (PhD, MSc, postdoc)
+  - 25+ invited talks & seminars (Harvard, Caltech, Cambridge)
+  - 40+ manuscripts reviewed (*Phys. Rev. X*, *Nat. Commun.*)
   - Doctoral committees at U. Luxembourg & U. Bristol
   # Compact presentation of cv.yaml's `awards` for the narrow sidebar.
   awards:
   - year: 2021
-    text: Marie Skłodowska-Curie Fellowship *(relinquished)*
+    text: Marie Skłodowska-Curie Fellowship *(awarded, declined)*
   - year: 2014
     text: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html), Charles University (best science graduate)"
   - year: 2008
     text: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual), Int. Physics Olympiad"
-  # Full author lists are academic convention and cost ~60 words here for no
-  # signal an industry reader can use, so the template prints this explicit
-  # `credit` instead. Keep it factual against the paper's author order.
+  # `authors` is a compressed credit line with the name emphasised, so author
+  # position is visible without the ~60 words a full author list costs.
+  # `credit` spells the position out only where the author line leaves it
+  # ambiguous — a leading bold **JH** already says "first author" for free.
+  # Both are checked against derived.json author order: Luise25 has 24 authors
+  # (JH 22nd), Foster25 has 10 (JH last).
   selected_pubs:
   - id: Luise25
+    authors: G. Luise et al., incl. **JH**
     credit: co-author
   - id: Foster25
+    authors: N. Foster et al. & **JH**
     credit: senior author
   - id: HermannNRC23
-    credit: first author
+    authors: '**JH**, J. Spencer et al.'
   - id: HermannNC20
-    credit: first author
+    authors: '**JH**, Z. Schätzle & F. Noé'
   - id: HermannPRL20
-    credit: first author
+    authors: '**JH** & A. Tkatchenko'
     # `title` overrides the fetched one; these two carry academic subtitles
     # after a colon that cost a line each and say nothing to this reader.
     title: Density functional model for van der Waals interactions
   - id: HermannCR17
-    credit: first author
+    authors: '**JH**, R. DiStasio & A. Tkatchenko'
     title: First-principles models for van der Waals interactions in molecules and materials
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
   # with blurbs shortened from the fetched GitHub descriptions.
@@ -127,4 +144,12 @@ industry:
     blurb: many-body dispersion library
   - name: Pyberny
     blurb: molecular geometry optimizer
-  software_note: libMBD and Pyberny also ship inside FHI-aims, DFTB+, PySCF & QCEngine.
+  # Portal build only. The first screen there is an HR match against an
+  # explicit requirement list, so paste the posting's exact strings (methods,
+  # tools, degree) here before submitting and they become findable literal text.
+  portal_keywords: >-
+    Density functional theory (DFT), quantum Monte Carlo, coupled cluster,
+    machine learning, deep learning, neural networks, PyTorch, JAX, Python,
+    Fortran, high-performance computing, Microsoft Azure, computational
+    chemistry, materials science, molecular simulation, open-source software,
+    research leadership, PhD Physics.

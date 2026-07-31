@@ -1,0 +1,7 @@
+% vim: set ft=tex
+<# portal build: single-column, standard headings, full publication list, for
+   blind submissions through applicant-tracking systems. See
+   templates/_cv-industry.tex for the shared body — this wrapper only selects
+   the layout. #>
+<+ set portal = true +>
+<+ include "templates/_cv-industry.tex" +>
