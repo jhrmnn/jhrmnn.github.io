@@ -50,13 +50,9 @@ check-sources:
 # come out as one uninterrupted run. Needs the `test` dependency group;
 # extractors it cannot import are skipped.
 #
-# Run by hand, not wired into CI, because it is knowingly red in one cell:
-# poppler's default reading-order mode splices the sidebar into the main column.
-# That is inherent to a two-column page — poppler column-separates only partway
-# down and the result flips on one-line content changes — and the two-column
-# one-pager was chosen over passing it. pdfminer.six and PyMuPDF, the extractors
-# actually embedded in most resume parsers, both pass. The other seven
-# assertions are still worth checking after any layout change.
+# Plain pdftotext's CONTIGUITY is reported as a warning rather than a failure:
+# it is a ceiling of two columns of unequal length, not a regression. See
+# WARN_ONLY in check_cv_parsing.py. Everything else is a hard failure.
 check-cv: $(OUTDIR)/cv-industry.pdf
 	./check_cv_parsing.py $<
 

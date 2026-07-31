@@ -205,6 +205,10 @@ jobs:
         run: poetry run make
         env:
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Check CV text extraction
+        run: |
+          poetry install --only main,test
+          poetry run make check-cv
       - uses: actions/upload-pages-artifact@v3
       # Loose copy of the rendered site for the Cloudflare preview job;
       # upload-pages-artifact above packs a Pages-only tarball that Wrangler
