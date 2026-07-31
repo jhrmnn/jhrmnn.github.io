@@ -14,7 +14,9 @@ statement: |
   The goal is to push through the scale–accuracy trade-off offered by traditional methods of quantum chemistry.
 contact:
   URL: [hrmnn.net, https://]
-  email: [info@hrmnn.net, mailto:]
+  # Quoted: bare `mailto:` is a YAML mapping key, so the prefix parsed as
+  # {mailto: None} and any template concatenating it built a broken href.
+  email: [info@hrmnn.net, "mailto:"]
   "[matrix]": ["@jhrmnn:matrix.org", https://matrix.to/#/]
   ORCID: [0000-0002-2779-0749, https://orcid.org/]
   Google Scholar: [5TjVq0YAAAAJ, "https://scholar.google.com/citations?user="]
