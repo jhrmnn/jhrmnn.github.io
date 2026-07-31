@@ -55,10 +55,9 @@ along the way [@HermannJCTC18; @Hermann18a].
 
 # Ecosystem {#more .theme}
 
-No tool stands alone. libMBD is built into FHI-aims, DFTB+, and other
-electronic-structure codes; Pyberny into PySCF and QCEngine — integrations
-reflected in their program papers [@AbbottES26; @HourahineJCP20; @SunJCP20;
-@SmithJCP21]. The same connective work runs through survey writing across the
-field, from a roadmap on machine learning in electronic structure [@KulikES22] to
-an introduction to material modeling [@Hermann20], alongside the invited seminars
-below.
+No tool stands alone. libMBD is built into FHI-aims [@AbbottES26], DFTB+
+[@HourahineJCP20], and other electronic-structure codes; Pyberny into PySCF
+[@SunJCP20] and QCEngine [@SmithJCP21]. The same connective work runs through
+survey writing across the field, from a roadmap on machine learning in
+electronic structure [@KulikES22] to an introduction to material modeling
+[@Hermann20], alongside the invited seminars below.
