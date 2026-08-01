@@ -138,10 +138,12 @@
 <+ endfor +>
 <+ for job, org in jobs +>
 {\small\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-% The dept carries the markdown link the academic CV shows, so strip the dotted
-% underline here: the destination survives, the company line stays clean.
+% Broadest first: employer, then the unit inside it, then the city set off by a
+% dash so it does not read as one more level of org chart. The dept carries the
+% markdown link the academic CV shows, so strip the dotted underline here: the
+% destination survives, the company line stays clean.
 \renewcommand{\udot}[1]{#1}%
-\emph{<< job.dept >>, << org.institution >><+ if org.location +>, << org.location >><+ endif +>}}\par
+\emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.industry.bullets +>
