@@ -157,8 +157,12 @@
 \begin{document}
 
 <#- ============================ MAIN COLUMN ============================ -#>
-{\sbseries\largefont\fontsize{26pt}{28pt}\selectfont
- \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}\par
+<# The title takes the pale grey "Jan" carries and the family's regular weight
+   against the name's medium — the lightest face Baskerville 120 Pro ships, so
+   it recedes by both colour and weight without a second type size. `\ ` keeps
+   the period from picking up sentence spacing. #>
+{\largefont\fontsize{26pt}{28pt}\selectfont
+ \textcolor{black!40}{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
 \vspace{0.3em}
 {\itshape\color{black!60}<< industry.tagline >>}\par
 \vspace{0.4em}
