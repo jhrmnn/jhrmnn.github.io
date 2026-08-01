@@ -191,15 +191,17 @@
 % the URL break across two lines rather than overhanging the band into the main
 % column. The URL is its own visible text like the contact line: the address
 % survives a parser that strips link annotations, and a printed copy stays
-% actionable. \scriptsize pairs it with the provenance note at the band's foot.
+% actionable. \scriptsize pairs it with the provenance note at the band's foot,
+% and is declared as a node option so the two lines sit on its own leading —
+% see the note at the band's foot for why the body is the wrong place for it.
 %
 % Kept off the band's top strip, which is level with the name: poppler reads
 % that strip before the header beside it, so text there displaces the contact
 % details down the extraction, and two lines up there pushed the contact past
 % the window check_cv_parsing.py allows. Down here it trails the contact line
 % instead, which is what buys the second line.
-\node[anchor=south east, inner sep=0, text width=3.9cm, align=right] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
-  {\scriptsize\color{black!60}Academic CV:\\
+\node[anchor=south east, inner sep=0, text width=3.9cm, align=right, font=\scriptsize] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
+  {\color{black!60}Academic CV:\\
    \renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
    \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}};
 % Sidebar starts below the summary, clear of the name/contact header. While it
@@ -252,8 +254,13 @@
 \end{minipage}};
 % Pinned to the foot of the band rather than left floating below the sidebar's
 % last block, which ends well above the main column.
-\node[anchor=south west, inner sep=0, text width=3.9cm] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
-  {\scriptsize\color{black!60}(generated on \today; citation and star counts are live)};
+%
+% Size declared as a node option, not in the body: TikZ sets the text box up
+% before the body runs, so a \scriptsize inside it shrinks the glyphs while the
+% lines stay on \normalsize's 12pt leading. As an option it lands in time and
+% the note wraps on its own leading, like the sidebar blocks above it.
+\node[anchor=south west, inner sep=0, text width=3.9cm, font=\scriptsize] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
+  {\color{black!60}(generated on \today; citation and star counts are live)};
 \end{tikzpicture}%
 
 \section{Experience}
