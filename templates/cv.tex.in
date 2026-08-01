@@ -187,17 +187,19 @@
    extraction mode. #>
 \begin{tikzpicture}[overlay,remember picture]
 % Pointer to the long form, sitting just above the sidebar as that column's
-% masthead. It shares the column's right edge, and the URL is its own visible
-% text like the contact line: the address survives a parser that strips link
-% annotations, and a printed copy stays actionable. \scriptsize keeps it inside
-% the band's width and pairs it with the provenance note at the band's foot.
+% masthead. It takes the sidebar's own width and right edge, so the label and
+% the URL break across two lines rather than overhanging the band into the main
+% column. The URL is its own visible text like the contact line: the address
+% survives a parser that strips link annotations, and a printed copy stays
+% actionable. \scriptsize pairs it with the provenance note at the band's foot.
 %
 % Kept off the band's top strip, which is level with the name: poppler reads
 % that strip before the header beside it, so text there displaces the contact
-% details down the extraction — two lines up there pushed the contact past the
-% window check_cv_parsing.py allows.
-\node[anchor=south east, inner sep=0] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
-  {\scriptsize\color{black!60}Academic CV:
+% details down the extraction, and two lines up there pushed the contact past
+% the window check_cv_parsing.py allows. Down here it trails the contact line
+% instead, which is what buys the second line.
+\node[anchor=south east, inner sep=0, text width=3.9cm, align=right] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
+  {\scriptsize\color{black!60}Academic CV:\\
    \renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
    \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}};
 % Sidebar starts below the summary, clear of the name/contact header. While it
