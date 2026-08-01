@@ -65,8 +65,8 @@ employment:
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
-    role: Junior Research Group Leader
-    dept: "[ML4MatSci group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html), Department of Mathematics"
+    role: "[Junior Research Group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) Leader"
+    dept: Department of Mathematics
     industry:
     - Founded and led a group on machine learning for materials science; co-PI on a competitively funded MATH+ project.
     - Extended deep-learning quantum Monte Carlo to electronic excited states (*Nat. Commun.* 2023) while supervising students and postdocs.

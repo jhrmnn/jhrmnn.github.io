@@ -154,12 +154,14 @@
 <+ endfor +>
 <+ endfor +>
 <+ for job, org in jobs +>
-{\small\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-% Broadest first: employer, then the unit inside it, then the city set off by a
-% dash so it does not read as one more level of org chart. The dept carries the
-% markdown link the academic CV shows, so strip the dotted underline here: the
-% destination survives, the company line stays clean.
-\renewcommand{\udot}[1]{#1}%
+<# Role and company line both carry the markdown links the academic CV shows, so
+   strip the dotted underline across the whole block: the destinations survive,
+   and the titles stay uniform — only one of the five is a link, and underlining
+   just that one would read as emphasis it does not deserve. The company line
+   runs broadest first, employer then the unit inside it, with the city behind a
+   dash so it does not read as one more level of org chart. #>
+{\small\renewcommand{\udot}[1]{#1}%
+\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
 \emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small

@@ -67,7 +67,7 @@ MAIN_MARKERS = [
 # left out precisely because they are not unique.
 JOB_RECORDS = [
     ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "60-year-old"),
-    ("Junior Research Group Leader", "ML4MatSci group", "Nov 2020", "Founded and led"),
+    ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
     ("Doctoral Researcher", "Theory Department", "Oct 2013", "Developed many-body"),
 ]
 
