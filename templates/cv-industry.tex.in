@@ -209,8 +209,9 @@
 <+ endfor +>
 
 \sidesection{Awards}
-<+ for item in industry.awards +>
-{\color{black!60}<< item.year >>} $\cdot$ << item.text >>\par\vspace{2pt}
+<# Derived from the CV's own `awards`, so the wording lives in one place. #>
+<+ for item in awards +>
+{\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{2pt}
 <+ endfor +>
 
 \sidesection{Ships inside}

@@ -101,7 +101,7 @@ funding:
 awards:
 - date: Feb 2021
   title: Marie Skłodowska-Curie Individual Fellowship
-  note: relinquished
+  note: "awarded, declined"
 - date: Jan 2014
   title: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html) for the best science graduate"
   institution: Charles University
@@ -530,14 +530,6 @@ industry:
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   - 40+ manuscripts reviewed (*Phys. Rev. X*, *Nat. Commun.*)
   - Doctoral committees (U. Luxembourg, U. Bristol)
-  # Compact presentation of cv.yaml's `awards` for the narrow sidebar.
-  awards:
-  - year: 2021
-    text: Marie Skłodowska-Curie Fellowship *(awarded, declined)*
-  - year: 2014
-    text: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html), Charles University (best science graduate)"
-  - year: 2008
-    text: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual), Int. Physics Olympiad"
   # `authors` is a compressed credit line with the name emphasised, so author
   # position is visible without the ~60 words a full author list costs.
   # `credit` spells the position out only where the author line leaves it
