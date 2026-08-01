@@ -142,10 +142,10 @@
 <+- endmacro +>
 
 <# Experience is the CV's own `employment`, flattened. A position appears here
-   only if it carries an `industry` block, which is also where its bullets live —
-   so the undergraduate assistantship drops out without needing a flag. The
-   company line is composed from the same dept and institution the academic CV
-   prints separately. #>
+   only if it carries an `industry` list, which is also its bullets — so the
+   undergraduate assistantship drops out without needing a flag. The company
+   line is composed from the same dept and institution the academic CV prints
+   separately. #>
 <+ macro experience_block() +>
 <+ set jobs = [] +>
 <+ for e in employment +>
@@ -163,7 +163,7 @@
 \emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
-<+ for b in job.industry.bullets +>
+<+ for b in job.industry +>
 \item << b >>
 <+ endfor +>
 \end{itemize}
@@ -245,10 +245,16 @@
 <+ endfor +>
 
 \sidesection{Open source}
+<# The repo's own GitHub description is the default, minus the trailing
+   "(Language)" fetch.py appends for the homepage — the sidebar lists languages
+   under Skills already, and the suffix costs a line in a 3.9cm column. `blurb`
+   overrides it for the two where the GitHub text does not serve this page:
+   DeepQMC's runs to three lines here, and Skala's opens by repeating the name
+   printed directly above it. #>
 <+ for name in industry.software +>
 <+ set item = software|selectattr("name", "equalto", name)|first +>
 {\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
-{\color{black!60}<< item.blurb >>}\par\vspace{2pt}
+{\color{black!60}<< item.blurb if item.blurb is defined else item.description.rsplit(" (", 1)[0] >>}\par\vspace{2pt}
 <+ endfor +>
 
 \sidesection{Education}
