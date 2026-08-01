@@ -193,9 +193,19 @@
 <+ endfor +>
 
 \sidesection{Education}
-<+ for deg in industry.education +>
-{\sbseries << deg.title >>}\par
-{\color{black!60}<< deg.detail >>}\par\vspace{2pt}
+<# Derived from the CV's own `education` block rather than restated beside it.
+   Degrees taken at one university at the same level in the same year are merged
+   onto a line (the two B.S. degrees), which is the only way the sidebar's
+   presentation differs from the source. #>
+<+ for school in education +>
+<+ set groups = {} +>
+<+ for d in school.degrees +>
+<+ set _ = groups.setdefault(d.degree ~ " " ~ d.date.split()[-1], []).append(d) +>
+<+ endfor +>
+<+ for _, ds in groups.items() +>
+{\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
+{\color{black!60}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{2pt}
+<+ endfor +>
 <+ endfor +>
 
 \sidesection{Awards}

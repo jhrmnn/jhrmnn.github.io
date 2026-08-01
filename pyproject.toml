@@ -10,10 +10,6 @@ beautifulsoup4 = "^4.11"
 iso4 = "^0.0.2"
 nltk = "^3.9"
 
-# Extractors for check_cv_parsing.py. Not needed to build the site, only to
-# assert the industry CV still survives the parser families an applicant
-# tracking system might use. pdfminer.six dropped 3.9, hence the marker; the
-# check skips any extractor it cannot import.
 [tool.poetry.group.test.dependencies]
 pymupdf = "*"
 "pdfminer.six" = { version = "*", python = ">=3.10" }
