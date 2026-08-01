@@ -186,26 +186,25 @@
    first, and no sidebar text precedes the summary paragraph in either
    extraction mode. #>
 \begin{tikzpicture}[overlay,remember picture]
-% Pointer to the long form, in the band's otherwise empty top strip. Right-edge
-% inset and top margin match the sidebar column below it and the page geometry,
-% so it reads as the head of that column rather than a floating annotation. The
-% URL is its own visible text, like the contact line: it survives a parser that
-% strips link annotations, and a printed copy stays actionable.
-%
-% One line, not two: poppler reads this strip before the header it sits beside,
-% so every line here displaces the contact details further down the extraction.
-% Two lines (plus the blanks poppler pads them with) pushed the contact past the
-% eight-line window check_cv_parsing.py allows. \scriptsize also keeps it inside
+% Pointer to the long form, sitting just above the sidebar as that column's
+% masthead. It shares the column's right edge, and the URL is its own visible
+% text like the contact line: the address survives a parser that strips link
+% annotations, and a printed copy stays actionable. \scriptsize keeps it inside
 % the band's width and pairs it with the provenance note at the band's foot.
-\node[anchor=north east, inner sep=0] at ([xshift=-0.7cm, yshift=-1.2cm] current page.north east)
+%
+% Kept off the band's top strip, which is level with the name: poppler reads
+% that strip before the header beside it, so text there displaces the contact
+% details down the extraction — two lines up there pushed the contact past the
+% window check_cv_parsing.py allows.
+\node[anchor=south east, inner sep=0] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
   {\scriptsize\color{black!60}Academic CV:
    \renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
    \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}};
-% Sidebar starts level with the summary, clear of the name/contact header.
-% While it began higher, its first block shared a vertical band with the name
-% and poppler spliced it between the name and the tagline; below the header
-% there is a clean two-column region it reads left-then-right.
-\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-3.9cm] current page.north east) {%
+% Sidebar starts below the summary, clear of the name/contact header. While it
+% began higher, its first block shared a vertical band with the name and poppler
+% spliced it between the name and the tagline; down here there is a clean
+% two-column region it reads left-then-right.
+\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-4.9cm] current page.north east) {%
 \begin{minipage}[t]{3.9cm}
 \raggedright\setlength{\parskip}{1.5pt}\footnotesize
 \sidesection{Skills}
