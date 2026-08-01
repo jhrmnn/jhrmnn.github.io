@@ -1,4 +1,4 @@
-name: CV
+name: Academic CV
 on:
   workflow_dispatch:
     inputs:
@@ -61,8 +61,8 @@ jobs:
           path: build
           run-id: ${{ steps.data.outputs.run-id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Render and compile CV
-        run: poetry run make _site/cv.pdf
+      - name: Render and compile the academic CV
+        run: poetry run make _site/cv-academic.pdf
         env:
           FLAGS: >-
             --pic=${{ inputs.pic }}
@@ -72,4 +72,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: cv
-          path: _site/cv.pdf
+          path: _site/cv-academic.pdf

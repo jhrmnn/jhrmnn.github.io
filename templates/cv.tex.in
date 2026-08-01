@@ -1,22 +1,28 @@
 % vim: set ft=tex
+<# Industry CV: a two-column one-pager keeping the academic CV's identity (the
+   Baskerville faces, the grey ramp, the grey band, dot-underlined links) with
+   the band turned into a content sidebar.
+
+   The sidebar sits on the RIGHT. Column-aware extractors read the left column
+   first by geometry, whatever order the content stream is written in, so a left
+   sidebar always precedes the name — which is what decides whether a candidate
+   record gets created at all. #>
+<+ set accent = "347AB7" +>
 \documentclass[10pt]{article}
 
 \usepackage[no-math]{fontspec}
-\usepackage[a4paper,left=0cm,right=2cm,top=3.75cm,bottom=1.5cm]{geometry}
+
+% Same 14.1cm measure for the main column as a left sidebar would give.
+\usepackage[a4paper,left=1.1cm,right=6.4cm,top=1.2cm,bottom=1.2cm]{geometry}
 \usepackage{tikz}
+\usepackage{everypage}
+
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
-\usepackage{longtable}
+\usepackage{graphicx}  % \scalebox, for the dotted-underline rule below
 \usepackage{enumitem}
-\usepackage{hanging}
-\usepackage{needspace}
-\usepackage[nobottomtitles*]{titlesec}
-\usepackage{everypage}
+\usepackage{titlesec}
 \usepackage[normalem]{ulem}
-\usepackage{svg}
-\svgpath{{assets/}}
-\usepackage{pifont}
-\newcommand{\bigwhitestar}{\mbox{\ding{73}}}
 
 \setmainfont{Baskerville10Pro}[
   Path = fonts/Baskerville 10 Pro/,
@@ -49,24 +55,23 @@
 \DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
 \DeclareTextFontCommand{\textsb}{\sbseries}
 
-\setlist{nosep,leftmargin=0.5cm,labelsep=0.35cm}
+% One restrained accent, the link blue the website already uses, so the CV and
+% the site read as the same hand. One is the ceiling.
+\definecolor{accent}{HTML}{<< accent >>}
+
+\hypersetup{pdftitle={Jan Hermann CV},pdfauthor={Jan Hermann}}
 
 \pagestyle{empty}
-
 \setcounter{secnumdepth}{0}
-\titleformat{\section}{\largefont\fontsize{16pt}{20pt}%
-    \selectfont\color{black!65}\vspace{0.8em}}{\thesection}{}{}
-\titlespacing*{\section}{5cm}{0pt}{1em}
-\titleformat{\subsection}{\large\sbseries\vspace{0.4em}}{\thesubsection}{}{}
-\titlespacing*{\subsection}{5cm}{0pt}{0.3em}
-% Keep a heading from being stranded at the page bottom: if fewer than this
-% much vertical space remains, titlesec moves the heading to the next page so
-% it stays with the first rows of its block (which live in a page-breaking
-% longtable and would otherwise flow over on their own).
-\renewcommand{\bottomtitlespace}{6\baselineskip}
+\setlength{\parindent}{0pt}
+\emergencystretch=1em
 
-\setlength{\LTpre}{0pt}
-\setlength{\LTpost}{0pt}
+% Main-column headings outrank the sidebar's: larger, accented, ruled.
+\titleformat{\section}{\largefont\fontsize{13pt}{15pt}\selectfont\color{accent}}{\thesection}{}{}[{\color{accent!25}\titlerule[0.5pt]}]
+\titlespacing*{\section}{0pt}{0.8em}{0.4em}
+
+\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=1.5pt,itemsep=1.5pt,
+  label=\textcolor{black!40}{$\bullet$}}
 
 \setlength{\ULdepth}{1.8pt}
 
@@ -74,7 +79,7 @@
 \def\SmallDotuline#1{\bgroup%
   \UL@setULdepth%
   \markoverwith{\begingroup
-     \advance\ULdepth0.08ex 
+     \advance\ULdepth0.08ex
      \lower\ULdepth\hbox{\scalebox{0.4}{.}\kern#1}%
      \endgroup}%
   \ULon}
@@ -87,283 +92,198 @@
 \let\oldhref\href%
 \renewcommand{\href}[2]{\oldhref{#1}{\udot{#2}}}
 
-\newenvironment{cvblock}{%
-  \setlength{\tabcolsep}{0pt}
-  \begin{longtable}{p{4.5cm}p{0.5cm}p{14.5cm}}}{%
-  \end{longtable}}
+\renewcommand{\strong}[1]{\textsb{#1}}
 
-\newenvironment{cvblock2}{%
-  \setlength{\tabcolsep}{0pt}
-  \begin{longtable}{p{4.5cm}p{0.5cm}p{13.5cm}p{1.0cm}}}{%
-  \end{longtable}}
-
+% The band is an every-page hook (not a one-off) so that an overflow second
+% page stays styled.
 \AddEverypageHook{
 \begin{tikzpicture}[overlay,remember picture]
      \draw [draw=none, fill=black!30]
-    	(current page.north west)
+    	(current page.north east)
     	rectangle
-    	([xshift=4.5cm] current page.south west);
+    	([xshift=-5.4cm] current page.south east);
 \end{tikzpicture}
 }
-
-\renewcommand{\strong}[1]{\textsb{#1}}
+\newcommand{\sidesection}[1]{\par\vspace{0.85em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{black!65}#1}\par\vspace{0.3em}}
 
 \hyphenation{Schrö-ding-er}
 
-<+ macro talk_block(talks) +>  % chktex 36
-{\footnotesize
-\begin{cvblock}
-<+ for year, items in talks|groupby("year")|sort(reverse=True) +>  % chktex 18 chktex 36
-<+ for item in items +>
-\hfill\color{white}<+ if loop.first +><< year|dateformat >><+ else +>$\bullet$\hspace{0.6em}<+ endif +> &&
-\hangpara{1.5em}{1}<+ if item.title +>``
-<+- if item.url +>\href{<< item.url >>}{<< item.title >>}<+ else +><< item.title >><+ endif +>''
-<+- endif -+>
-<+ if item.event +><+ if item.title +>~$\cdot$ <+ endif +><+ if item.event_url +>\href{<< item.event_url >>}{<< item.event >>}<+ else +><< item.event >><+ endif +><+ endif +>
-<+- if item.where +><+ if item.title or item.event +> (<+ endif +><< item.where >>)<+ endif +>
-<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
-<+ if not loop.last +>\\
-<+ endif +>
-<+ endfor +>
-<+ if not loop.last +>\\
-<+ endif +>
-<+ endfor +>
-\end{cvblock}}
-<+ endmacro +>
+<# Contact entries render their own destination as the visible text, so the
+   address survives a parser that strips link annotations. Google Scholar is the
+   one exception: its URL is a bare user id, useless as visible text. #>
+<+ macro contact_line() +>
+<+- set parts = [] +>
+<+- for key in industry.contact_keys +>
+<+- set val = contact[key][0] +>
+<+- set pre = contact[key][1] +>
+<+- set disp = val if pre.startswith("mailto:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
+<+- set _ = parts.append("\\href{" ~ pre ~ val ~ "}{" ~ disp ~ "}") +>
+<+- endfor +>
+<+- set gs = contact["Google Scholar"] +>
+<+- set _ = parts.append("\\href{" ~ gs[1] ~ gs[0] ~ "}{Google Scholar}") +>
+<< parts|join("~$\\cdot$~") >>
+<+- endmacro +>
 
-<+ macro link(data) +>\href{<< data[1] >>}{<< data[0] >>}<+ endmacro +>
-
-<+ macro pub_block(types, by_year=false) +>
-{\small
-\begin{cvblock2}
-<+ for item in references|selectattr("type", "in", types)|sortrefs +>
-<+ set title, authors, ref = item|reftomd +>
-<+ if not loop.first +>\\<+ endif +>
-\hfill\color{white}<+ if loop.first and false +><< year|dateformat >><+ else +><+ if settings.with_stars and item.star +>{\large$\mathbf{\bigwhitestar}$}<+ else +>$\bullet$<+ endif +>\hspace{0.6em}<+ endif +> &&
-\hangpara{1.5em}{1}<< title >>~$\cdot$ << authors >>~$\cdot$ << ref >> &
-\hfill<+ if item.cited_by +><< item.cited_by >><+ endif +>
+<# Experience is the CV's own `employment`, flattened. A position appears here
+   only if it carries an `industry` block, which is also where its bullets live —
+   so the undergraduate assistantship drops out without needing a flag. The
+   company line is composed from the same dept and institution the academic CV
+   prints separately. #>
+<+ macro experience_block() +>
+<+ set jobs = [] +>
+<+ for e in employment +>
+<+ for p in e.positions if p.industry +>
+<+ set _ = jobs.append((p, e)) +>
 <+ endfor +>
-\end{cvblock2}}
+<+ endfor +>
+<+ for job, org in jobs +>
+{\small\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
+% The dept carries the markdown link the academic CV shows, so strip the dotted
+% underline here: the destination survives, the company line stays clean.
+\renewcommand{\udot}[1]{#1}%
+\emph{<< job.dept >>, << org.institution >><+ if org.location +>, << org.location >><+ endif +>}}\par
+\vspace{0.15em}
+\begin{itemize}\small
+<+ for b in job.industry.bullets +>
+\item << b >>
+<+ endfor +>
+\end{itemize}
+<+ if not loop.last +>\vspace{0.4em}<+ endif +>
+<+ endfor +>
 <+ endmacro +>
 
 \begin{document}
 
-<+ if settings.pic +>
+<#- ============================ MAIN COLUMN ============================ -#>
+{\sbseries\largefont\fontsize{26pt}{28pt}\selectfont
+ \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}\par
+\vspace{0.3em}
+{\itshape\color{black!60}<< industry.tagline >>}\par
+\vspace{0.4em}
+<+ set ncites = custom_data.scholar_citations.value.values()|sum +>
+<+ set nstars = software|selectattr("stars", "defined")|map(attribute="stars")|sum +>
+<# Adoption before citations: stars and production-code adoption are legible to
+   an industry screener and a research reviewer alike. No h-index anywhere. #>
+{\small\color{black!60}\textsb{<< nstars // 50 * 50 >>+}~GitHub stars
+ ~$\cdot$~shipped in \textsb{<< industry.production_codes|length >>}~production codes
+ ~$\cdot$~\textsb{<< references|length >>}~publications
+ ~$\cdot$~\textsb{<< "{:,}".format(ncites // 100 * 100) >>+}~citations}\par
+\vspace{0.3em}
+% Colour-only links: five dot-underlined URLs in a row made the busiest line on
+% the page out of the one a reader should scan fastest.
+{\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
+ Berlin $\cdot$ << contact_line() >>}\par
+\vspace{0.55em}
+{\small << industry.summary >>}\par
+
+<#- ========================= SIDEBAR ========================= -#>
+
+<# Placed here, after the summary, rather than at the end of the document. An
+   overlay tikzpicture occupies no space but is still a box on the vertical
+   list, so at the end of a nearly-full page TeX breaks the page to place it and
+   the whole sidebar lands on page 2. Mid-document it cannot. Sitting after the
+   summary also keeps stream-order extraction clean: name and contact still come
+   first, and no sidebar text precedes the summary paragraph in either
+   extraction mode. #>
 \begin{tikzpicture}[overlay,remember picture]
-    \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{<< settings.pic >>}};
-\end{tikzpicture}
-<+ endif +>
-
-\vspace{-2.25cm}
-{\raggedleft%
- {\itshape\color{black!60}
-  <+ for item in ["URL", "ORCID"] +>
-  << item >>\@: \href{<< contact[item][1] >><< contact[item][0] >>}{<< contact[item][0] >>} \\
-  <+ endfor +>
- \vspace{0.6cm}
- {\footnotesize(\href{https://hrmnn.net/cv.pdf}{generated} on <+ if settings.generated +>\href{<< settings.generated >>}{\today}<+ else +>\today<+ endif +>)}
-} \\
- %
- \vspace{1.5cm}
- %
- {\sbseries\largefont\Huge
-  \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}} \\}
+% Pointer to the long form, in the band's otherwise empty top strip. Right-edge
+% inset and top margin match the sidebar column below it and the page geometry,
+% so it reads as the head of that column rather than a floating annotation. The
+% URL is its own visible text, like the contact line: it survives a parser that
+% strips link annotations, and a printed copy stays actionable.
 %
-\vspace{0.8cm}
-
-<+ if settings.with_statement +>
-\begin{cvblock}%
-\hfill && << statement >>
-\end{cvblock}
-<+ endif +>
-
-\section{Employment}
-
-\begin{cvblock}
-<+ for item in employment +>
-  && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
-  <+ for position in item.positions +>
-  \hfill\color{white}<< position.date|dateformat >> &&
-  << position.role >>~$\cdot$ << position.dept >><+ if not loop.last +>\\
-  <+ endif +>
-  <+ endfor +><+ if not loop.last +>\\[6pt]
-  <+ endif +>
+% One line, not two: poppler reads this strip before the header it sits beside,
+% so every line here displaces the contact details further down the extraction.
+% Two lines (plus the blanks poppler pads them with) pushed the contact past the
+% eight-line window check_cv_parsing.py allows. \scriptsize also keeps it inside
+% the band's width and pairs it with the provenance note at the band's foot.
+\node[anchor=north east, inner sep=0] at ([xshift=-0.7cm, yshift=-1.2cm] current page.north east)
+  {\scriptsize\color{black!60}Academic CV:
+   \renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
+   \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}};
+% Sidebar starts level with the summary, clear of the name/contact header.
+% While it began higher, its first block shared a vertical band with the name
+% and poppler spliced it between the name and the tagline; below the header
+% there is a clean two-column region it reads left-then-right.
+\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-3.9cm] current page.north east) {%
+\begin{minipage}[t]{3.9cm}
+\raggedright\setlength{\parskip}{1.5pt}\footnotesize
+\sidesection{Skills}
+<+ for s in industry.skills +>
+{\sbseries << s.area >>}\par
+{\color{black!60}<< s["items"] >>}\par\vspace{2pt}
 <+ endfor +>
-\end{cvblock}
 
-\section{Education}
-
-\begin{cvblock}
-<+ for item in education +>
-  && \textsb{<< item.university >>}<+ if item.location +>, << item.location >><+ endif +> \\
-  <+ for degree in item.degrees +>
-    \hfill\color{white}<< degree.date|dateformat >> &&
-    \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.note +>~$\cdot$ \emph{<< degree.note >>}<+ endif +>
-    <+ if not loop.last +>\\
-    <+ endif +>
-  <+ endfor +><+ if not loop.last +>\\[6pt]
-  <+ endif +>
+\sidesection{Open source}
+<+ for name in industry.software +>
+<+ set item = software|selectattr("name", "equalto", name)|first +>
+{\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
+{\color{black!60}<< item.blurb >>}\par\vspace{2pt}
 <+ endfor +>
-\end{cvblock}
 
-\section{Secondary appointments}
-
-\begin{cvblock}
-<+ for item in secondary +>
-\hfill\color{white}<< item.date|dateformat >> &&
-\hangpara{1.5em}{1}<< item.role >>~$\cdot$ << item.where >>
-<+ if item.subtitle +>\newline
-<< item.subtitle >>
-<+ endif +><+ if not loop.last +>\\
-<+ endif +>
+\sidesection{Education}
+<# Derived from the CV's own `education` block rather than restated beside it.
+   Degrees taken at one university at the same level in the same year are merged
+   onto a line (the two B.S. degrees), which is the only way the sidebar's
+   presentation differs from the source. #>
+<+ for school in education +>
+<+ set groups = {} +>
+<+ for d in school.degrees +>
+<+ set _ = groups.setdefault(d.degree ~ " " ~ d.date.split()[-1], []).append(d) +>
 <+ endfor +>
-\end{cvblock}
+<+ for _, ds in groups.items() +>
+{\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
+{\color{black!60}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{2pt}
+<+ endfor +>
+<+ endfor +>
 
-\section{Awards}
-
-\begin{cvblock}
+\sidesection{Awards}
+<# Derived from the CV's own `awards`, so the wording lives in one place. #>
 <+ for item in awards +>
-\hfill\color{white}<< item.date|dateformat >> &&
-\textsb{<< item.title >>}<+ if item.institution +>~$\cdot$ << item.institution >><+ endif +>
-<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
-<+ if not loop.last +>\\
-<+ endif +>
+{\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{2pt}
 <+ endfor +>
-\end{cvblock}
 
-\section{Funding}
+\sidesection{Ships inside}
+{\color{black!60}<< industry.production_codes[:-1]|join(", ") >> \& << industry.production_codes[-1] >>}\par
 
-\begin{cvblock}
-<+ for item in funding +>
-\hfill\color{white}<< item.date|dateformat >> &&
-\hangpara{1.5em}{1}<< item.label >>~$\cdot$ ``<< item.title >>''~$\cdot$ \textbf{<< item.sum >>}
-<+ if item.subtitle +>\newline
-<< item.subtitle >>
-<+ endif +><+ if not loop.last +>\\<+ endif +>
-<+ endfor +>
-\end{cvblock}
+% Plain text, no dotted links: the provenance note was carrying heavier link
+% styling than its importance justifies.
+\end{minipage}};
+% Pinned to the foot of the band rather than left floating below the sidebar's
+% last block, which ends well above the main column.
+\node[anchor=south west, inner sep=0, text width=3.9cm] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
+  {\scriptsize\color{black!60}(generated on \today; citation and star counts are live)};
+\end{tikzpicture}%
 
-\section{Professional activities}
+\section{Experience}
+<< experience_block() >>
 
-\begin{cvblock}
-<+ for item in activity +>
-\hfill\color{white}$\bullet$\hspace{0.6em} &&
-\hangpara{1.5em}{1}<< item >>
-<+ if not loop.last +>\\
-<+ endif +>
-<+ endfor +>
-\end{cvblock}
-
-\section{Teaching \& mentoring}
-
-\vspace{-0.4em}
-\subsection{Professional mentorship}
-
+\section{Selected publications}
 {\footnotesize
-\begin{cvblock}
-<+ for item in mentorship +>
-\hfill\color{white}<< item.date|dateformat >> &&
- << item.who >>
-<+ if not loop.last +>\\
-<+ endif +>
+% Colour-only links here: the dotted underline on every journal name, volume
+% and arXiv id turned the block into visual noise.
+\renewcommand{\udot}[1]{\textcolor{accent}{#1}}
+{\raggedleft\scriptsize\color{black!45}citations\par}
+\vspace{-0.15em}
+<+ for id, entry in keypubs.items() if entry.authors is defined +>
+<+ set item = refs_by_id[id] +>
+<+ set title, authors, ref = item|reftomd +>
+% Citation count sits in its own fixed-width gutter rather than after an
+% \hfill, so a title that fills the measure cannot orphan the number onto the
+% next line. Same idea as the academic CV's trailing table column.
+\noindent\parbox[t]{\dimexpr\linewidth-2.6em\relax}{\hangindent=1.2em\hangafter=1 << entry.title|default(title, true) >>~$\cdot$ << entry.authors >>~$\cdot$ << ref >><+ if entry.credit +>~$\cdot$ \mbox{\emph{<< entry.credit >>}}<+ endif +>}\hfill\parbox[t]{2em}{\raggedleft\color{black!60}<+ if item.cited_by +><< item.cited_by >><+ endif +>}\par\vspace{1pt}
 <+ endfor +>
-\end{cvblock}}
+\vspace{0.2em}
+{\color{black!60}All << references|length >> works: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
+}
 
-\subsection{Lectures for students}
-
-<< talk_block(lectures) >>  % chktex 36
-
-\subsection{Doctoral committees}
-
-{\footnotesize
-\begin{cvblock}
-<+ for item in defense +>
-\hfill\color{white}<< item.date|dateformat >> &&
- << item.who >>
-<+ if not loop.last +>\\
-<+ endif +>
-<+ endfor +>
-\end{cvblock}}
-
-\section{Public outreach}
-
-{\footnotesize
-\begin{cvblock}
-<+ for item in outreach +>
-\hfill\color{white}<< item.date|dateformat >> &&
-<< item.what >>
-<+ if not loop.last +>\\
-<+ endif +>
-<+ endfor +>
-\end{cvblock}}
-
-\section{Software}
-
-\begin{cvblock}
-<+ for item in software +>
-\hfill\color{white}$\bullet$\hspace{0.6em} &&
-\textbf{<< item.name >>}~$\cdot$ << item.role >>\hfill{\itshape\small\url{<< item.url >>}<+ if item.stars +> (<< item.stars >> stars)<+ endif +>}  % chktex 6
-<+ if item.description +>\newline
-<< item.description >><+ endif +>
-<+ if not loop.last +>\\[2pt]
-<+ endif +>
-<+ endfor +>
-\end{cvblock}
-
-% The Presentations header spans a section title, an intro note and a
-% subsection title before the first talk appears. nobottomtitles* only
-% guards a single title, so the header could sit at a page bottom with no
-% actual talk beneath it. Reserve enough room for the whole header plus the
-% first subsection's own bottom-title allowance; otherwise start it on the
-% next page (a conditional replacement for the former hard \newpage).
-\needspace{12\baselineskip}
-\section{Presentations}
-
-\begin{cvblock}%
-\hfill && \vspace{-\baselineskip}\begin{itemize}%
-\item Includes future presentations
-\end{itemize}\vspace{-0.7\baselineskip}
-\end{cvblock}
-
-\vspace{-0.4em}
-\subsection{Invited conference talks}
-
-<< talk_block(presentations.invited) >>  % chktex 36
-
-\subsection{Contributed conference talks}
-
-<< talk_block(presentations.contributed) >>  % chktex 36
-
-\subsection{Conference poster presentations}
-
-<< talk_block(presentations.posters) >>  % chktex 36
-
-\subsection{Invited seminars}
-
-<< talk_block(presentations.seminars) >>  % chktex 36
-
-\section{Publications}
-
-\begin{cvblock}%
-\hfill && \vspace{-\baselineskip}\begin{itemize}%
-<+ if settings.with_stars +>
-\item Most important publications marked with a star
-<+ endif +>
-\item Citation numbers (on the right) from \href{https://scholar.google.com/citations?user=5TjVq0YAAAAJ}{Google Scholar}
-\end{itemize}\vspace{-\baselineskip}
-
-\end{cvblock}
-
-\subsection{Research articles}
-
-<< pub_block(["article-journal", "article"], by_year=true) >>
-
-\subsection{Book chapters}
-
-<< pub_block(["chapter"]) >>
-
-\subsection{Theses}
-
-<< pub_block(["thesis"]) >>
+<# Service sits in the main column, not the sidebar: mentoring and peer review
+   are substantive for a research-leadership read, and the sidebar has no room
+   for them once it starts below the header. Items are emitted one at a time so
+   each passes through the markdown finalizer individually — joining them on a
+   separator containing a backslash would make the whole string look like raw
+   TeX and skip conversion. #>
+\section{Mentoring and service}
+{\footnotesize <+ for item in industry.service +><+ if not loop.first +>~$\cdot$~<+ endif +><< item >><+ endfor +>}\par
 
 \end{document}

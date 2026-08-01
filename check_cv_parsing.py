@@ -12,7 +12,7 @@ Checks two independent properties across several extractor families:
 
 A layout can pass one and fail the other; both matter.
 
-Usage:  python3 check_cv_parsing.py cv-industry.pdf
+Usage:  python3 check_cv_parsing.py cv.pdf
 Exit:   0 if all extractors pass both checks, 1 otherwise.
 """
 

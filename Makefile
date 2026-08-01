@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-industry.pdf cv.txt cv.yaml profile-pic-web.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-academic.pdf cv-academic.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -45,15 +45,15 @@ check:
 check-sources:
 	./check_sources.py $(DERIVED)
 
-# Report how the industry CV survives the parser families an applicant-tracking
-# system might use: the name and contact must lead, and the main column must
-# come out as one uninterrupted run. Needs the `test` dependency group;
-# extractors it cannot import are skipped.
+# Report how the industry CV (cv.pdf) survives the parser families an
+# applicant-tracking system might use: the name and contact must lead, and the
+# main column must come out as one uninterrupted run. Needs the `test`
+# dependency group; extractors it cannot import are skipped.
 #
 # Plain pdftotext's CONTIGUITY is reported as a warning rather than a failure:
 # it is a ceiling of two columns of unequal length, not a regression. See
 # WARN_ONLY in check_cv_parsing.py. Everything else is a hard failure.
-check-cv: $(OUTDIR)/cv-industry.pdf
+check-cv: $(OUTDIR)/cv.pdf
 	./check_cv_parsing.py $<
 
 # Otherwise reuse the most recent data artifact from a previous run.
@@ -114,7 +114,7 @@ FORCE:
 dev:
 	printf '%s\n' render.py templates/index.html.in templates/_head.html templates/_footer.html $(wildcard data/*) templates/styles.css | entr make $(OUTDIR)/index.html & \
 	printf '%s\n' posts.py render.py templates/post.html.in templates/blog.html.in templates/_head.html templates/_footer.html templates/styles.css $(POSTS) | entr make $(OUTDIR)/notes/index.html & \
-	printf '%s\n' render.py templates/cv.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv.txt & \
+	printf '%s\n' render.py templates/cv-academic.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv-academic.txt & \
+	printf '%s\n' render.py templates/cv-academic.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv-academic.pdf & \
 	printf '%s\n' render.py templates/cv.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv.pdf & \
-	printf '%s\n' render.py templates/cv-industry.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv-industry.pdf & \
 	python3 -m http.server -b 0.0.0.0 -d $(OUTDIR)
