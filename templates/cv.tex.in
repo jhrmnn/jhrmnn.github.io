@@ -55,6 +55,23 @@
 \DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
 \DeclareTextFontCommand{\textsb}{\sbseries}
 
+% Baskerville 120 Pro ships no Light -- Regular is the lightest face in the
+% family, and the name already uses it. To take a word a step below that, draw
+% the glyphs in fill-and-stroke mode (2 Tr) with the stroke in the page colour,
+% which trims the outline inward from its edge. 0.25pt at 26pt sheds about a
+% sixth of the ink; text extraction is untouched, since the glyphs stay real
+% text. Two things this leans on:
+%
+%   - the stroke colour has to be set *after* \color. xcolor sets fill and
+%     stroke together, so an override placed before it is silently replaced,
+%     leaving the stroke at the fill colour -- which thickens the glyphs into a
+%     fake bold rather than thinning them.
+%   - white stroke assumes white behind it. True in the main column; over the
+%     grey band it would need the band's colour instead.
+\newcommand{\lightface}[1]{{\color{black!40}%
+  \special{pdf:literal direct 2 Tr 0.25 w 1 1 1 RG}#1%
+  \special{pdf:literal direct 0 Tr}}}
+
 % One restrained accent, the link blue the website already uses, so the CV and
 % the site read as the same hand. One is the ceiling.
 \definecolor{accent}{HTML}{<< accent >>}
@@ -157,12 +174,12 @@
 \begin{document}
 
 <#- ============================ MAIN COLUMN ============================ -#>
-<# The title takes the pale grey "Jan" carries and the family's regular weight
-   against the name's medium — the lightest face Baskerville 120 Pro ships, so
-   it recedes by both colour and weight without a second type size. `\ ` keeps
-   the period from picking up sentence spacing. #>
+<# The title takes the pale grey "Jan" carries, and \lightface thins it a step
+   below the family's lightest face — so it recedes by both colour and weight
+   without a second type size. `\ ` keeps the period from picking up sentence
+   spacing. #>
 {\largefont\fontsize{26pt}{28pt}\selectfont
- \textcolor{black!40}{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
+ \lightface{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
 \vspace{0.3em}
 {\itshape\color{black!60}<< industry.tagline >>}\par
 \vspace{0.4em}
