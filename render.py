@@ -537,7 +537,7 @@ def render(template, ctx, **kwargs):
         item['pdf_url'] = extras['PDF']
         if 'notice' in extras:
             item['pdf_notice'] = extras['notice']
-        if item['id'] in ctx['keypubs']:
+        if ctx['keypubs'].get(item['id'], {}).get('star'):
             item['star'] = True
     # Lookups for the tool-hub homepage: a reference by id, and talks bucketed
     # into the hubs.

@@ -51,36 +51,57 @@ education:
     degree: B.S.
     field: Chemistry
 employment:
-- institution: Microsoft
+- institution: Microsoft Research
   location: Berlin
   positions:
-  - date: Nov 2022–
-    role: Principal research manager
+  - date: Nov 2022-present
+    role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
+    industry:
+      bullets:
+      - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first machine-learned exchange–correlation functional to match hand-designed DFT at semi-local cost, closing a 60-year-old accuracy gap.
+      - Co-led its 25+ researchers and engineers across machine learning, quantum chemistry and HPC, from concept to open-source release.
+      - Drove MSR-ACC, a public reference dataset of about 150,000 coupled-cluster energies computed on Azure, two orders of magnitude beyond prior efforts.
+      - "Took the technology to industrial R&D through the DFT Research Early Access Program (first partner: Flagship Pioneering)."
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
-    role: "[Junior research group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) leader"
-    dept: Department of Mathematics
+    role: Junior Research Group Leader
+    dept: "[ML4MatSci group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html), Department of Mathematics"
+    industry:
+      bullets:
+      - Founded and led a group on machine learning for materials science; co-PI on a competitively funded MATH+ project.
+      - Extended deep-learning quantum Monte Carlo to electronic excited states (*Nat. Commun.* 2023) while supervising students and postdocs.
   - date: Jan 2019-Oct 2020
-    role: Postdoctoral researcher
-    dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s)"
+    role: Postdoctoral Researcher
+    dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
+    industry:
+      bullets:
+      - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**.
+      - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
-    role: Postdoctoral researcher
-    dept: "[Theoretical Chemical Physics group](https://www.tcpunilu.com)"
-- institution: Fritz Haber Institute
+    role: Postdoctoral Researcher
+    dept: "[Theoretical Chemical Physics group](https://www.tcpunilu.com) (A. Tkatchenko)"
+    industry:
+      bullets:
+      - Unified many-body dispersion with nonlocal density functionals into one model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
+- institution: Fritz Haber Institute of the Max Planck Society
   location: Berlin
   positions:
   - date: Oct 2013-Dec 2017
-    role: Graduate research assistant
-    dept: "[Theory department](https://www.fhi.mpg.de/th-department)"
+    role: Doctoral Researcher
+    dept: "[Theory Department](https://www.fhi.mpg.de/th-department)"
+    industry:
+      bullets:
+      - Developed many-body models of van der Waals interactions; first author of the field's standard review (*Chem. Rev.* 2017).
+      - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in FHI-aims and DFTB+; core contributor to FHI-aims.
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
   - date: Mar 2010-Sep 2013
-    role: Undergraduate research assistant
+    role: Undergraduate Research Assistant
     dept: "[Non-Covalent Interactions group](https://hobza.group.uochb.cz)"
 secondary:
 - date: Jul 2021-Oct 2022
@@ -155,15 +176,19 @@ outreach:
 software:
 - name: DeepQMC
   role: creator
+  blurb: deep-learning quantum Monte Carlo
   github: deepqmc/deepqmc
 - name: libMBD
   role: creator
+  blurb: many-body dispersion library
   github: libmbd/libmbd
 - name: Pyberny
   role: creator
+  blurb: molecular geometry optimizer
   github: jhrmnn/pyberny
 - name: Skala
   role: contributor
+  blurb: deep-learned XC functional for DFT
   github: microsoft/skala
 - name: FHI-aims
   role: core contributor
@@ -460,62 +485,6 @@ industry:
   # both an industry screener and a research reviewer, whereas citation totals
   # are academic-committee currency. Counts other than this list are live.
   production_codes: [FHI-aims, DFTB+, PySCF, QCEngine]
-  experience:
-  - company: Microsoft Research AI for Science
-    location: Berlin
-    date: Nov 2022-present
-    role: Principal Research Manager
-    bullets:
-    # The flagship claim and the attribution arrive together: this is the
-    # sharpest sentence in the document and it should have a name in it.
-    - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first
-      machine-learned exchange–correlation functional to match hand-designed
-      DFT at semi-local cost, closing a 60-year-old accuracy gap.
-    # Still missing the personally owned slice, e.g. "…; owned the
-    # <workstream>, delivering <outcome>." That cannot be sourced from public
-    # material — fill it in and this bullet gets materially stronger.
-    - Co-led its 25+ researchers and engineers across machine learning, quantum
-      chemistry and HPC, from concept to open-source release.
-    # No leading "~" for "approximately": a bare tilde is a non-breaking space
-    # in LaTeX and silently disappears.
-    - Drove MSR-ACC, a public reference dataset of about 150,000
-      coupled-cluster energies computed on Azure, two orders of magnitude
-      beyond prior efforts.
-    # Quoted: the ": " inside would otherwise scan as a YAML mapping.
-    - "Took the technology to industrial R&D through the DFT Research Early
-      Access Program (first partner: Flagship Pioneering)."
-  - company: ML4MatSci group, Department of Mathematics, Free University of Berlin
-    date: Nov 2020-Oct 2022
-    role: Junior Research Group Leader
-    bullets:
-    - Founded and led a group on machine learning for materials science; co-PI
-      on a competitively funded MATH+ project.
-    - Extended deep-learning quantum Monte Carlo to electronic excited states
-      (*Nat. Commun.* 2023) while supervising students and postdocs.
-  - company: AI4Science group (F. Noé), Free University of Berlin
-    date: Jan 2019-Oct 2020
-    role: Postdoctoral Researcher
-    bullets:
-    - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network
-      wavefunction to reach chemical accuracy, and grew it into
-      **[DeepQMC](https://github.com/deepqmc/deepqmc)**.
-    - Concurrently a fellow in TU Berlin's Machine Learning group
-      (K.-R. Müller).
-  - company: Theoretical Chemical Physics group (A. Tkatchenko), University of Luxembourg
-    date: Jan-Dec 2018
-    role: Postdoctoral Researcher
-    bullets:
-    - Unified many-body dispersion with nonlocal density functionals into one
-      model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
-  - company: Theory Department, Fritz Haber Institute of the Max Planck Society
-    location: Berlin
-    date: Oct 2013-Dec 2017
-    role: Doctoral Researcher
-    bullets:
-    - Developed many-body models of van der Waals interactions; first author
-      of the field's standard review (*Chem. Rev.* 2017).
-    - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in
-      FHI-aims and DFTB+; core contributor to FHI-aims.
   # No `Leadership` area: it read as generic filler next to the specific
   # entries, and Experience already carries the claim.
   skills:
@@ -530,42 +499,6 @@ industry:
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   - 40+ manuscripts reviewed (*Phys. Rev. X*, *Nat. Commun.*)
   - Doctoral committees (U. Luxembourg, U. Bristol)
-  # `authors` is a compressed credit line with the name emphasised, so author
-  # position is visible without the ~60 words a full author list costs.
-  # `credit` spells the position out only where the author line leaves it
-  # ambiguous — a leading bold **JH** already says "first author" for free.
-  # Both are checked against derived.json author order: Luise25 has 24 authors
-  # (JH 22nd), Foster25 has 10 (JH last).
-  selected_pubs:
-  - id: Luise25
-    authors: G. Luise et al., incl. **JH**
-    credit: co-author
-  - id: Foster25
-    authors: N. Foster et al. & **JH**
-    credit: senior author
-  - id: HermannNRC23
-    authors: '**JH**, J. Spencer et al.'
-  - id: HermannNC20
-    authors: '**JH**, Z. Schätzle & F. Noé'
-  - id: HermannPRL20
-    authors: '**JH** & A. Tkatchenko'
-    # `title` overrides the fetched one; these two carry academic subtitles
-    # after a colon that cost a line each and say nothing to this reader.
-    title: Density functional model for van der Waals interactions
-  - id: HermannCR17
-    authors: '**JH**, R. DiStasio & A. Tkatchenko'
-    title: First-principles models for van der Waals interactions in molecules and materials
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
   # with blurbs shortened from the fetched GitHub descriptions.
-  software:
-  - name: DeepQMC
-    blurb: deep-learning quantum Monte Carlo
-  - name: Skala
-    blurb: deep-learned XC functional for DFT
-  - name: libMBD
-    blurb: many-body dispersion library
-  - name: Pyberny
-    blurb: molecular geometry optimizer
-  # Named codes are stronger evidence of industrial adoption than the header's
-  # bare count, and PySCF and QCEngine appear nowhere else on the page.
-  software_note: FHI-aims, DFTB+, PySCF & QCEngine
+  software: [DeepQMC, Skala, libMBD, Pyberny]

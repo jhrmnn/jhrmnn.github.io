@@ -124,13 +124,27 @@
 << parts|join("~$\\cdot$~") >>
 <+- endmacro +>
 
+<# Experience is the CV's own `employment`, flattened. A position appears here
+   only if it carries an `industry` block, which is also where its bullets live —
+   so the undergraduate assistantship drops out without needing a flag. The
+   company line is composed from the same dept and institution the academic CV
+   prints separately. #>
 <+ macro experience_block() +>
-<+ for job in industry.experience +>
+<+ set jobs = [] +>
+<+ for e in employment +>
+<+ for p in e.positions if p.industry +>
+<+ set _ = jobs.append((p, e)) +>
+<+ endfor +>
+<+ endfor +>
+<+ for job, org in jobs +>
 {\small\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-\emph{<< job.company >><+ if job.location +>, << job.location >><+ endif +>}}\par
+% The dept carries the markdown link the academic CV shows, so strip the dotted
+% underline here: the destination survives, the company line stays clean.
+\renewcommand{\udot}[1]{#1}%
+\emph{<< job.dept >>, << org.institution >><+ if org.location +>, << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
-<+ for b in job.bullets +>
+<+ for b in job.industry.bullets +>
 \item << b >>
 <+ endfor +>
 \end{itemize}
@@ -186,10 +200,10 @@
 <+ endfor +>
 
 \sidesection{Open source}
-<+ for entry in industry.software +>
-<+ set item = software|selectattr("name", "equalto", entry.name)|first +>
+<+ for name in industry.software +>
+<+ set item = software|selectattr("name", "equalto", name)|first +>
 {\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
-{\color{black!60}<< entry.blurb >>}\par\vspace{2pt}
+{\color{black!60}<< item.blurb >>}\par\vspace{2pt}
 <+ endfor +>
 
 \sidesection{Education}
@@ -215,7 +229,7 @@
 <+ endfor +>
 
 \sidesection{Ships inside}
-{\color{black!60}<< industry.software_note >>}\par
+{\color{black!60}<< industry.production_codes[:-1]|join(", ") >> \& << industry.production_codes[-1] >>}\par
 
 % Plain text, no dotted links: the provenance note was carrying heavier link
 % styling than its importance justifies.
@@ -236,8 +250,8 @@
 \renewcommand{\udot}[1]{\textcolor{accent}{#1}}
 {\raggedleft\scriptsize\color{black!45}citations\par}
 \vspace{-0.15em}
-<+ for entry in industry.selected_pubs +>
-<+ set item = refs_by_id[entry.id] +>
+<+ for id, entry in keypubs.items() if entry.authors is defined +>
+<+ set item = refs_by_id[id] +>
 <+ set title, authors, ref = item|reftomd +>
 % Citation count sits in its own fixed-width gutter rather than after an
 % \hfill, so a title that fills the measure cannot orphan the number onto the
