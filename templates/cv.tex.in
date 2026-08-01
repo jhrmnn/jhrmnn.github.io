@@ -178,8 +178,12 @@
    below the family's lightest face — so it recedes by both colour and weight
    without a second type size. `\ ` keeps the period from picking up sentence
    spacing. #>
+<# Hung left by its own side bearing. Every line starts at the same margin, but
+   the bearing is part of the glyph and scales with type size, so the 26pt
+   initial cleared it by ~1.5pt while the 9-10pt lines below cleared it by a
+   fraction of that, and the name sat visibly indented against them. #>
 {\largefont\fontsize{26pt}{28pt}\selectfont
- \lightface{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
+ \hspace*{-1.55pt}\lightface{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
 \vspace{0.3em}
 {\itshape\color{black!60}<< industry.tagline >>}\par
 \vspace{0.4em}
