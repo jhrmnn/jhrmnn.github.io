@@ -467,12 +467,12 @@ presentations:
     year: 2015
 
 industry:
-  tagline: Deep learning for computational chemistry --- research lead in AI for Science
+  tagline: Machine learning for physical simulation --- research lead in AI for Science
   summary: >-
-    Research leader at the intersection of deep learning and quantum chemistry,
-    taking methods from first idea to breakthrough to widely adopted software. Co-leads **Skala** at Microsoft Research; previously led a
-    university research group and created **PauliNet**, which helped launch the
-    field of deep-learning wavefunctions.
+    Research leader building machine-learned methods for physical simulation,
+    taking them from first idea to breakthrough to widely adopted software. Co-leads **Skala** at Microsoft Research; previously led a
+    university research group and created **PauliNet**, now the basis of
+    open-source software used across the field.
   contact_keys: [email, URL, GitHub, LinkedIn]
   # Header metrics, adoption first: stars and production-code adoption read to
   # both an industry screener and a research reviewer, whereas citation totals
@@ -482,8 +482,8 @@ industry:
   # entries, and Experience already carries the claim.
   skills:
   - area: Machine learning
-    items: deep architectures for molecules & materials, physics-informed priors, PyTorch, JAX
-  - area: Quantum chemistry
+    items: deep architectures for physical systems, physics-informed priors, PyTorch, JAX
+  - area: Physical simulation
     items: DFT, quantum Monte Carlo, coupled cluster, electronic-structure software
   - area: Engineering
     items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
