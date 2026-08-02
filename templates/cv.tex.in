@@ -215,28 +215,13 @@
    first, and no sidebar text precedes the summary paragraph in either
    extraction mode. #>
 \begin{tikzpicture}[overlay,remember picture]
-% Pointer to the long form, sitting just above the sidebar as that column's
-% masthead. It takes the sidebar's own width and right edge, so the label and
-% the URL break across two lines rather than overhanging the band into the main
-% column. The URL is its own visible text like the contact line: the address
-% survives a parser that strips link annotations, and a printed copy stays
-% actionable. \scriptsize pairs it with the provenance note at the band's foot,
-% and is declared as a node option so the two lines sit on its own leading —
-% see the note at the band's foot for why the body is the wrong place for it.
-%
-% Kept off the band's top strip, which is level with the name: poppler reads
-% that strip before the header beside it, so text there displaces the contact
-% details down the extraction, and two lines up there pushed the contact past
-% the window check_cv_parsing.py allows. Down here it trails the contact line
-% instead, which is what buys the second line.
-\node[anchor=south east, inner sep=0, text width=3.9cm, align=right, font=\scriptsize] at ([xshift=-0.7cm, yshift=-4.6cm] current page.north east)
-  {\color{black!60}Academic CV:\\
-   \renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
-   \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}};
 % Sidebar starts below the summary, clear of the name/contact header. While it
 % began higher, its first block shared a vertical band with the name and poppler
 % spliced it between the name and the tagline; down here there is a clean
-% two-column region it reads left-then-right.
+% two-column region it reads left-then-right, and plain pdftotext extracts the
+% whole main column as one run. The band's top strip is deliberately left empty
+% — a pointer to the academic CV lived there, but the publications block already
+% carries that URL where a reader wants it.
 \node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-4.9cm] current page.north east) {%
 \begin{minipage}[t]{3.9cm}
 \raggedright\setlength{\parskip}{1.5pt}\footnotesize
