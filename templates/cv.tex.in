@@ -194,7 +194,7 @@
 <# Adoption before citations: stars and production-code adoption are legible to
    an industry screener and a research reviewer alike. No h-index anywhere. #>
 {\small\color{black!60}\textsb{<< nstars // 50 * 50 >>+}~GitHub stars
- ~$\cdot$~ships inside \textsb{<< industry.production_codes|length >>+}~production codes
+ ~$\cdot$~ships in \textsb{<< industry.production_codes|length >>+}~codes
  ~$\cdot$~\textsb{<< references|length >>}~publications
  ~$\cdot$~\textsb{<< "{:,}".format(ncites // 100 * 100) >>+}~citations}\par
 \vspace{0.3em}
