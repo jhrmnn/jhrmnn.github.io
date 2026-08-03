@@ -57,10 +57,13 @@ employment:
   - date: Nov 2022-present
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
+    # "Microsoft Research AI for Science" is the lab's proper name, so the
+    # industry CV's company line runs the two together instead of comma-joining.
+    dept_in_name: true
     industry:
-    - Co-lead **[Skala](https://github.com/microsoft/skala)**, the first machine-learned exchange–correlation functional to match hand-designed DFT at semi-local cost, closing a 60-year-old accuracy gap.
-    - Co-led its 25+ researchers and engineers across machine learning, quantum chemistry and HPC, from concept to open-source release.
-    - Drove MSR-ACC, a public reference dataset of about 150,000 coupled-cluster energies computed on Azure, two orders of magnitude beyond prior efforts.
+    - Co-lead **[Skala](https://github.com/microsoft/skala)** (25+ researchers and engineers across machine learning, quantum chemistry and HPC), the first machine-learned exchange–correlation functional to match hand-designed DFT at semi-local cost, closing a 60-year-old accuracy gap.
+    - Lead the data workstream — in-house reference-data generation and academic collaborations on data-generation protocols — including MSR-ACC, about 150,000 coupled-cluster energies computed on Azure and released publicly.
+    - "Drive adoption into third-party simulation codes: announced in CP2K, with VASP, ORCA, Turbomole and Psi4 committed or in progress."
     - "Took the technology to industrial R&D through the DFT Research Early Access Program (first partner: Flagship Pioneering)."
 - institution: Free University of Berlin
   positions:
@@ -74,7 +77,7 @@ employment:
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
     industry:
-    - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**.
+    - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained as a package for users.
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
 - institution: University of Luxembourg
   positions:
@@ -180,7 +183,7 @@ software:
   role: creator
   github: jhrmnn/pyberny
 - name: Skala
-  role: contributor
+  role: co-lead
   blurb: Deep-learned XC functional for DFT
   github: microsoft/skala
 - name: FHI-aims
@@ -467,17 +470,18 @@ presentations:
     year: 2015
 
 industry:
-  tagline: Machine learning for physical simulation --- research lead in AI for Science
+  tagline: Machine learning for physical simulation --- from method to production software
   summary: >-
-    Research leader building machine-learned methods for physical simulation,
-    taking them from first idea to breakthrough to widely adopted software. Co-leads **Skala** at Microsoft Research; previously led a
-    university research group and created **PauliNet**, now the basis of
-    open-source software used across the field.
+    Research leader building machine-learned methods for physical simulation and
+    getting them into the codes people actually run. Co-lead **Skala** at Microsoft Research;
+    my **libMBD** ships inside VASP, Quantum ESPRESSO and other production codes,
+    and **DeepQMC** --- grown from **PauliNet** --- is a maintained package used
+    beyond my own group.
   contact_keys: [email, URL, GitHub, LinkedIn]
   # Header metrics, adoption first: stars and production-code adoption read to
   # both an industry screener and a research reviewer, whereas citation totals
   # are academic-committee currency. Counts other than this list are live.
-  production_codes: [FHI-aims, DFTB+, PySCF, QCEngine]
+  production_codes: [VASP, Quantum ESPRESSO, Q-Chem, FHI-aims, DFTB+]
   # No `Leadership` area: it read as generic filler next to the specific
   # entries, and Experience already carries the claim.
   skills:
@@ -488,10 +492,9 @@ industry:
   - area: Engineering
     items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
   service:
-  - Mentored 7 researchers (PhD, MSc, postdoc)
+  - Mentored 7 researchers
   - 25+ invited talks (Harvard, Caltech, Cambridge)
-  - 40+ manuscripts reviewed (*Phys. Rev. X*, *Nat. Commun.*)
-  - Doctoral committees (U. Luxembourg, U. Bristol)
+  - 40+ manuscripts reviewed
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
   # with blurbs shortened from the fetched GitHub descriptions.
   software: [DeepQMC, Skala, libMBD, Pyberny]

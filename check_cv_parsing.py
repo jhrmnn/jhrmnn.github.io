@@ -66,7 +66,7 @@ MAIN_MARKERS = [
 # the bullet stand in for them. The two "Postdoctoral Researcher" titles are
 # left out precisely because they are not unique.
 JOB_RECORDS = [
-    ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "60-year-old"),
+    ("Principal Research Manager", "Microsoft Research AI for Science", "Nov 2022", "60-year-old"),
     ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
     ("Doctoral Researcher", "Theory Department", "Oct 2013", "Developed many-body"),
 ]

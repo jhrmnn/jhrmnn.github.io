@@ -162,7 +162,7 @@
    dash so it does not read as one more level of org chart. #>
 {\small\renewcommand{\udot}[1]{#1}%
 \textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-\emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
+\emph{<< org.institution >><+ if job.dept_in_name +> <+ else +>, <+ endif +><< job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.industry +>
@@ -194,7 +194,7 @@
 <# Adoption before citations: stars and production-code adoption are legible to
    an industry screener and a research reviewer alike. No h-index anywhere. #>
 {\small\color{black!60}\textsb{<< nstars // 50 * 50 >>+}~GitHub stars
- ~$\cdot$~shipped in \textsb{<< industry.production_codes|length >>}~production codes
+ ~$\cdot$~ships inside \textsb{<< industry.production_codes[0] >>}
  ~$\cdot$~\textsb{<< references|length >>}~publications
  ~$\cdot$~\textsb{<< "{:,}".format(ncites // 100 * 100) >>+}~citations}\par
 \vspace{0.3em}
@@ -267,7 +267,10 @@
 <+ endfor +>
 
 \sidesection{Ships inside}
-{\color{black!60}<< industry.production_codes[:-1]|join(", ") >> \& << industry.production_codes[-1] >>}\par
+<# "& others" rather than a closed list: the tail is genuinely fuzzy, and naming
+   a boundary invites a question about where it falls. The header metrics lead
+   with the first two, the commercial ones. #>
+{\color{black!60}<< industry.production_codes|join(", ") >> \& others}\par
 
 % Plain text, no dotted links: the provenance note was carrying heavier link
 % styling than its importance justifies.
