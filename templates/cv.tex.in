@@ -162,7 +162,7 @@
    dash so it does not read as one more level of org chart. #>
 {\small\renewcommand{\udot}[1]{#1}%
 \textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-\emph{<< org.institution >><+ if job.dept_in_name +> <+ else +>, <+ endif +><< job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
+\emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.industry +>

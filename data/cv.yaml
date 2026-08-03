@@ -57,9 +57,6 @@ employment:
   - date: Nov 2022-present
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
-    # "Microsoft Research AI for Science" is the lab's proper name, so the
-    # industry CV's company line runs the two together instead of comma-joining.
-    dept_in_name: true
     industry:
     - Co-lead **[Skala](https://github.com/microsoft/skala)** (25+ researchers and engineers across machine learning, quantum chemistry and HPC), the first machine-learned exchange–correlation functional to match hand-designed DFT at semi-local cost, closing a 60-year-old accuracy gap.
     - Lead the data workstream (in-house reference-data generation and academic collaborations on data-generation protocols), including MSR-ACC, about 150,000 coupled-cluster energies computed on Azure and released publicly.
