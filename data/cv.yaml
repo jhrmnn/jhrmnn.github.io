@@ -12,6 +12,30 @@ statement: |
   My work focuses on advancing quantum chemistry through tight integration of deep learning.
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
   The goal is to push through the scale–accuracy trade-off offered by traditional methods of quantum chemistry.
+industry:
+  tagline: "Machine learning for physical simulation: from method to production software"
+  summary: >-
+    Research leader building machine-learned methods for physical simulation and
+    getting them into the codes people actually run. Co-lead **Skala** at Microsoft Research;
+    my **libMBD** ships inside VASP, Quantum ESPRESSO and other production codes,
+    and **DeepQMC** (grown from **PauliNet**) is a maintained package used
+    beyond my own group.
+  contact_keys: [email, URL, GitHub, LinkedIn]
+  production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum Espresso, CP2K]
+  skills:
+  - area: Machine learning
+    items: deep architectures for physical systems, physics-informed priors, PyTorch, JAX
+  - area: Physical simulation
+    items: DFT, quantum Monte Carlo, coupled cluster, electronic-structure software
+  - area: Engineering
+    items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
+  service:
+  - Mentored 7 researchers
+  - 25+ invited talks (Harvard, Caltech, Cambridge)
+  - 40+ manuscripts reviewed
+  # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
+  # with blurbs shortened from the fetched GitHub descriptions.
+  software: [DeepQMC, Skala, libMBD, Pyberny]
 contact:
   URL: [hrmnn.net, https://]
   email: [info@hrmnn.net, "mailto:"]
@@ -465,33 +489,3 @@ presentations:
   - event: DiStasio group seminar
     where: Cornell University, Ithaca, USA
     year: 2015
-
-industry:
-  tagline: "Machine learning for physical simulation: from method to production software"
-  summary: >-
-    Research leader building machine-learned methods for physical simulation and
-    getting them into the codes people actually run. Co-lead **Skala** at Microsoft Research;
-    my **libMBD** ships inside VASP, Quantum ESPRESSO and other production codes,
-    and **DeepQMC** (grown from **PauliNet**) is a maintained package used
-    beyond my own group.
-  contact_keys: [email, URL, GitHub, LinkedIn]
-  # Header metrics, adoption first: stars and production-code adoption read to
-  # both an industry screener and a research reviewer, whereas citation totals
-  # are academic-committee currency. Counts other than this list are live.
-  production_codes: [VASP, Quantum ESPRESSO, Q-Chem, FHI-aims, DFTB+]
-  # No `Leadership` area: it read as generic filler next to the specific
-  # entries, and Experience already carries the claim.
-  skills:
-  - area: Machine learning
-    items: deep architectures for physical systems, physics-informed priors, PyTorch, JAX
-  - area: Physical simulation
-    items: DFT, quantum Monte Carlo, coupled cluster, electronic-structure software
-  - area: Engineering
-    items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
-  service:
-  - Mentored 7 researchers
-  - 25+ invited talks (Harvard, Caltech, Cambridge)
-  - 40+ manuscripts reviewed
-  # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
-  # with blurbs shortened from the fetched GitHub descriptions.
-  software: [DeepQMC, Skala, libMBD, Pyberny]
