@@ -115,7 +115,7 @@ keypubs:
     authors: "**JH** et al."
   HermannCR17:  # 10.1021/acs.chemrev.6b00446
     star: true
-    authors: "**JH**, R. DiStasio & A. Tkatchenko"
+    authors: "**JH**, R. A. DiStasio, Jr. & A. Tkatchenko"
     title: "First-principles models for van der Waals interactions in molecules and materials"
   HermannNC17:  # 10.1038/ncomms14052
     star: true
