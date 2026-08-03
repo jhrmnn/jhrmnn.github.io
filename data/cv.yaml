@@ -21,7 +21,7 @@ industry:
     and **DeepQMC** (grown from **PauliNet**) is a maintained package used
     beyond my own group.
   contact_keys: [email, URL, GitHub, LinkedIn]
-  production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum Espresso, CP2K]
+  production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum ESPRESSO, CP2K]
   skills:
   - area: Machine learning
     items: deep architectures for physical systems, physics-informed priors, PyTorch, JAX
