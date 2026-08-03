@@ -101,19 +101,18 @@ ref_extras:
 keypubs:
   Luise25:
     authors: "G. Luise et al., incl. **JH**"
-    credit: co-author
+    credit: co-corresponding
   Foster25:
     authors: "N. Foster et al. & **JH**"
-    credit: senior author
   HermannNRC23:
-    authors: "**JH**, J. Spencer et al."
+    authors: "**JH** et al."
   HermannNC20:  # 10.1038/s41557-020-0544-y
     star: true
     authors: "**JH**, Z. Schätzle & F. Noé"
   HermannPRL20:  # 10.1103/physrevlett.124.146401
     star: true
-    authors: "**JH** & A. Tkatchenko"
-    title: "Density functional model for van der Waals interactions"
+  HermannJCP23:
+    authors: "**JH** et al."
   HermannCR17:  # 10.1021/acs.chemrev.6b00446
     star: true
     authors: "**JH**, R. DiStasio & A. Tkatchenko"
