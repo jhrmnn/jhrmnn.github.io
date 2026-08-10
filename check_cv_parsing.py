@@ -211,7 +211,13 @@ def main():
         try:
             lines = fn(path).splitlines()
         except Exception as exc:  # extractor missing or failed
-            print(f"  SKIP  {exc}")
+            # Not tolerated: an absent extractor used to print SKIP and leave
+            # the run reporting ALL PASS, so CI green meant only "the
+            # extractors that happened to be installed passed". pdftotext was
+            # missing from the image for exactly that reason, and the poppler
+            # half of this gate never ran at all.
+            all_ok = False
+            print(f"  MISSING  {exc}")
             continue
         for label, check in CHECKS:
             ok, detail = check(lines)

@@ -48,9 +48,10 @@ check-sources:
 # Report how the industry CV (cv.pdf) survives the parser families an
 # applicant-tracking system might use: the name and contact must lead, each job
 # record must come out whole, and the main column's landmarks must stay in
-# document order. Needs the `test` dependency group; extractors it cannot
-# import are skipped. Every check is a hard failure -- the script no longer
-# exempts anything, because it no longer asks for perfect column contiguity.
+# document order. Needs the `test` dependency group and poppler-utils; an
+# extractor that will not load is itself a failure, so a thin environment
+# cannot report green on a subset. Every check is a hard failure -- the script
+# exempts nothing, because it no longer asks for perfect column contiguity.
 check-cv: $(OUTDIR)/cv.pdf
 	./check_cv_parsing.py $<
 

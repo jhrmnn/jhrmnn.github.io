@@ -82,7 +82,7 @@ employment:
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
     industry:
-    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a 60-year-old chalenge in quantum chemistry by establishing a new accuracy–cost frontier
+    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a 60-year-old challenge in quantum chemistry by establishing a new accuracy–cost frontier
     - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols)
     - "Drives adoption into third-party codes (announced in CP2K, with VASP, ORCA, Turbomole, and Psi4 in progress)"
     - "Pilots the technology in industrial R&D through partnerships and collaborations"

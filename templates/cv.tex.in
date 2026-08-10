@@ -177,7 +177,14 @@
 \item << b >>
 <+ endfor +>
 \end{itemize}
-<+ if not loop.last +>\vspace{0.4em}<+ endif +>
+<# Plain pdftotext reads each flush-right date as its own narrow column and
+   emits it away from its title, so what keeps a record together in extraction
+   is how cleanly the gap between records separates it from the sidebar blocks
+   alongside. At 0.4em the FHI record interleaved with the sidebar's Education
+   entries and its date landed 13 lines from its title, past the 12 the check
+   allows; 0.6-0.8em all bring it back to 6 and hold one page, so this sits in
+   the middle of that plateau rather than on its edge. #>
+<+ if not loop.last +>\vspace{0.7em}<+ endif +>
 <+ endfor +>
 <+ endmacro +>
 
