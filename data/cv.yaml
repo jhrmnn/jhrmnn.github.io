@@ -13,20 +13,20 @@ statement: |
   I search for suitable entry points for machine learning in electronic structure theory and incorporate exact priors induced by the underlying physics into neural-network and training architectures.
   The goal is to push through the scale–accuracy trade-off offered by traditional methods of quantum chemistry.
 industry:
-  tagline: "Machine learning for physical simulation: from method to production software"
+  tagline: "Machine learning for physical simulation: from methods to production software"
   summary: >-
-    Research leader building machine-learned methods for physical simulation and
-    getting them into the codes people actually run. Co-lead **Skala** at Microsoft Research;
-    my **libMBD** ships inside VASP, Quantum ESPRESSO and other production codes,
-    and **DeepQMC** (grown from **PauliNet**) is a maintained package used
-    beyond my own group.
+    Research leader building machine-learned methods for quantum chemistry and
+    getting them into the codes people actually run.
+    Co-leads **Skala** at Microsoft Research,
+    my **libMBD** ships inside top production codes,
+    and **DeepQMC** is a maintained package with a growing userbase.
   contact_keys: [email, URL, GitHub, LinkedIn]
   production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum ESPRESSO, CP2K]
   skills:
   - area: Machine learning
     items: deep architectures for physical systems, physics-informed priors, PyTorch, JAX
   - area: Physical simulation
-    items: DFT, quantum Monte Carlo, coupled cluster, electronic-structure software
+    items: DFT, quantum Monte Carlo, electronic-structure software, numerical algorithms
   - area: Engineering
     items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
   service:
@@ -82,10 +82,10 @@ employment:
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
     industry:
-    - Co-lead **[Skala](https://github.com/microsoft/skala)** (25+ researchers and engineers across machine learning, quantum chemistry and HPC), the first machine-learned exchange–correlation functional to match hand-designed DFT at semi-local cost, closing a 60-year-old accuracy gap.
-    - Lead the data workstream (in-house reference-data generation and academic collaborations on data-generation protocols), including MSR-ACC, about 150,000 coupled-cluster energies computed on Azure and released publicly.
-    - "Drive adoption into third-party simulation codes: announced in CP2K, with VASP, ORCA, Turbomole and Psi4 committed or in progress."
-    - "Took the technology to industrial R&D through the DFT Research Early Access Program (first partner: Flagship Pioneering)."
+    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a 60-year-old chalenge in quantum chemistry by establishing a new accuracy–cost frontier
+    - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols)
+    - "Drives adoption into third-party codes (announced in CP2K, with VASP, ORCA, Turbomole, and Psi4 in progress)"
+    - "Pilots the technology in industrial R&D through partnerships and collaborations"
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
