@@ -49,6 +49,14 @@
 \DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
 \DeclareTextFontCommand{\textsb}{\sbseries}
 
+% TeX widens the space after a period that follows a lowercase letter, taking it
+% for a sentence end. Here that is almost always an abbreviation instead --
+% Nat. Commun., Phys. Rev. Lett., et al. -- and each one costs about 0.9pt of
+% false gap. Initials are already safe, since a capital before the period
+% suppresses the widening; it is the journal names that need this. The trade is
+% that genuine sentence ends lose the wider space too.
+\frenchspacing
+
 \setlist{nosep,leftmargin=0.5cm,labelsep=0.35cm}
 
 \pagestyle{empty}
