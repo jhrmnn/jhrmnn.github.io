@@ -123,7 +123,10 @@ def ref_to_md(item):
         locator = (
             f' **{item["volume"]}**' if 'volume' in item else ''
         ) + (f', {item["page"].replace("-", "–")}' if 'page' in item else '')
-        ref = f'[*{item["container-title-short"]}*{locator or ", in press"}]({url}) ({year})'
+        ref = (
+            f'[*{item["container-title-short"]}*{locator}]({url})'
+            f'{"" if locator else ", in press"} ({year})'
+        )
     elif item['type'] == 'article':
         if "arxiv.org" in item['URL']:
             (iden,) = re.match(r'http://arxiv.org/abs/([\d.]+)', item['URL']).groups()
