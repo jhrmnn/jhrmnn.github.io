@@ -116,12 +116,14 @@ def ref_to_md(item):
     elif item['type'] == 'thesis':
         title = f'[*{title}*]({url})'
     if item['type'] == 'article-journal':
-        ref = (
-            f'[*{item["container-title-short"]}*'
-            + (f' **{item["volume"]}**' if 'volume' in item else '')
-            + (f', {item["page"].replace("-", "–")}' if 'page' in item else '')
-            + f']({url}) ({year})'
-        )
+        # A paper accepted by a journal is registered (title, journal, year, DOI)
+        # before it is placed in an issue, so it carries neither volume nor page
+        # for a while. Naming that state beats printing a bare journal and year,
+        # which reads like a locator went missing.
+        locator = (
+            f' **{item["volume"]}**' if 'volume' in item else ''
+        ) + (f', {item["page"].replace("-", "–")}' if 'page' in item else '')
+        ref = f'[*{item["container-title-short"]}*{locator or ", in press"}]({url}) ({year})'
     elif item['type'] == 'article':
         if "arxiv.org" in item['URL']:
             (iden,) = re.match(r'http://arxiv.org/abs/([\d.]+)', item['URL']).groups()
