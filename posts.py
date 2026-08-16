@@ -26,6 +26,25 @@ FILENAME_RE = re.compile(r'(\d{4})-(\d{2})-(\d{2})-(.+)\.md$')
 BULLET_RE = re.compile(r'[-*]\s')
 ORDERED_RE = re.compile(r'\d+\.\s')
 ORDERED_PREFIX_RE = re.compile(r'^\d+\.\s*')
+TRAILING_BREAKS_RE = re.compile(r'(?:<br>)+$')
+
+
+def join_paragraph(lines):
+    """Join a paragraph's lines into one string. Lines are soft-wrapped by
+    default (joined with a space), so a paragraph can be reflowed in the source
+    without changing the output. A line ending in a backslash is CommonMark's
+    hard line break: it becomes a literal `<br>`, which lets a note keep a
+    deliberate line structure (a list-like stanza, an aphorism per line) without
+    turning it into a `<ul>`. Trailing spaces are deliberately not the marker —
+    they're invisible and editors strip them."""
+    out = ''
+    for ln in lines:
+        ln = ln.strip()
+        if ln.endswith('\\'):
+            out += ln[:-1].rstrip() + '<br>'
+        else:
+            out += ln + ' '
+    return TRAILING_BREAKS_RE.sub('', out.strip())
 
 
 def md_blocks_to_html(text):
@@ -44,7 +63,7 @@ def md_blocks_to_html(text):
                 tag = f'h{min(level + 1, 6)}'
                 out.append(f'<{tag}>{md_to_html(ln.lstrip("# ").strip())}</{tag}>')
         elif all(ln.lstrip().startswith('>') for ln in lines):
-            inner = ' '.join(ln.lstrip().lstrip('>').strip() for ln in lines)
+            inner = join_paragraph(ln.lstrip().lstrip('>') for ln in lines)
             out.append(f'<blockquote><p>{md_to_html(inner)}</p></blockquote>')
         elif all(BULLET_RE.match(ln.lstrip()) for ln in lines):
             items = ''.join(
@@ -58,7 +77,7 @@ def md_blocks_to_html(text):
             )
             out.append(f'<ol>{items}</ol>')
         else:
-            out.append(f'<p>{md_to_html(" ".join(ln.strip() for ln in lines))}')
+            out.append(f'<p>{md_to_html(join_paragraph(lines))}')
     return '\n'.join(out)
 
 
