@@ -40,7 +40,14 @@ def title_key(s):
     differences never split a pair. Used only to *pair* records; their substance
     is then compared field by field.
     """
-    s = re.sub(r'<[^>]+>', '', fold_text(s))
+    s = fold_text(s)
+    # Pretty-printed markup pads inline tags with newline+indent -- Crossref
+    # serves "PʏSCF" as ``P\n  <scp>y</scp>\n  SCF``. A real title never contains
+    # a newline, so a newline-bearing whitespace run is always serialization
+    # indentation; drop it (together with its indent) before stripping the tags,
+    # or the padding survives as spaces and splits the word into "p y scf".
+    s = re.sub(r'\s*\n\s*', '', s)
+    s = re.sub(r'<[^>]+>', '', s)
     return ' '.join(re.sub(r'[^a-z0-9]+', ' ', s).split())
 
 
