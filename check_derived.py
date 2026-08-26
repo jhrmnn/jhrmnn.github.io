@@ -7,8 +7,10 @@ publications, rewrite bibliographic data, or report lower counts than what was
 last published. This compares the new dataset against the published `derived`
 artifact for the most recent default-branch commit the run descends from (the
 previous `main` commit on `main`, the fork point on a PR branch) and exits
-non-zero if anything was removed, an identity field changed, or a count that
-should only grow went down. Grading against the default-branch ancestor — rather
+non-zero if a tracked item disappeared (references are guarded by their total
+count, so a preprint→published DOI change passes but a net deletion fails), an
+identity field changed, or a count that should only grow went down. Grading
+against the default-branch ancestor — rather
 than the current branch's own latest artifact — means a PR is checked against
 published `main` state, not against its own in-progress commits. Running it at
 the end of the fetch job means a regression aborts before the artifact is
@@ -103,10 +105,20 @@ def check(old, new):  # noqa: C901
                 STARS_REL_TOL,
             )
 
-    # references: keyed by canonical DOI; append-only, stable identity, cited_by
-    # only grows.
+    # references: keyed by canonical DOI. A publication's DOI legitimately
+    # changes when a preprint becomes the published version (the arXiv DOI gives
+    # way to the journal one), so an individual key disappearing is a replacement,
+    # not a loss, as long as the list didn't get shorter. Guard the Zotero
+    # reference *count* instead -- a genuine deletion drops it, and needs a manual
+    # dispatch (where this check is continue-on-error) to publish through -- while
+    # still checking identity and cited_by for every DOI carried over.
     old_refs, new_refs = refs_by_id(old), refs_by_id(new)
-    removed('reference', old_refs, new_refs)
+    decreased(
+        'reference count',
+        'references',
+        len(old.get('references', [])),
+        len(new.get('references', [])),
+    )
     for doi, ref in old_refs.items():
         new_ref = new_refs.get(doi)
         if new_ref is None:
