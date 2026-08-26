@@ -35,7 +35,7 @@ equation itself, with no reference data. It can reach excited states
 open-source suite [@SchatzleJCP23] within a fast-developing field [@HermannNRC23].
 Those same wavefunctions also yield accurate real-space electron densities
 [@ChengJCP25], and in the latest iteration are encoded in a single foundation model
-[@Foster25].
+[@FosterNC26].
 
 # Van der Waals dispersion {#vdW github="libmbd/libmbd"}
 
