@@ -92,7 +92,7 @@ employment:
     role: "[Junior Research Group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) Leader"
     dept: Department of Mathematics
     industry:
-    - Founded and led a group on ML for materials science; co-PI on a competitively funded MATH+ project.
+    - Founded and led a group on ML for materials science, and was co-PI on a competitively funded MATH+ project.
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
@@ -114,8 +114,8 @@ employment:
     role: Doctoral Researcher
     dept: "[Theory Department](https://www.fhi.mpg.de/th-department)"
     industry:
-    - Developed many-body models of van der Waals interactions; first author of the field's standard review (*Chem. Rev.* 2017).
-    - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in FHI-aims and DFTB+; core contributor to FHI-aims.
+    - Developed many-body models of van der Waals interactions, and first-authored the field's standard review (*Chem. Rev.* 2017).
+    - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in FHI-aims and DFTB+, and was a core contributor to FHI-aims.
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:

@@ -324,7 +324,7 @@
 % lines stay on \normalsize's 12pt leading. As an option it lands in time and
 % the note wraps on its own leading, like the sidebar blocks above it.
 \node[anchor=south west, inner sep=0, text width=3.9cm, font=\scriptsize] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
-  {\color{black!60}(generated on \today; citation and star counts are live)};
+  {\color{black!60}(generated on \today, with live citation and star counts)};
 \end{tikzpicture}%
 
 \section{Experience}
