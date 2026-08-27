@@ -1,6 +1,7 @@
 {# vim: set ft=jinja sts=2 sw=2: #}
 {% set page_title = (post.title or post.date_display) ~ " · Jan Hermann" %}
 {% set canonical = post.canonical %}
+{% set ap_alternate = post.canonical %}
 {% include "templates/_head.html" %}
 
 <nav aria-label="Sections">

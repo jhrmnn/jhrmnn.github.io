@@ -275,3 +275,78 @@ jobs:
             } else {
               await github.rest.issues.createComment({ owner, repo, issue_number, body });
             }
+  deploy-worker:
+    # Deploy the Cloudflare Worker that serves the static site AND runs the
+    # self-hosted ActivityPub actor (worker/, wrangler.toml). Production deploy on
+    # main only; the worker is reachable at its *.workers.dev URL until the apex
+    # DNS is pointed at it (user-managed). This runs alongside the GitHub Pages
+    # deploy during the transition — production hosting only flips when DNS does.
+    #
+    # continue-on-error keeps the pipeline green before Cloudflare is fully set up
+    # (KV namespace id in wrangler.toml + AP_PRIVATE_KEY/AP_ADMIN_TOKEN dashboard
+    # secrets). Remove it, and the GitHub Pages deploy, once the native actor is
+    # verified and DNS is cut over to the Worker.
+    if: ${{ !cancelled() && needs.render.result == 'success' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs: render
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: _site
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          # v4 for the run_worker_first path-list form in wrangler.toml.
+          wranglerVersion: '4'
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+  federate-native:
+    # Deliver changed posts to followers via our own Worker's /ap/admin/deliver
+    # (self-hosted federation; the site is no longer bridged via Bridgy Fed).
+    # Real pushes to main only, so the daily data-refresh schedule doesn't
+    # re-deliver. Best-effort and continue-on-error. Needs the AP_ADMIN_TOKEN repo
+    # secret (same value as the Worker's dashboard secret) and, until DNS is cut
+    # over, an optional AP_BASE_URL repo variable pointing at the *.workers.dev
+    # origin.
+    if: >-
+      !cancelled() &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [deploy-worker]
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install requests
+      - name: Deliver changed posts to followers
+        env:
+          AP_ADMIN_TOKEN: ${{ secrets.AP_ADMIN_TOKEN }}
+          AP_BASE_URL: ${{ vars.AP_BASE_URL }}
+        run: |
+          # Map each posts/*.md changed since the previous commit to its slug
+          # (the filename stem) and hand them to federate_native.py, which just
+          # pings the Worker. The Worker reads each Note from its own deployed
+          # static assets (notes/<slug>/note.json), so nothing here needs the
+          # rendered site — deploy-worker (a dependency) already published them.
+          base="${{ github.event.before }}"
+          if [ -z "$base" ] || ! git rev-parse -q --verify "$base^{commit}" >/dev/null; then
+            changed="$(git ls-files posts)"
+          else
+            changed="$(git diff --name-only "$base" HEAD -- posts)"
+          fi
+          slugs=""
+          while IFS= read -r f; do
+            case "$f" in
+              posts/*.md) slugs="$slugs $(basename "$f" .md)" ;;
+            esac
+          done <<<"$changed"
+          echo "Changed slugs:$slugs"
+          python federate_native.py $slugs
