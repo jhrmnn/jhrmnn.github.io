@@ -115,7 +115,7 @@ employment:
     dept: "[Theory Department](https://www.fhi.mpg.de/th-department)"
     industry:
     - Developed many-body models of van der Waals interactions, and first-authored the field's standard review (*Chem. Rev.* 2017).
-    - Created **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in FHI-aims and DFTB+, and was a core contributor to FHI-aims.
+    - Created **[libMBD](https://github.com/libmbd/libmbd)** and was a core contributor to FHI-aims.
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:

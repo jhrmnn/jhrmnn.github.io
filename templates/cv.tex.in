@@ -84,6 +84,14 @@
 % the site read as the same hand. One is the ceiling.
 \definecolor{accent}{HTML}{<< accent >>}
 
+% The sidebar's two greys, in one place because they move together. They are
+% darker than the main column's black!60, which sits on white: the band behind
+% this column is filled black!30, so a grey tuned for white has much less to
+% work against here. Keep the 5-point gap — headings a step darker than the
+% body text they head.
+\colorlet{sidegrey}{black!70}
+\colorlet{sideheading}{black!75}
+
 \hypersetup{pdftitle={Jan Hermann CV},pdfauthor={Jan Hermann}}
 
 \pagestyle{empty}
@@ -135,7 +143,7 @@
 % parameters — plain pdftotext's column detection keys on how sidebar blocks
 % align against the main column's records, and 0.65em (which frees more room
 % still) strands the Doctoral Researcher bullets 39 lines from their heading.
-\newcommand{\sidesection}[1]{\par\vspace{0.7em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{black!65}#1}\par\vspace{0.2em}}
+\newcommand{\sidesection}[1]{\par\vspace{0.7em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{sideheading}#1}\par\vspace{0.2em}}
 
 \hyphenation{Schrö-ding-er}
 
@@ -256,7 +264,7 @@
 \sidesection{Skills}
 <+ for s in industry.skills +>
 {\sbseries << s.area >>}\par
-{\color{black!60}<< s["items"] >>}\par\vspace{1pt}
+{\color{sidegrey}<< s["items"] >>}\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Open source}
@@ -269,7 +277,7 @@
 <+ for name in industry.software +>
 <+ set item = software|selectattr("name", "equalto", name)|first +>
 {\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
-{\color{black!60}<< item.blurb if item.blurb is defined else item.description.rsplit(" (", 1)[0] >>}\par\vspace{1pt}
+{\color{sidegrey}<< item.blurb if item.blurb is defined else item.description.rsplit(" (", 1)[0] >>}\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Education}
@@ -284,7 +292,7 @@
 <+ endfor +>
 <+ for _, ds in groups.items() +>
 {\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
-{\color{black!60}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
+{\color{sidegrey}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
 <+ endfor +>
 <+ endfor +>
 
@@ -294,14 +302,17 @@
    on the academic CV and the homepage, which read the same block. Opt-out, so
    a newly added award shows up here without needing to be marked. #>
 <+ for item in awards if item.industry is not defined or item.industry +>
-{\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{1pt}
+<# Grey covers the whole entry, not just the year: every other block in this
+   column sets its detail text in the sidebar grey, and an award's title is
+   detail the same way a degree's institution is. #>
+{\color{sidegrey}<< item.date.split()[-1] >> $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>}\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Ships inside}
 <# "& others" rather than a closed list: the tail is genuinely fuzzy, and naming
    a boundary invites a question about where it falls. The header metrics lead
    with the first two, the commercial ones. #>
-{\color{black!60}<< industry.production_codes|join(", ") >> \& others}\par
+{\color{sidegrey}<< industry.production_codes|join(", ") >> \& others}\par
 
 \sidesection{Mentoring and service}
 <# Moved here from the main column, where it sat last. The main column had
@@ -313,7 +324,7 @@
    separator containing a backslash would make the whole string look like raw
    TeX and skip conversion. #>
 <+ for item in industry.service +>
-{\color{black!60}<< item >>}\par\vspace{1pt}
+{\color{sidegrey}<< item >>}\par\vspace{1pt}
 <+ endfor +>
 
 % Plain text, no dotted links: the provenance note was carrying heavier link
@@ -327,7 +338,7 @@
 % lines stay on \normalsize's 12pt leading. As an option it lands in time and
 % the note wraps on its own leading, like the sidebar blocks above it.
 \node[anchor=south west, inner sep=0, text width=3.9cm, font=\scriptsize] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
-  {\color{black!60}(generated on \today, with live citation and star counts)};
+  {\color{sidegrey}(generated on \today, with live citation and star counts)};
 \end{tikzpicture}%
 
 \section{Experience}
