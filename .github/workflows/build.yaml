@@ -26,7 +26,7 @@ jobs:
     outputs:
       docker-tag: ${{ steps.docker-tag.outputs.docker-tag }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Maybe restore Docker tag
@@ -41,7 +41,7 @@ jobs:
       - name: Set Docker tag
         id: docker-tag
         run: echo docker-tag=$(cat docker-tag) >>$GITHUB_OUTPUT
-      - uses: docker/login-action@v2
+      - uses: docker/login-action@v3
         if: "!steps.cache.outputs.cache-hit"
         with:
           registry: ghcr.io
@@ -62,7 +62,7 @@ jobs:
     outputs:
       fetch: ${{ steps.filter.outputs.fetch }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Detect changes to fetch inputs
@@ -116,7 +116,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Restore Poetry and NLTK cache
@@ -172,7 +172,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Restore fonts and Poetry cache
