@@ -12,6 +12,12 @@ Checks three independent properties across several extractor families:
 
 A layout can pass one and fail the others; all three matter.
 
+Before any of them, PAGES asserts the document is still one page. That is
+the whole premise of this CV, and nothing checked it: a summary two words
+too long silently spilled "Mentoring and service" onto a second page while
+every extraction check went on passing, because text that moved to page two
+still extracts in the right order.
+
 RECORDS replaced an earlier check that demanded the main column extract as
 one uninterrupted run. Two columns of unequal length always displace the
 sidebar somewhere, so that bar could only be met by luck, and clearing it
@@ -32,6 +38,7 @@ import sys
 NAME = "Jan Hermann"
 CONTACT_TOKEN = "info@hrmnn.net"
 LEAD_WINDOW = 8  # name and contact must fall within this many lines
+EXPECTED_PAGES = 1  # this CV is a one-pager; spilling to two is a failure
 
 # Headings that live in the sidebar. None of these may land inside a job
 # record; between records they are harmless.
@@ -199,6 +206,23 @@ CHECKS = [("LEAD", check_lead), ("RECORDS", check_records), ("ORDER", check_orde
 # --- main -------------------------------------------------------------------
 
 
+def page_count(path):
+    """Pages in the PDF, read with whichever of the extractor backends loads.
+    pdfinfo ships with poppler, which this script already requires."""
+    out = subprocess.run(
+        ["pdfinfo", path], capture_output=True, text=True, check=True
+    ).stdout
+    for line in out.splitlines():
+        if line.startswith("Pages:"):
+            return int(line.split(":", 1)[1])
+    raise RuntimeError("pdfinfo reported no page count")
+
+
+def check_pages(path):
+    n = page_count(path)
+    return n == EXPECTED_PAGES, f"{n} page{'s' if n != 1 else ''}"
+
+
 def main():
     if len(sys.argv) != 2:
         print(__doc__)
@@ -206,6 +230,9 @@ def main():
     path = sys.argv[1]
 
     all_ok = True
+    ok, detail = check_pages(path)
+    all_ok &= ok
+    print(f"\ndocument\n  {'PASS' if ok else 'FAIL'}  PAGES    {detail}")
     for name, fn in EXTRACTORS.items():
         print(f"\n{name}")
         try:

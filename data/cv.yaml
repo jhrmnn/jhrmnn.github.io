@@ -17,10 +17,9 @@ industry:
   summary: >-
     Research leader building machine-learned methods for quantum chemistry and
     getting them into the codes people actually run.
-    Research leader building machine-learned methods for quantum chemistry and getting them into the codes people actually run.
-    **Skala**, which I co-lead at Microsoft Research, is reaching third-party codes,
-    **libMBD** ships inside VASP and Quantum ESPRESSO,
-    and **DeepQMC** is a maintained package with a growing userbase.
+    I co-lead **Skala**, now reaching third-party codes;
+    **libMBD** ships inside FHI-aims and Quantum ESPRESSO;
+    **DeepQMC** has a growing userbase.
   contact_keys: [email, URL, GitHub, LinkedIn]
   production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum ESPRESSO, CP2K]
   skills:
