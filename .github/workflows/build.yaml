@@ -68,8 +68,8 @@ jobs:
       - name: Detect changes to fetch inputs
         id: filter
         run: |
-          # The fetch step crawls live sources from these inputs. When a push or
-          # PR touches one, run a real fetch so the change is exercised end to
+          # The fetch step crawls live sources. When a push or PR changes what
+          # or how it crawls, run a real fetch so the change is exercised end to
           # end instead of silently reusing the previous run's artifact.
           # The Makefile is intentionally excluded: its fetch recipe is a thin
           # wrapper and rarely changes, whereas most edits (build wiring, the
@@ -77,6 +77,13 @@ jobs:
           # fetch behaviour lives in fetch.py/common.py/reuse_data.py, which do
           # trigger here. This keeps unrelated Makefile edits from forcing a
           # live crawl (and inheriting flaky upstream rate limits) on every PR.
+          #
+          # data/* is excluded for the same reason, and now truthfully: fetch.py
+          # reads nothing from it. The repo list it used to take from cv.yaml is
+          # a constant there, and render.py fails the build if the two drift.
+          # While data/* was listed, every reworded CV bullet re-crawled all
+          # five sources -- nine crawls in ninety minutes on one afternoon of
+          # prose edits, which is what earned a 429 from Publons.
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             base="${{ github.event.pull_request.base.sha }}"
           else
@@ -92,7 +99,7 @@ jobs:
           fetch=false
           while IFS= read -r f; do
             case "$f" in
-              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock|data/*)
+              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock)
                 fetch=true
                 break
                 ;;

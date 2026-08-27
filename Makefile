@@ -33,7 +33,7 @@ $(OUTDIR)/notes/index.html: posts.py render.py common.py $(POSTS) \
 # Refresh the data by crawling live sources; run on schedule/dispatch and on
 # pushes/PRs that touch the fetch inputs.
 fetch: | $(BLDDIR)
-	./fetch.py $(CTX) -o $(DERIVED)
+	./fetch.py -o $(DERIVED)
 
 # Verify a freshly fetched dataset hasn't regressed against the last published
 # one (run after `make fetch`).

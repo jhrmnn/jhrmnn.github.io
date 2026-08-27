@@ -16,7 +16,7 @@ from urllib.parse import urlencode
 import requests
 from bs4 import BeautifulSoup
 
-from common import load_ctx, reduce_sc, strip_html
+from common import reduce_sc, strip_html
 
 MAX_RETRIES = 3
 # Google Scholar blocks IPs with a bad reputation (429 "sorry" CAPTCHA). When a
@@ -42,6 +42,25 @@ ZOTERO_REFS_URL = (
     'https://api.zotero.org/users/1562978/publications/items?'
     + urlencode({'format': 'csljson', 'itemType': '-attachment || note', 'limit': 100})
 )
+# The repos whose stars and descriptions the homepage and the CVs render.
+#
+# Listed here rather than read out of data/cv.yaml, which is what this script
+# used to do. That made every edit to the CV -- a reworded bullet, a comma --
+# a change to a "fetch input", so CI re-crawled all five live sources for it,
+# and a burst of prose edits was enough to earn a 429 from Publons. Nothing
+# else in data/ ever reached the crawl, so fetch.py now reads no repo data at
+# all and the CI trigger no longer includes data/*.
+#
+# The cost is that this list and cv.yaml's `software` can drift apart. They may
+# not: render.py's completeness check fails the build if cv.yaml names a repo
+# that is missing from the fetched data, which is what a repo added there and
+# not here looks like.
+REPOS = [
+    'deepqmc/deepqmc',
+    'libmbd/libmbd',
+    'jhrmnn/pyberny',
+    'microsoft/skala',
+]
 # Public ORCID record of the same publications, used by check_sources.py to
 # cross-check the Zotero list. The summary works endpoint gives title, type,
 # year and DOI per work -- enough to catch a paper that's missing from, or
@@ -483,36 +502,28 @@ def fetch_scholar(cache):
 
 
 def update_from_web(ctx, cache):  # noqa: C901
-    def stars(item):
-        if 'github' in item:
-            headers = {'accept': 'application/vnd.github.v3+json'}
-            # Authenticate when a token is available (CI and web sessions both
-            # export GITHUB_TOKEN); unauthenticated calls are rate-limited/403.
-            if token := os.environ.get('GITHUB_TOKEN'):
-                headers['authorization'] = f'Bearer {token}'
-            info = cache.get(
-                f'https://api.github.com/repos/{item["github"]}',
-                headers=headers,
-            )
-            item.update(
-                {
-                    'url': f'https://github.com/{item["github"]}',
-                    'description': (
-                        f'{norm_desc(info["description"])} ({info["language"]})'
-                    ),
-                    'stars': info['stargazers_count'],
-                }
-            )
+    def stars(repo):
+        headers = {'accept': 'application/vnd.github.v3+json'}
+        # Authenticate when a token is available (CI and web sessions both
+        # export GITHUB_TOKEN); unauthenticated calls are rate-limited/403.
+        if token := os.environ.get('GITHUB_TOKEN'):
+            headers['authorization'] = f'Bearer {token}'
+        info = cache.get(f'https://api.github.com/repos/{repo}', headers=headers)
+        ctx['software'][repo] = {
+            'url': f'https://github.com/{repo}',
+            'description': f'{norm_desc(info["description"])} ({info["language"]})',
+            'stars': info['stargazers_count'],
+        }
 
     def reviews(ctx):
-        n_reviews = cache.get(
+        # render.py substitutes this into cv.yaml's NUMREV placeholder. This
+        # function used to do the same to ctx['activity'], which was the only
+        # other thing fetch.py read out of data/ -- and dead, since `activity`
+        # is not part of extract_derived's output.
+        ctx['_n_reviews'] = cache.get(
             WOS_ACADEMIC_URL,
             headers={'authorization': f'Token {os.environ["PUBLONS_TOKEN"]}'},
         )['reviews']['pre']['count']
-        ctx['_n_reviews'] = n_reviews
-        activity = ctx['activity']
-        for i in range(len(activity)):
-            activity[i] = activity[i].replace('NUMREV', str(n_reviews))
 
     def citations(item):
         try:
@@ -561,7 +572,7 @@ def update_from_web(ctx, cache):  # noqa: C901
         futures = [
             pool.submit(collect, label, func, x)
             for label, func, x in [
-                *(('GitHub stars', stars, x) for x in ctx['software']),
+                *(('GitHub stars', stars, repo) for repo in REPOS),
                 ('Web of Science reviews', reviews, ctx),
                 *(('citations', citations, x) for x in ctx['references']),
             ]
@@ -603,15 +614,7 @@ def update_from_web(ctx, cache):  # noqa: C901
 
 def extract_derived(ctx):
     return {
-        'software': {
-            item['github']: {
-                'url': item['url'],
-                'description': item['description'],
-                'stars': item['stars'],
-            }
-            for item in ctx['software']
-            if 'github' in item and 'stars' in item
-        },
+        'software': ctx['software'],
         'references': ctx['references'],
         'orcid': ctx.get('orcid', []),
         'wos': ctx.get('wos', []),
@@ -622,11 +625,11 @@ def extract_derived(ctx):
 
 def main(args):
     p = argparse.ArgumentParser()
-    p.add_argument('ctx', nargs='+', type=Path)
     p.add_argument('-o', dest='output', required=True)
     a = p.parse_args(args)
-    ctx = load_ctx(a.ctx)
-    ctx['custom_data'] = {}
+    # No inputs from data/: everything below is crawled or hardcoded here, so
+    # editing the CV cannot force a live fetch.
+    ctx = {'software': {}, 'custom_data': {}}
     with Cache() as cache:
         update_from_web(ctx, cache)
     derived = extract_derived(ctx)
