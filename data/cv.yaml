@@ -82,9 +82,9 @@ employment:
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
     industry:
-    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in quantum chemistry by establishing a new accuracy–cost frontier
-    - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols), with MSR Accurate Chemistry Collection as its public venue, carrying a [150,000 coupled cluster](link) dataset, the largest of its kind
-    - "Drives adoption into third-party codes ([announced in CP2K](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), with ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress)"
+    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in quantum chemistry by establishing a new accuracy–cost frontier.
+    - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols), with the Accurate Chemistry Collection (MSR-ACC) as its public venue, carrying [77,000 coupled cluster atomization energies](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scope.
+    - "Drives adoption into third-party codes ([announced in CP2K](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), with ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress)."
     - "Pilots the technology in industrial R&D through an [early access program](https://www.microsoft.com/en-us/research/project/dft/early-access/), with [Flagship Pioneering](https://www.flagshippioneering.com/) as the first partner."
 - institution: Free University of Berlin
   positions:
