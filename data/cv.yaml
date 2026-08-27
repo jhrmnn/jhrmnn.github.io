@@ -19,7 +19,7 @@ industry:
     getting them into the codes people actually run.
     **Skala**, which I co-lead at Microsoft Research, is reaching third-party codes,
     **libMBD** ships inside VASP and Quantum ESPRESSO,
-    and **DeepQMC** has a growing userbase.
+    and **DeepQMC** is a maintained package with a growing userbase.
   contact_keys: [email, URL, GitHub, LinkedIn]
   production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum ESPRESSO, CP2K]
   skills:
