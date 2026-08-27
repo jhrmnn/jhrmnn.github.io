@@ -129,7 +129,13 @@
     	([xshift=-5.4cm] current page.south east);
 \end{tikzpicture}
 }
-\newcommand{\sidesection}[1]{\par\vspace{0.85em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{black!65}#1}\par\vspace{0.3em}}
+% 0.7em/0.2em, not the roomier 0.85em/0.3em these began at: the band now runs
+% from below a four-line summary down to the provenance note with six sections
+% in it, and the looser leads overflow into the note. Do not treat these as free
+% parameters — plain pdftotext's column detection keys on how sidebar blocks
+% align against the main column's records, and 0.65em (which frees more room
+% still) strands the Doctoral Researcher bullets 39 lines from their heading.
+\newcommand{\sidesection}[1]{\par\vspace{0.7em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{black!65}#1}\par\vspace{0.2em}}
 
 \hyphenation{Schrö-ding-er}
 
@@ -237,7 +243,14 @@
 % whole main column as one run. The band's top strip is deliberately left empty
 % — a pointer to the academic CV lived there, but the publications block already
 % carries that URL where a reader wants it.
-\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-4.9cm] current page.north east) {%
+%
+% The offset is absolute, so it does not track the summary: at -4.9cm, which
+% cleared a three-line summary by 0.02cm, the fourth line reached 5.55cm and
+% "Skills" shared a band with it — poppler spliced the heading into the summary
+% and stranded the Doctoral Researcher bullets 79 lines from their heading.
+% -5.4cm puts the first block at 5.60cm. Any further growth of the summary has
+% to move this too.
+\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-5.4cm] current page.north east) {%
 \begin{minipage}[t]{3.9cm}
 \raggedright\setlength{\parskip}{1.5pt}\footnotesize
 \sidesection{Skills}
