@@ -15,10 +15,10 @@ statement: |
 industry:
   tagline: "Machine learning for physical simulation: from methods to production software"
   summary: >-
-    Research leader building machine-learned methods for quantum chemistry and
-    getting them into the codes people actually run.
-    **Skala**, which I co-lead in Microsoft Research, is reaching third-party codes,
-    **libMBD** ships inside FHI-aims and Quantum ESPRESSO,
+    I build machine-learned methods for quantum chemistry and get them
+    into the codes people actually run.
+    **Skala**, which I co-lead at Microsoft Research, reaches third-party codes,
+    **libMBD** ships in FHI-aims and Quantum ESPRESSO,
     and **DeepQMC** has a growing userbase.
   contact_keys: [email, URL, GitHub, LinkedIn]
   production_codes: [VASP, Q-Chem, FHI-aims, DFTB+, Quantum ESPRESSO, CP2K]
