@@ -218,6 +218,17 @@ def check_completeness(ctx):
             f'hub repos missing from the software list: {", ".join(sorted(missing))}'
         )
 
+    # Every repo this CV lists must have been crawled, or it renders with no
+    # stars and no description and nothing says so. fetch.py holds the crawl
+    # list in its own REPOS constant -- deliberately, so that editing the CV
+    # cannot force a live fetch -- so the two can only be kept in step by
+    # checking them against each other here.
+    if unfetched := sw_repos - ctx.get('_fetched_repos', sw_repos):
+        problems.append(
+            'repos in the software list that fetch.py does not crawl (add them '
+            f'to REPOS in fetch.py): {", ".join(sorted(unfetched))}'
+        )
+
     for talks in ctx.get('presentations', {}).values():
         for talk in talks:
             title = talk.get('title')
@@ -375,6 +386,10 @@ def render_hub_sections(ctx):
 
 def apply_derived(ctx, derived):
     software = derived.get('software', {})
+    # Which repos the crawl actually covered, for check_completeness. fetch.py
+    # carries its own REPOS list and reads nothing from data/, so this is where
+    # a repo added to cv.yaml and not to fetch.py becomes visible.
+    ctx['_fetched_repos'] = set(software)
     for item in ctx['software']:
         gh = item.get('github')
         if gh in software:
@@ -542,7 +557,7 @@ def render(template, ctx, **kwargs):
         item['pdf_url'] = extras['PDF']
         if 'notice' in extras:
             item['pdf_notice'] = extras['notice']
-        if item['id'] in ctx['keypubs']:
+        if ctx['keypubs'].get(item['id'], {}).get('star'):
             item['star'] = True
     # Lookups for the tool-hub homepage: a reference by id, and talks bucketed
     # into the hubs.

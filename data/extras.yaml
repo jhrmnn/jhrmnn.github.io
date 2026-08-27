@@ -99,8 +99,25 @@ ref_extras:
   OuyangJCTC21:  # 10.1021/acs.jctc.1c00782 — Anisotropic interlayer force field for transition metal dich
     PDF: https://pub.hrmnn.net/63/38feae25/acs.jctc.1c00782.pdf
 keypubs:
-  - HermannNC20  # 10.1038/s41557-020-0544-y
-  - HermannNC17  # 10.1038/ncomms14052
-  - HermannPRL20  # 10.1103/physrevlett.124.146401
-  - HermannCR17  # 10.1021/acs.chemrev.6b00446
-  - HermannJCTC18  # 10.1021/acs.jctc.7b01172
+  Luise25:
+    authors: "G. Luise et al., incl. **JH**"
+    credit: co-lead
+  FosterNC26:
+    authors: "N. Foster et al. & **JH**"
+  HermannNRC23:
+    authors: "**JH** et al."
+  HermannNC20:  # 10.1038/s41557-020-0544-y
+    star: true
+    authors: "**JH**, Z. Schätzle & F. Noé"
+  HermannPRL20:  # 10.1103/physrevlett.124.146401
+    star: true
+  HermannJCP23:
+    authors: "**JH** et al."
+  HermannCR17:  # 10.1021/acs.chemrev.6b00446
+    star: true
+    authors: "**JH**, R. A. DiStasio, Jr. & A. Tkatchenko"
+    title: "First-principles models for van der Waals interactions in molecules and materials"
+  HermannNC17:  # 10.1038/ncomms14052
+    star: true
+  HermannJCTC18:  # 10.1021/acs.jctc.7b01172
+    star: true

@@ -7,6 +7,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists apt-get update && \
         latexmk \
         pandoc \
         pipx \
+        poppler-utils \
         python3-pip \
         python3-venv \
         texlive-base \

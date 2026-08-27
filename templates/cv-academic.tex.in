@@ -1,0 +1,377 @@
+% vim: set ft=tex
+\documentclass[10pt]{article}
+
+\usepackage[no-math]{fontspec}
+\usepackage[a4paper,left=0cm,right=2cm,top=3.75cm,bottom=1.5cm]{geometry}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{longtable}
+\usepackage{enumitem}
+\usepackage{hanging}
+\usepackage{needspace}
+\usepackage[nobottomtitles*]{titlesec}
+\usepackage{everypage}
+\usepackage[normalem]{ulem}
+\usepackage{svg}
+\svgpath{{assets/}}
+\usepackage{pifont}
+\newcommand{\bigwhitestar}{\mbox{\ding{73}}}
+
+\setmainfont{Baskerville10Pro}[
+  Path = fonts/Baskerville 10 Pro/,
+  Ligatures = TeX,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*-Medium},
+  FontFace = {sb}{it}{*-MediumItalic},
+]
+\newfontfamily\largefont{Baskerville120Pro}[
+  Path = fonts/Baskerville 120 Pro/,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*Medium},
+  FontFace = {sb}{it}{*Medium-Italic},
+]
+\setmonofont{iosevka-fixed-curly-slab}[
+  Path = fonts/Iosevka/,
+  Extension = .ttf,  % chktex 26
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Scale = MatchLowercase,
+]
+\DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
+\DeclareTextFontCommand{\textsb}{\sbseries}
+
+% TeX widens the space after a period that follows a lowercase letter, taking it
+% for a sentence end. Here that is almost always an abbreviation instead --
+% Nat. Commun., Phys. Rev. Lett., et al. -- and each one costs about 0.9pt of
+% false gap. Initials are already safe, since a capital before the period
+% suppresses the widening; it is the journal names that need this. The trade is
+% that genuine sentence ends lose the wider space too.
+\frenchspacing
+
+\setlist{nosep,leftmargin=0.5cm,labelsep=0.35cm}
+
+\pagestyle{empty}
+
+\setcounter{secnumdepth}{0}
+\titleformat{\section}{\largefont\fontsize{16pt}{20pt}%
+    \selectfont\color{black!65}\vspace{0.8em}}{\thesection}{}{}
+\titlespacing*{\section}{5cm}{0pt}{1em}
+\titleformat{\subsection}{\large\sbseries\vspace{0.4em}}{\thesubsection}{}{}
+\titlespacing*{\subsection}{5cm}{0pt}{0.3em}
+% Keep a heading from being stranded at the page bottom: if fewer than this
+% much vertical space remains, titlesec moves the heading to the next page so
+% it stays with the first rows of its block (which live in a page-breaking
+% longtable and would otherwise flow over on their own).
+\renewcommand{\bottomtitlespace}{6\baselineskip}
+
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+
+\setlength{\ULdepth}{1.8pt}
+
+\makeatletter
+\def\SmallDotuline#1{\bgroup%
+  \UL@setULdepth%
+  \markoverwith{\begingroup
+     \advance\ULdepth0.08ex 
+     \lower\ULdepth\hbox{\scalebox{0.4}{.}\kern#1}%
+     \endgroup}%
+  \ULon}
+\makeatother
+
+\urlstyle{same}
+\newcommand{\udot}[1]{\SmallDotuline{0pt}{#1}}
+\let\oldurl\url%
+\renewcommand{\url}[1]{\udot{\oldurl{#1}}}
+\let\oldhref\href%
+\renewcommand{\href}[2]{\oldhref{#1}{\udot{#2}}}
+
+\newenvironment{cvblock}{%
+  \setlength{\tabcolsep}{0pt}
+  \begin{longtable}{p{4.5cm}p{0.5cm}p{14.5cm}}}{%
+  \end{longtable}}
+
+\newenvironment{cvblock2}{%
+  \setlength{\tabcolsep}{0pt}
+  \begin{longtable}{p{4.5cm}p{0.5cm}p{13.5cm}p{1.0cm}}}{%
+  \end{longtable}}
+
+\AddEverypageHook{
+\begin{tikzpicture}[overlay,remember picture]
+     \draw [draw=none, fill=black!30]
+    	(current page.north west)
+    	rectangle
+    	([xshift=4.5cm] current page.south west);
+\end{tikzpicture}
+}
+
+\renewcommand{\strong}[1]{\textsb{#1}}
+
+\hyphenation{Schrö-ding-er}
+
+<+ macro talk_block(talks) +>  % chktex 36
+{\footnotesize
+\begin{cvblock}
+<+ for year, items in talks|groupby("year")|sort(reverse=True) +>  % chktex 18 chktex 36
+<+ for item in items +>
+\hfill\color{white}<+ if loop.first +><< year|dateformat >><+ else +>$\bullet$\hspace{0.6em}<+ endif +> &&
+\hangpara{1.5em}{1}<+ if item.title +>``
+<+- if item.url +>\href{<< item.url >>}{<< item.title >>}<+ else +><< item.title >><+ endif +>''
+<+- endif -+>
+<+ if item.event +><+ if item.title +>~$\cdot$ <+ endif +><+ if item.event_url +>\href{<< item.event_url >>}{<< item.event >>}<+ else +><< item.event >><+ endif +><+ endif +>
+<+- if item.where +><+ if item.title or item.event +> (<+ endif +><< item.where >>)<+ endif +>
+<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+<+ endmacro +>
+
+<+ macro link(data) +>\href{<< data[1] >>}{<< data[0] >>}<+ endmacro +>
+
+<+ macro pub_block(types, by_year=false) +>
+{\small
+\begin{cvblock2}
+<+ for item in references|selectattr("type", "in", types)|sortrefs +>
+<+ set title, authors, ref = item|reftomd +>
+<+ if not loop.first +>\\<+ endif +>
+\hfill\color{white}<+ if loop.first and false +><< year|dateformat >><+ else +><+ if settings.with_stars and item.star +>{\large$\mathbf{\bigwhitestar}$}<+ else +>$\bullet$<+ endif +>\hspace{0.6em}<+ endif +> &&
+\hangpara{1.5em}{1}<< title >>~$\cdot$ << authors >>~$\cdot$ << ref >> &
+\hfill<+ if item.cited_by +><< item.cited_by >><+ endif +>
+<+ endfor +>
+\end{cvblock2}}
+<+ endmacro +>
+
+\begin{document}
+
+<+ if settings.pic +>
+\begin{tikzpicture}[overlay,remember picture]
+    \node [anchor=north] at ([xshift=4.5cm, yshift=-0.8cm] current page.north west) {\includegraphics[width=5.5cm]{<< settings.pic >>}};
+\end{tikzpicture}
+<+ endif +>
+
+\vspace{-2.25cm}
+{\raggedleft%
+ {\itshape\color{black!60}
+  <+ for item in ["URL", "ORCID"] +>
+  << item >>\@: \href{<< contact[item][1] >><< contact[item][0] >>}{<< contact[item][0] >>} \\
+  <+ endfor +>
+ \vspace{0.6cm}
+ {\footnotesize(\href{https://hrmnn.net/cv-academic.pdf}{generated} on <+ if settings.generated +>\href{<< settings.generated >>}{\today}<+ else +>\today<+ endif +>)}
+} \\
+ %
+ \vspace{1.5cm}
+ %
+ {\sbseries\largefont\Huge
+  \textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}} \\}
+%
+\vspace{0.8cm}
+
+<+ if settings.with_statement +>
+\begin{cvblock}%
+\hfill && << statement >>
+\end{cvblock}
+<+ endif +>
+
+\section{Employment}
+
+\begin{cvblock}
+<+ for item in employment +>
+  && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
+  <+ for position in item.positions +>
+  \hfill\color{white}<< position.date|dateformat >> &&
+  << position.role >>~$\cdot$ << position.dept >><+ if not loop.last +>\\
+  <+ endif +>
+  <+ endfor +><+ if not loop.last +>\\[6pt]
+  <+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Education}
+
+\begin{cvblock}
+<+ for item in education +>
+  && \textsb{<< item.university >>}<+ if item.location +>, << item.location >><+ endif +> \\
+  <+ for degree in item.degrees +>
+    \hfill\color{white}<< degree.date|dateformat >> &&
+    \textbf{<< degree.degree >>} in \textbf{<< degree.field >>}<+ if degree.note +>~$\cdot$ \emph{<< degree.note >>}<+ endif +>
+    <+ if not loop.last +>\\
+    <+ endif +>
+  <+ endfor +><+ if not loop.last +>\\[6pt]
+  <+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Secondary appointments}
+
+\begin{cvblock}
+<+ for item in secondary +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\hangpara{1.5em}{1}<< item.role >>~$\cdot$ << item.where >>
+<+ if item.subtitle +>\newline
+<< item.subtitle >>
+<+ endif +><+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Awards}
+
+\begin{cvblock}
+<+ for item in awards +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\textsb{<< item.title >>}<+ if item.institution +>~$\cdot$ << item.institution >><+ endif +>
+<+ if item.note +> \emph{[<< item.note >>]}<+ endif +>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Funding}
+
+\begin{cvblock}
+<+ for item in funding +>
+\hfill\color{white}<< item.date|dateformat >> &&
+\hangpara{1.5em}{1}<< item.label >>~$\cdot$ ``<< item.title >>''~$\cdot$ \textbf{<< item.sum >>}
+<+ if item.subtitle +>\newline
+<< item.subtitle >>
+<+ endif +><+ if not loop.last +>\\<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Professional activities}
+
+\begin{cvblock}
+<+ for item in activity +>
+\hfill\color{white}$\bullet$\hspace{0.6em} &&
+\hangpara{1.5em}{1}<< item >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+\section{Teaching \& mentoring}
+
+\vspace{-0.4em}
+\subsection{Professional mentorship}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in mentorship +>
+\hfill\color{white}<< item.date|dateformat >> &&
+ << item.who >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\subsection{Lectures for students}
+
+<< talk_block(lectures) >>  % chktex 36
+
+\subsection{Doctoral committees}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in defense +>
+\hfill\color{white}<< item.date|dateformat >> &&
+ << item.who >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\section{Public outreach}
+
+{\footnotesize
+\begin{cvblock}
+<+ for item in outreach +>
+\hfill\color{white}<< item.date|dateformat >> &&
+<< item.what >>
+<+ if not loop.last +>\\
+<+ endif +>
+<+ endfor +>
+\end{cvblock}}
+
+\section{Software}
+
+\begin{cvblock}
+<+ for item in software +>
+\hfill\color{white}$\bullet$\hspace{0.6em} &&
+\textbf{<< item.name >>}~$\cdot$ << item.role >>\hfill{\itshape\small\url{<< item.url >>}<+ if item.stars +> (<< item.stars >> stars)<+ endif +>}  % chktex 6
+<+ if item.description +>\newline
+<< item.description >><+ endif +>
+<+ if not loop.last +>\\[2pt]
+<+ endif +>
+<+ endfor +>
+\end{cvblock}
+
+% The Presentations header spans a section title, an intro note and a
+% subsection title before the first talk appears. nobottomtitles* only
+% guards a single title, so the header could sit at a page bottom with no
+% actual talk beneath it. Reserve enough room for the whole header plus the
+% first subsection's own bottom-title allowance; otherwise start it on the
+% next page (a conditional replacement for the former hard \newpage).
+\needspace{12\baselineskip}
+\section{Presentations}
+
+\begin{cvblock}%
+\hfill && \vspace{-\baselineskip}\begin{itemize}%
+\item Includes future presentations
+\end{itemize}\vspace{-0.7\baselineskip}
+\end{cvblock}
+
+\vspace{-0.4em}
+\subsection{Invited conference talks}
+
+<< talk_block(presentations.invited) >>  % chktex 36
+
+\subsection{Contributed conference talks}
+
+<< talk_block(presentations.contributed) >>  % chktex 36
+
+\subsection{Conference poster presentations}
+
+<< talk_block(presentations.posters) >>  % chktex 36
+
+\subsection{Invited seminars}
+
+<< talk_block(presentations.seminars) >>  % chktex 36
+
+\section{Publications}
+
+\begin{cvblock}%
+\hfill && \vspace{-\baselineskip}\begin{itemize}%
+<+ if settings.with_stars +>
+\item Most important publications marked with a star
+<+ endif +>
+\item Citation numbers (on the right) from \href{https://scholar.google.com/citations?user=5TjVq0YAAAAJ}{Google Scholar}
+\end{itemize}\vspace{-\baselineskip}
+
+\end{cvblock}
+
+\subsection{Research articles}
+
+<< pub_block(["article-journal", "article"], by_year=true) >>
+
+\subsection{Book chapters}
+
+<< pub_block(["chapter"]) >>
+
+\subsection{Theses}
+
+<< pub_block(["thesis"]) >>
+
+\end{document}

@@ -68,8 +68,8 @@ jobs:
       - name: Detect changes to fetch inputs
         id: filter
         run: |
-          # The fetch step crawls live sources from these inputs. When a push or
-          # PR touches one, run a real fetch so the change is exercised end to
+          # The fetch step crawls live sources. When a push or PR changes what
+          # or how it crawls, run a real fetch so the change is exercised end to
           # end instead of silently reusing the previous run's artifact.
           # The Makefile is intentionally excluded: its fetch recipe is a thin
           # wrapper and rarely changes, whereas most edits (build wiring, the
@@ -77,22 +77,44 @@ jobs:
           # fetch behaviour lives in fetch.py/common.py/reuse_data.py, which do
           # trigger here. This keeps unrelated Makefile edits from forcing a
           # live crawl (and inheriting flaky upstream rate limits) on every PR.
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            base="${{ github.event.pull_request.base.sha }}"
-          else
-            base="${{ github.event.before }}"
-          fi
+          #
+          # data/* is excluded for the same reason, and now truthfully: fetch.py
+          # reads nothing from it. The repo list it used to take from cv.yaml is
+          # a constant there, and render.py fails the build if the two drift.
+          # While data/* was listed, every reworded CV bullet re-crawled all
+          # five sources -- nine crawls in ninety minutes on one afternoon of
+          # prose edits, which is what earned a 429 from Publons.
+          #
+          # The base is the branch's previous head, not the PR base: we ask
+          # whether THIS push touched a fetch input, not whether the PR as a
+          # whole does. Diffing against the PR base meant a PR containing one
+          # fetch.py commit re-crawled on every later push, however unrelated --
+          # so a run of prose edits on top of such a PR kept hitting the rate
+          # limit. github.event.before carries the pre-push head on both `push`
+          # and `pull_request` (synchronize) events; it is absent on a freshly
+          # opened PR, where the guard below falls back to a full crawl anyway.
+          #
+          # The cost is a looser guarantee: a fetch.py change followed by a push
+          # that does not touch it merges without the final state being crawled
+          # on the PR. The commit that changed it was crawled when it was pushed,
+          # and the scheduled run on main crawls daily, so the gap is one PR's
+          # merge state, not the change going wholly untested.
+          base="${{ github.event.before }}"
           if [ -z "$base" ] || ! git rev-parse -q --verify "$base^{commit}" >/dev/null; then
-            # No usable base (e.g. main's first commit, force-push): err on the
-            # side of running fetch.
+            # No usable base (opened PR, main's first commit, force-push): err on
+            # the side of running fetch.
             changed="$(git ls-files)"
           else
+            # HEAD is the PR merge commit on pull_request events; since main is
+            # not moving under these PRs, before..HEAD is the push delta. If main
+            # advances, the merge can add its files here -- a spurious crawl, the
+            # safe direction, never a missed one.
             changed="$(git diff --name-only "$base" HEAD)"
           fi
           fetch=false
           while IFS= read -r f; do
             case "$f" in
-              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock|data/*)
+              fetch.py|common.py|reuse_data.py|pyproject.toml|poetry.lock)
                 fetch=true
                 break
                 ;;
@@ -205,6 +227,10 @@ jobs:
         run: poetry run make
         env:
           FLAGS: --generated=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: Check CV text extraction
+        run: |
+          poetry install --only main,test
+          poetry run make check-cv
       - uses: actions/upload-pages-artifact@v3
       # Loose copy of the rendered site for the Cloudflare preview job;
       # upload-pages-artifact above packs a Pages-only tarball that Wrangler

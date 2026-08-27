@@ -10,6 +10,10 @@ beautifulsoup4 = "^4.11"
 iso4 = "^0.0.2"
 nltk = "^3.9"
 
+[tool.poetry.group.test.dependencies]
+pymupdf = "*"
+"pdfminer.six" = { version = "*", python = ">=3.10" }
+
 [tool.poetry.group.dev.dependencies]
 flake8 = "^3.5"
 flake8-bugbear = ">=19"

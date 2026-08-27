@@ -15,7 +15,7 @@ vpath %.jpeg assets
 
 all: cv notes
 
-cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv.txt cv.yaml profile-pic-web.png)
+cv: $(addprefix $(OUTDIR)/,index.html cv.pdf cv-academic.pdf cv-academic.txt cv.yaml profile-pic-web.png)
 
 POSTS = $(wildcard posts/*.md)
 
@@ -33,7 +33,7 @@ $(OUTDIR)/notes/index.html: posts.py render.py common.py $(POSTS) \
 # Refresh the data by crawling live sources; run on schedule/dispatch and on
 # pushes/PRs that touch the fetch inputs.
 fetch: | $(BLDDIR)
-	./fetch.py $(CTX) -o $(DERIVED)
+	./fetch.py -o $(DERIVED)
 
 # Verify a freshly fetched dataset hasn't regressed against the last published
 # one (run after `make fetch`).
@@ -44,6 +44,16 @@ check:
 # list and its substance (run after `make fetch`, gated to pushes to main).
 check-sources:
 	./check_sources.py $(DERIVED)
+
+# Report how the industry CV (cv.pdf) survives the parser families an
+# applicant-tracking system might use: the name and contact must lead, each job
+# record must come out whole, and the main column's landmarks must stay in
+# document order. Needs the `test` dependency group and poppler-utils; an
+# extractor that will not load is itself a failure, so a thin environment
+# cannot report green on a subset. Every check is a hard failure -- the script
+# exempts nothing, because it no longer asks for perfect column contiguity.
+check-cv: $(OUTDIR)/cv.pdf
+	./check_cv_parsing.py $<
 
 # Otherwise reuse the most recent data artifact from a previous run.
 $(DERIVED): | $(BLDDIR)
@@ -103,6 +113,7 @@ FORCE:
 dev:
 	printf '%s\n' render.py templates/index.html.in templates/_head.html templates/_footer.html $(wildcard data/*) templates/styles.css | entr make $(OUTDIR)/index.html & \
 	printf '%s\n' posts.py render.py templates/post.html.in templates/blog.html.in templates/_head.html templates/_footer.html templates/styles.css $(POSTS) | entr make $(OUTDIR)/notes/index.html & \
-	printf '%s\n' render.py templates/cv.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv.txt & \
+	printf '%s\n' render.py templates/cv-academic.txt.in $(wildcard data/*) | entr make $(OUTDIR)/cv-academic.txt & \
+	printf '%s\n' render.py templates/cv-academic.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv-academic.pdf & \
 	printf '%s\n' render.py templates/cv.tex.in $(wildcard data/*) | entr make $(OUTDIR)/cv.pdf & \
 	python3 -m http.server -b 0.0.0.0 -d $(OUTDIR)
