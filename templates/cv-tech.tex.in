@@ -106,13 +106,13 @@
 
 % Main-column headings outrank the sidebar's: larger, accented, ruled.
 \titleformat{\section}{\largefont\fontsize{13pt}{15pt}\selectfont\color{accent}}{\thesection}{}{}[{\color{accent!25}\titlerule[0.5pt]}]
-\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\section}{0pt}{1.7em}{0.5em}
 
 % Roomier than the research CV's list (topsep/itemsep 1.5pt there): this variant
 % carries fewer, shorter bullets, so a more generous rhythm fills the page the
 % collapsed publication block would otherwise leave short — see the experience
 % inter-record \vspace and \section spacing below, all raised for the same reason.
-\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=3pt,itemsep=3.5pt,
+\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=3pt,itemsep=4.5pt,
   label=\textcolor{black!40}{$\bullet$}}
 
 \setlength{\ULdepth}{1.8pt}
@@ -189,7 +189,7 @@
 {\small\renewcommand{\udot}[1]{#1}%
 \textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
 \emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
-\vspace{0.35em}
+\vspace{0.45em}
 \begin{itemize}\small
 <+ for b in job.tech +>
 \item << b >>
@@ -200,7 +200,7 @@
    extraction — larger is safer for that, not riskier (see cv.tex.in for the
    0.4em-was-too-tight measurements). The page has ample slack here, so 1.5em
    sits well clear of both failure modes. #>
-<+ if not loop.last +>\vspace{1.5em}<+ endif +>
+<+ if not loop.last +>\vspace{2.1em}<+ endif +>
 <+ endfor +>
 <+ endmacro +>
 
@@ -321,7 +321,7 @@
    list to the academic CV; the counts come from the live data so they never
    drift from the research CV's header. This is what frees roughly a third of the
    page, and that space is deliberately left as white space, not backfilled. #>
-\vspace{1.1em}
+\vspace{1.4em}
 {\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
 \textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
  Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
