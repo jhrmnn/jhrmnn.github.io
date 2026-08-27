@@ -289,8 +289,11 @@
 <+ endfor +>
 
 \sidesection{Awards}
-<# Derived from the CV's own `awards`, so the wording lives in one place. #>
-<+ for item in awards +>
+<# Derived from the CV's own `awards`, so the wording lives in one place.
+   `industry: false` on an award keeps it out of this column while leaving it
+   on the academic CV and the homepage, which read the same block. Opt-out, so
+   a newly added award shows up here without needing to be marked. #>
+<+ for item in awards if item.industry is not defined or item.industry +>
 {\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{1pt}
 <+ endfor +>
 

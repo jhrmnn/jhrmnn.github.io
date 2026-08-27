@@ -145,6 +145,10 @@ awards:
 - date: Jan 2014
   title: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html) for the best science graduate"
   institution: Charles University
+  # Kept on the academic CV and the homepage, off the one-pager's sidebar.
+  # Opt-out rather than opt-in: an award added here should reach every
+  # document by default, as the rest of this block does.
+  industry: false
 - date: Jul 2008
   title: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual)"
   institution: 39th International Physics Olympiad
