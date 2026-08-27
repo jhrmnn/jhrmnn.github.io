@@ -82,10 +82,10 @@ employment:
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
     industry:
-    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a 60-year-old challenge in quantum chemistry by establishing a new accuracy–cost frontier
-    - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols)
-    - "Drives adoption into third-party codes (announced in CP2K, with VASP, ORCA, Turbomole, and Psi4 in progress)"
-    - "Pilots the technology in industrial R&D through partnerships and collaborations"
+    - Co-leads **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across machine learning, quantum chemistry and HPC), a machine-learned exchange–correlation functional that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in quantum chemistry by establishing a new accuracy–cost frontier
+    - Leads the data workstream (in-house training-data generation and academic collaborations on data-generation protocols), with MSR Accurate Chemistry Collection as its public venue, carrying a [150,000 coupled cluster](link) dataset, the largest of its kind
+    - "Drives adoption into third-party codes ([announced in CP2K](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), with ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress)"
+    - "Pilots the technology in industrial R&D through an [early access program](https://www.microsoft.com/en-us/research/project/dft/early-access/), with [Flagship Pioneering](https://www.flagshippioneering.com/) as the first partner."
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
