@@ -395,11 +395,13 @@ def apply_derived(ctx, derived):
         if gh in software:
             item.update(software[gh])
     ctx['references'] = derived['references']
+    # Substitute the live Publons review count into cv.yaml's NUMREV placeholder.
+    # When it's unavailable (Publons rate-limited the fetch and no prior value
+    # could be carried forward), drop the token so the bullet still reads
+    # "Peer-reviewed [manuscripts](...)" rather than leaking a literal "NUMREV".
     n_reviews = derived.get('n_reviews')
-    if n_reviews is not None:
-        ctx['activity'] = [
-            a.replace('NUMREV', str(n_reviews)) for a in ctx['activity']
-        ]
+    token = f'{n_reviews} ' if n_reviews is not None else ''
+    ctx['activity'] = [a.replace('NUMREV ', token) for a in ctx.get('activity', [])]
     ctx['custom_data'] = derived.get('custom_data', {})
 
 

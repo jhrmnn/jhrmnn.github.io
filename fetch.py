@@ -16,6 +16,7 @@ from urllib.parse import urlencode
 import requests
 from bs4 import BeautifulSoup
 
+import reuse_data
 from common import reduce_sc, strip_html
 
 MAX_RETRIES = 3
@@ -547,10 +548,26 @@ def update_from_web(ctx, cache):  # noqa: C901
     # source degrading to empty or aborting the run on the first failure.
     errors = []
 
-    def collect(label, func, *args):
+    def is_rate_limited(e):
+        return (
+            isinstance(e, requests.exceptions.HTTPError)
+            and e.response is not None
+            and e.response.status_code == 429
+        )
+
+    # A Publons/WoS rate-limit (HTTP 429) is transient and the WoS sources are
+    # optional: the cross-check skips an empty WoS list (see check_sources.py) and
+    # the review count is carried forward below. So an `optional` source logs the
+    # 429 and is skipped rather than failing the whole fetch. Any other error (a
+    # persistent 500, an auth failure) still fails, so a genuine problem isn't
+    # silently swallowed.
+    def collect(label, func, *args, optional=False):
         try:
             func(*args)
         except requests.exceptions.RequestException as e:
+            if optional and is_rate_limited(e):
+                logging.warning('%s: rate-limited (429), skipping this source', label)
+                return
             errors.append(f'{label}: {e!r}')
 
     # Zotero is the canonical publication list that citations and the Scholar
@@ -566,22 +583,42 @@ def update_from_web(ctx, cache):  # noqa: C901
 
     collect('Zotero references', lambda: ctx.update(references=fetch_references(cache)))
     collect('ORCID works', lambda: ctx.update(orcid=fetch_orcid(cache)))
-    collect('Web of Science works', lambda: ctx.update(wos=fetch_wos(cache)))
+    collect(
+        'Web of Science works',
+        lambda: ctx.update(wos=fetch_wos(cache)),
+        optional=True,
+    )
     collect('Google Scholar profile', scholar)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [
-            pool.submit(collect, label, func, x)
-            for label, func, x in [
-                *(('GitHub stars', stars, repo) for repo in REPOS),
-                ('Web of Science reviews', reviews, ctx),
-                *(('citations', citations, x) for x in ctx['references']),
-            ]
+            pool.submit(collect, 'Web of Science reviews', reviews, ctx, optional=True),
+            *(
+                pool.submit(collect, label, func, x)
+                for label, func, x in [
+                    *(('GitHub stars', stars, repo) for repo in REPOS),
+                    *(('citations', citations, x) for x in ctx['references']),
+                ]
+            ),
         ]
     # collect() absorbs the request errors; draining the futures re-raises any
     # other exception (a bug, not a fetch failure) instead of losing it in a
     # worker thread.
     for future in concurrent.futures.as_completed(futures):
         future.result()
+    # The review count shares the Publons endpoint with the WoS works and is
+    # rate-limited together; when it was skipped (above), carry the last
+    # published number forward so the CV keeps showing "Peer-reviewed N
+    # manuscripts" rather than losing the figure to a transient 429. n_reviews
+    # only grows (check_derived guards that), so a slightly stale value is a safe
+    # floor. Best-effort: if the previous artifact can't be reached, leave it
+    # unset and let render.py drop the placeholder.
+    if ctx.get('_n_reviews') is None:
+        try:
+            prev = json.loads(reuse_data.latest_derived_bytes())
+        except (requests.exceptions.RequestException, LookupError, KeyError, ValueError):
+            prev = {}
+        if prev.get('n_reviews') is not None:
+            ctx['_n_reviews'] = prev['n_reviews']
     if ctx.get("scholar_cites"):
         refs_by_key = {
             reduce_sc(strip_html(item['title'].lower()))[:120]: item
