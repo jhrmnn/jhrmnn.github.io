@@ -14,9 +14,9 @@ A layout can pass one and fail the others; all three matter.
 
 Before any of them, PAGES asserts the document is still one page. That is
 the whole premise of this CV, and nothing checked it: a summary two words
-too long silently spilled "Mentoring and service" onto a second page while
-every extraction check went on passing, because text that moved to page two
-still extracts in the right order.
+too long silently spilled the main column's last block onto a second page
+while every extraction check went on passing, because text that moved to
+page two still extracts in the right order.
 
 RECORDS replaced an earlier check that demanded the main column extract as
 one uninterrupted run. Two columns of unequal length always displace the
@@ -48,6 +48,7 @@ SIDEBAR_MARKERS = [
     "Education",
     "Awards",
     "Ships inside",
+    "Mentoring and service",
 ]
 
 # A layout-preserving extractor keeps the sidebar in its own column, indented

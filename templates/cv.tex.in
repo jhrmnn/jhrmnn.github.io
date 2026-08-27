@@ -243,7 +243,7 @@
 \sidesection{Skills}
 <+ for s in industry.skills +>
 {\sbseries << s.area >>}\par
-{\color{black!60}<< s["items"] >>}\par\vspace{2pt}
+{\color{black!60}<< s["items"] >>}\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Open source}
@@ -256,7 +256,7 @@
 <+ for name in industry.software +>
 <+ set item = software|selectattr("name", "equalto", name)|first +>
 {\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
-{\color{black!60}<< item.blurb if item.blurb is defined else item.description.rsplit(" (", 1)[0] >>}\par\vspace{2pt}
+{\color{black!60}<< item.blurb if item.blurb is defined else item.description.rsplit(" (", 1)[0] >>}\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Education}
@@ -271,14 +271,14 @@
 <+ endfor +>
 <+ for _, ds in groups.items() +>
 {\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
-{\color{black!60}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{2pt}
+{\color{black!60}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
 <+ endfor +>
 <+ endfor +>
 
 \sidesection{Awards}
 <# Derived from the CV's own `awards`, so the wording lives in one place. #>
 <+ for item in awards +>
-{\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{2pt}
+{\color{black!60}<< item.date.split()[-1] >>} $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>\par\vspace{1pt}
 <+ endfor +>
 
 \sidesection{Ships inside}
@@ -286,6 +286,19 @@
    a boundary invites a question about where it falls. The header metrics lead
    with the first two, the commercial ones. #>
 {\color{black!60}<< industry.production_codes|join(", ") >> \& others}\par
+
+\sidesection{Mentoring and service}
+<# Moved here from the main column, where it sat last. The main column had
+   0.02 cm of slack against the bottom margin while the band ran 2.1 cm short
+   of its footer note, so the page's spare room was all on this side.
+   One item per line rather than the main column's interpunct run: at 3.9 cm
+   the separators would fall mid-item. Items are emitted one at a time so each
+   passes through the markdown finalizer individually — joining them on a
+   separator containing a backslash would make the whole string look like raw
+   TeX and skip conversion. #>
+<+ for item in industry.service +>
+{\color{black!60}<< item >>}\par\vspace{1pt}
+<+ endfor +>
 
 % Plain text, no dotted links: the provenance note was carrying heavier link
 % styling than its importance justifies.
@@ -322,14 +335,5 @@
 \vspace{0.2em}
 {\color{black!60}All << references|length >> works: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
 }
-
-<# Service sits in the main column, not the sidebar: mentoring and peer review
-   are substantive for a research-leadership read, and the sidebar has no room
-   for them once it starts below the header. Items are emitted one at a time so
-   each passes through the markdown finalizer individually — joining them on a
-   separator containing a backslash would make the whole string look like raw
-   TeX and skip conversion. #>
-\section{Mentoring and service}
-{\footnotesize <+ for item in industry.service +><+ if not loop.first +>~$\cdot$~<+ endif +><< item >><+ endfor +>}\par
 
 \end{document}
