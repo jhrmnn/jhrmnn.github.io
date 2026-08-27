@@ -44,15 +44,17 @@ industry:
 # factual and shared (the production-code list), the template reads it from
 # `industry` rather than restating it here.
 tech:
-  tagline: "Technical program leadership: from research to shipped software"
-  # Program and delivery foregrounded; the systems (Skala, the tools) demoted to
-  # "output" and "tools"; quantum chemistry kept once, as domain colour. Held to
-  # roughly the research CV's length so the sidebar's absolute offset still
-  # clears it (see the tex template's node placement note).
+  tagline: "Technical leadership: from research to shipped software"
+  # Leadership and delivery foregrounded; the systems (Skala, the tools) demoted
+  # to "output" and "tools"; quantum chemistry kept once, as domain colour. Held
+  # to roughly the research CV's length so the sidebar's absolute offset still
+  # clears it (see the tex template's node placement note). Deliberately kept
+  # role-agnostic: no "program"/TPM-genre vocabulary in the prose (that lives in
+  # the Skills box, for keyword matching, not here).
   summary: >-
     Research-computing leader who takes large, cross-disciplinary technical
     efforts from concept to shipped software.
-    At Microsoft Research I co-lead a 15+-person program across ML, quantum
+    At Microsoft Research I co-lead a team of 15+ across ML, quantum
     chemistry, and HPC and drive its output into third-party and commercial code.
     Earlier I founded and led a university research group and built open-source
     tools now used across the field.
@@ -64,8 +66,8 @@ tech:
   team_size: "15+"
   tenure: "10+"
   skills:
-  - area: Program delivery
-    items: cross-functional leadership, research-to-production, stakeholder & partner management, 15+-person teams
+  - area: Leadership & delivery
+    items: team leadership, research-to-production, academic & industrial partnerships, 15+ person teams
   - area: Technical breadth
     items: machine learning (PyTorch, JAX), HPC & cloud (Azure), large-scale data pipelines, scientific software
   - area: Engineering
@@ -83,7 +85,7 @@ tech:
     DeepQMC: maintained package with an active user community
     Skala: deep-learned DFT functional, reaching third-party codes
     libMBD: embedded in major production simulation codes
-    Pyberny: molecular-geometry optimizer, adopted downstream
+    Pyberny: molecular-geometry optimizer
   # Flagship venues named in the one-line publications summary; the counts come
   # from the live data, the venues are the credibility signal a screener reads.
   pub_venues: Nature Chem., Nature Rev. Chem., Phys. Rev. Lett.
@@ -143,10 +145,14 @@ employment:
     # are the same as the `industry` bullets above -- 15+ people, 77k energies,
     # six adoption targets -- only the emphasis differs.
     tech:
-    - "Co-lead a **[15+-person program](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that reached a capability the field pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/)."
-    - "Own the data workstream end to end — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scale: 77k coupled-cluster reference calculations run on Azure."
-    - "Drive adoption of the program's output into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress), coordinating across independent external engineering teams."
-    - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners, [Flagship Pioneering](https://www.flagshippioneering.com/) the first."
+    # "machine-learned method" is kept as plain (unlinked) text: it is the phrase
+    # check_cv_parsing.py anchors the Microsoft record on, and a dot-underlined
+    # link would splice its dot-leader through it. The Skala repo link rides the
+    # team phrase instead.
+    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that achieved what the field had pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/)."
+    - "Own the data workstream — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scale: 77k coupled-cluster reference calculations run on Azure."
+    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress), coordinating with the external engineering teams."
+    - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
@@ -166,6 +172,7 @@ employment:
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
     tech:
     - Created **PauliNet**, a first-of-its-kind method, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)** — a maintained open-source package with a user community.
+    - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
@@ -186,6 +193,7 @@ employment:
     - Created **[libMBD](https://github.com/libmbd/libmbd)** and was a core contributor to FHI-aims.
     tech:
     - Built **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in major production simulation codes, and contributed to the FHI-aims code.
+    - First-authored the field's standard review (*Chem. Rev.* 2017).
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
