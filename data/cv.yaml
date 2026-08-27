@@ -93,7 +93,7 @@ employment:
     dept: Department of Mathematics
     industry:
     - Founded and led a group on machine learning for materials science; co-PI on a competitively funded MATH+ project.
-    - Extended deep-learning quantum Monte Carlo to electronic excited states (*Nat. Commun.* 2023) while supervising students and postdocs.
+    - Started independent work on ML for DFT (del Mazo-Sevillano & Hermann, *J. Chem. Phys.* 2023) while supervising students and postdocs.
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
