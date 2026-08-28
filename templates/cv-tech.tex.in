@@ -211,8 +211,13 @@
    below the family's lightest face — so it recedes by both colour and weight
    without a second type size. `\ ` keeps the period from picking up sentence
    spacing. #>
+<# Unlike the research and academic CVs, this variant drops the "Dr." from the
+   name line by default — a program/engineering-leadership reader does not weight
+   it, and the plainer name reads less academic. Set `show_title: true` in the
+   `tech` namespace to bring it back. The -1.55pt hang correction stays: it
+   compensates the 26pt line's first glyph's side bearing whichever word leads. #>
 {\largefont\fontsize{26pt}{28pt}\selectfont
- \hspace*{-1.55pt}\lightface{Dr.}\ \textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
+ \hspace*{-1.55pt}<+ if tech.show_title +>\lightface{Dr.}\ <+ endif +>\textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
 \vspace{0.3em}
 {\itshape\color{black!60}<< tech.tagline >>}\par
 \vspace{0.4em}

@@ -59,6 +59,9 @@ tech:
     Earlier I founded and led a university research group and built open-source
     tools now used across the field.
   contact_keys: [email, URL, GitHub, LinkedIn]
+  # The name line drops the "Dr." by default on this variant (the research and
+  # academic CVs keep it). Uncomment to restore it here.
+  # show_title: true
   # Header metrics recast from research currency (stars, citations) to delivery
   # currency: team scale, shipping outcomes, tenure. Team size matches Skala's
   # "15+" in the employment block below; the code count is the length of
