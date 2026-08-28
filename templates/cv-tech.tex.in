@@ -110,13 +110,14 @@
 
 % Main-column headings outrank the sidebar's: larger, accented, ruled.
 \titleformat{\section}{\largefont\fontsize{13pt}{15pt}\selectfont\color{accent}}{\thesection}{}{}[{\color{accent!25}\titlerule[0.5pt]}]
-\titlespacing*{\section}{0pt}{1.4em}{0.5em}
+\titlespacing*{\section}{0pt}{0.8em}{0.4em}
 
-% Roomier than the research CV's list (topsep/itemsep 1.5pt there): this variant
-% carries fewer, shorter bullets, so a more generous rhythm fills the page the
-% collapsed publication block would otherwise leave short — see the experience
-% inter-record \vspace and \section spacing below, all raised for the same reason.
-\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=3pt,itemsep=3.5pt,
+% The research CV's list spacing, not a roomier one: with the publication block
+% collapsed this variant runs short, and rather than stretch the rhythm to reach
+% the sidebar's depth (which read as padded), it keeps the tight rhythm and lets
+% the page end where it ends — the foot is deliberately left blank. The lowered
+% top margin above keeps that compact block from sitting top-heavy.
+\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=1.5pt,itemsep=1.5pt,
   label=\textcolor{black!40}{$\bullet$}}
 
 \setlength{\ULdepth}{1.8pt}
@@ -193,19 +194,17 @@
 {\small\renewcommand{\udot}[1]{#1}%
 \textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
 \emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
-\vspace{0.45em}
+\vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.tech +>
 \item << b >>
 <+ endfor +>
 \end{itemize}
-<# The gap between records both fills the page (this variant runs short) and
-   separates a record from the sidebar blocks alongside it in a flowed
-   extraction — larger is safer for that, not riskier (see cv.tex.in for the
-   0.4em-was-too-tight measurements). 1.7em, down from a 2.1em that read
-   top-heavy against the lowered start: the freed room moved into the top
-   margin rather than the record gaps. #>
-<+ if not loop.last +>\vspace{1.7em}<+ endif +>
+<# The research CV's 0.7em inter-record gap: enough to separate a record from the
+   sidebar blocks alongside it in a flowed extraction (0.4em was too tight; see
+   cv.tex.in), and no more. This variant deliberately does not stretch the gap to
+   fill the page — the extra room is left as blank space at the foot. #>
+<+ if not loop.last +>\vspace{0.7em}<+ endif +>
 <+ endfor +>
 <+ endmacro +>
 
@@ -332,7 +331,7 @@
    list to the academic CV; the counts come from the live data so they never
    drift from the research CV's header. This is what frees roughly a third of the
    page, and that space is deliberately left as white space, not backfilled. #>
-\vspace{1.2em}
+\vspace{0.7em}
 {\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
 \textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
  Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
