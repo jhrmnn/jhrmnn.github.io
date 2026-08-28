@@ -36,6 +36,62 @@ industry:
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
   # with blurbs shortened from the fetched GitHub descriptions.
   software: [DeepQMC, Skala, libMBD, Pyberny]
+# The technical-program-manager variant (cv-tech.pdf). Same career and the same
+# source facts as `industry` above, reframed from "invents methods" to "leads
+# and ships large cross-disciplinary programs". Numbers are held identical to
+# the research CV on purpose (team scale, code count, dataset size) -- the two
+# documents draw on one reality and must not drift. Where a fact is purely
+# factual and shared (the production-code list), the template reads it from
+# `industry` rather than restating it here.
+tech:
+  tagline: "Technical leadership: from research to shipped software"
+  # Leadership and delivery foregrounded; the systems (Skala, the tools) demoted
+  # to "output" and "tools"; quantum chemistry kept once, as domain colour. Held
+  # to roughly the research CV's length so the sidebar's absolute offset still
+  # clears it (see the tex template's node placement note). Deliberately kept
+  # role-agnostic: no "program"/TPM-genre vocabulary in the prose (that lives in
+  # the Skills box, for keyword matching, not here).
+  summary: >-
+    Research-computing leader who takes large, cross-disciplinary technical
+    efforts from concept to shipped software.
+    At Microsoft Research I co-lead a team of 15+ across ML, quantum
+    chemistry, and HPC and drive its output into third-party and commercial code.
+    Earlier I founded and led a university research group and built open-source
+    tools now used across the field.
+  contact_keys: [email, URL, GitHub, LinkedIn]
+  # The name line drops the "Dr." by default on this variant (the research and
+  # academic CVs keep it). Uncomment to restore it here.
+  # show_title: true
+  # Header metrics recast from research currency (stars, citations) to delivery
+  # currency: team scale, shipping outcomes, tenure. Team size matches Skala's
+  # "15+" in the employment block below; the code count is the length of
+  # industry.production_codes; tenure is deliberately understated ("10+").
+  team_size: "15+"
+  tenure: "10+"
+  skills:
+  - area: Leadership & delivery
+    items: team leadership, research-to-production, academic & industrial partnerships, 15+ person teams
+  - area: Technical breadth
+    items: machine learning (PyTorch, JAX), HPC & cloud (Azure), large-scale data pipelines, scientific software
+  - area: Engineering
+    items: Python, Fortran, open-source maintainership, CI/release engineering
+  # The manuscript-review line from `industry.service` is dropped here -- academic
+  # noise to this reader; the leadership-flavoured items stay.
+  service:
+  - Mentored 7 researchers
+  - 25+ invited talks (Harvard, Caltech, Cambridge)
+  software: [DeepQMC, Skala, libMBD, Pyberny]
+  # Sidebar blurbs reframed toward users and adoption rather than method, keyed
+  # by software name. Override the fetched GitHub descriptions the research CV
+  # sidebar falls back to.
+  software_blurbs:
+    DeepQMC: maintained package with an active user community
+    Skala: ML model for chemistry simulation, reaching third-party codes
+    libMBD: embedded in major production simulation codes
+    Pyberny: molecular-geometry optimizer
+  # Flagship venues named in the one-line publications summary; the counts come
+  # from the live data, the venues are the credibility signal a screener reads.
+  pub_venues: Nature Chem., Nature Rev. Chem., Phys. Rev. Lett.
 contact:
   URL: [hrmnn.net, https://]
   email: [info@hrmnn.net, "mailto:"]
@@ -86,6 +142,20 @@ employment:
     - Lead the data workstream (in-house training-data generation and academic collaborations on data-generation protocols), with the Accurate Chemistry Collection (MSR-ACC) as its public output, carrying an unprecedented dataset of [77k coupled-cluster energies](https://doi.org/10.1038/s41597-026-07200-8).
     - "Drive adoption into third-party codes ([announced in CP2K](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), with ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress)."
     - "Pilot the technology in industrial R&D through the [DFT Research Early Access Program](https://www.microsoft.com/en-us/research/project/dft/early-access/), with [Flagship Pioneering](https://www.flagshippioneering.com/) as the first partner."
+    # Every bullet leads with a verb of leadership/delivery (co-lead, own, drive,
+    # run) and a scope object (program, workstream, adoption, partners); the
+    # science is the object of the sentence, not the subject. Facts and numbers
+    # are the same as the `industry` bullets above -- 15+ people, 77k energies,
+    # six adoption targets -- only the emphasis differs.
+    tech:
+    # "machine-learned method" is kept as plain (unlinked) text: it is the phrase
+    # check_cv_parsing.py anchors the Microsoft record on, and a dot-underlined
+    # link would splice its dot-leader through it. The Skala repo link rides the
+    # team phrase instead.
+    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that achieved what the field had pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/)."
+    - "Own the data workstream — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scale: 77k coupled-cluster reference calculations run on Azure."
+    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress), coordinating with the external engineering teams."
+    - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
@@ -94,11 +164,17 @@ employment:
     industry:
     - Founded and led a group on ML for materials science, and was co-PI on a competitively funded MATH+ project.
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
+    tech:
+    - Founded and led a research group and secured competitive project funding as co-PI.
+    - Delivered a new research direction while managing and mentoring students and postdocs.
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
     industry:
     - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained as a package for users.
+    - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
+    tech:
+    - Created **PauliNet**, a first-of-its-kind method, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)** — a maintained open-source package with a user community.
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
 - institution: University of Luxembourg
   positions:
@@ -107,6 +183,8 @@ employment:
     dept: "[Theoretical Chemical Physics group](https://www.tcpunilu.com) (A. Tkatchenko)"
     industry:
     - Unified many-body dispersion with nonlocal density functionals into one model of van der Waals interactions (*Phys. Rev. Lett.* 2020).
+    tech:
+    - Unified two competing modeling approaches into a single method, published in *Phys. Rev. Lett.*
 - institution: Fritz Haber Institute of the Max Planck Society
   location: Berlin
   positions:
@@ -116,6 +194,9 @@ employment:
     industry:
     - Developed many-body models of van der Waals interactions, and first-authored the field's standard review (*Chem. Rev.* 2017).
     - Created **[libMBD](https://github.com/libmbd/libmbd)** and was a core contributor to FHI-aims.
+    tech:
+    - Built **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in major production simulation codes, and contributed to the FHI-aims code.
+    - First-authored the field's standard review (*Chem. Rev.* 2017).
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
@@ -152,6 +233,11 @@ awards:
 - date: Jul 2008
   title: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual)"
   institution: 39th International Physics Olympiad
+  # Kept on the research one-pager (olympiad medals are recognized currency in
+  # AI-lab culture) but dropped from the tech CV, whose delivery-lead reader
+  # reads an 18-year-old academic prize as noise. `tech: false` is honoured only
+  # by cv-tech.tex.in's awards filter; every other document still shows it.
+  tech: false
 mentorship:
 - date: Sep 2022-Jul 2024
   who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), Master student"

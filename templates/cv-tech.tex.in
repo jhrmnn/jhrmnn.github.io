@@ -1,0 +1,339 @@
+% vim: set ft=tex
+<# Technical-program-manager CV (cv-tech.pdf): a branch of the industry CV
+   (cv.tex.in) that keeps the identical layout system -- two-column, right
+   sidebar, Baskerville, grey band, dot-underlined links -- but reframes the
+   same career from "invents methods and gets them adopted" to "leads large,
+   cross-disciplinary technical efforts and ships them". It reads its own
+   `tech` namespace and each position's `tech` bullets from data/cv.yaml, and
+   pulls purely factual shared lists (the production codes) straight from
+   `industry`. The research CV (cv.tex.in) is left untouched.
+
+   The sidebar sits on the RIGHT. Column-aware extractors read the left column
+   first by geometry, whatever order the content stream is written in, so a left
+   sidebar always precedes the name -- which is what decides whether a candidate
+   record gets created at all. #>
+<+ set accent = "347AB7" +>
+\documentclass[10pt]{article}
+
+\usepackage[no-math]{fontspec}
+
+% Same 14.1cm measure for the main column as a left sidebar would give.
+% top=1.95cm, not the research CV's 1.2cm: with the publications block collapsed
+% this page carries less material, and pinned to a 1.2cm top edge it read
+% top-heavy. Starting the name lower re-centres the column; the sidebar's
+% absolute node offsets below are tuned to this value and move with it.
+\usepackage[a4paper,left=1.1cm,right=6.4cm,top=1.95cm,bottom=1.2cm]{geometry}
+\usepackage{tikz}
+\usepackage{everypage}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}  % \scalebox, for the dotted-underline rule below
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[normalem]{ulem}
+
+\setmainfont{Baskerville10Pro}[
+  Path = fonts/Baskerville 10 Pro/,
+  Ligatures = TeX,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*-Medium},
+  FontFace = {sb}{it}{*-MediumItalic},
+]
+\newfontfamily\largefont{Baskerville120Pro}[
+  Path = fonts/Baskerville 120 Pro/,
+  Extension = .otf,  % chktex 26
+  BoldFont = *-Bold,
+  ItalicFont = *-Italic,
+  BoldItalicFont = *-BoldItalic,
+  FontFace = {sb}{n}{*Medium},
+  FontFace = {sb}{it}{*Medium-Italic},
+]
+\setmonofont{iosevka-fixed-curly-slab}[
+  Path = fonts/Iosevka/,
+  Extension = .ttf,  % chktex 26
+  UprightFont = *-regular,
+  BoldFont = *-bold,
+  ItalicFont = *-italic,
+  BoldItalicFont = *-bolditalic,
+  Scale = MatchLowercase,
+]
+\DeclareRobustCommand{\sbseries}{\fontseries{sb}\selectfont}
+\DeclareTextFontCommand{\textsb}{\sbseries}
+
+% TeX widens the space after a period that follows a lowercase letter, taking it
+% for a sentence end. Here that is almost always an abbreviation instead --
+% Nat. Commun., Phys. Rev. Lett., et al. -- and each one costs about 0.9pt of
+% false gap. Initials are already safe, since a capital before the period
+% suppresses the widening; it is the journal names that need this. The trade is
+% that genuine sentence ends lose the wider space too.
+\frenchspacing
+
+% Baskerville 120 Pro ships no Light -- Regular is the lightest face in the
+% family, and the name already uses it. To take a word a step below that, draw
+% the glyphs in fill-and-stroke mode (2 Tr) with the stroke in the page colour,
+% which trims the outline inward from its edge. 0.25pt at 26pt sheds about a
+% sixth of the ink; text extraction is untouched, since the glyphs stay real
+% text. Two things this leans on:
+%
+%   - the stroke colour has to be set *after* \color. xcolor sets fill and
+%     stroke together, so an override placed before it is silently replaced,
+%     leaving the stroke at the fill colour -- which thickens the glyphs into a
+%     fake bold rather than thinning them.
+%   - white stroke assumes white behind it. True in the main column; over the
+%     grey band it would need the band's colour instead.
+\newcommand{\lightface}[1]{{\color{black!40}%
+  \special{pdf:literal direct 2 Tr 0.25 w 1 1 1 RG}#1%
+  \special{pdf:literal direct 0 Tr}}}
+
+% One restrained accent, the link blue the website already uses, so the CV and
+% the site read as the same hand. One is the ceiling.
+\definecolor{accent}{HTML}{<< accent >>}
+
+% The sidebar's two greys, in one place because they move together. They are
+% darker than the main column's black!60, which sits on white: the band behind
+% this column is filled black!30, so a grey tuned for white has much less to
+% work against here. Keep the 5-point gap — headings a step darker than the
+% body text they head.
+\colorlet{sidegrey}{black!70}
+\colorlet{sideheading}{black!75}
+
+\hypersetup{pdftitle={Jan Hermann CV},pdfauthor={Jan Hermann}}
+
+\pagestyle{empty}
+\setcounter{secnumdepth}{0}
+\setlength{\parindent}{0pt}
+\emergencystretch=1em
+
+% Main-column headings outrank the sidebar's: larger, accented, ruled.
+\titleformat{\section}{\largefont\fontsize{13pt}{15pt}\selectfont\color{accent}}{\thesection}{}{}[{\color{accent!25}\titlerule[0.5pt]}]
+\titlespacing*{\section}{0pt}{0.8em}{0.4em}
+
+% The research CV's list spacing, not a roomier one: with the publication block
+% collapsed this variant runs short, and rather than stretch the rhythm to reach
+% the sidebar's depth (which read as padded), it keeps the tight rhythm and lets
+% the page end where it ends — the foot is deliberately left blank. The lowered
+% top margin above keeps that compact block from sitting top-heavy.
+\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=1.5pt,itemsep=1.5pt,
+  label=\textcolor{black!40}{$\bullet$}}
+
+\setlength{\ULdepth}{1.8pt}
+
+\makeatletter
+\def\SmallDotuline#1{\bgroup%
+  \UL@setULdepth%
+  \markoverwith{\begingroup
+     \advance\ULdepth0.08ex
+     \lower\ULdepth\hbox{\scalebox{0.4}{.}\kern#1}%
+     \endgroup}%
+  \ULon}
+\makeatother
+
+\urlstyle{same}
+\newcommand{\udot}[1]{\SmallDotuline{0pt}{#1}}
+\let\oldurl\url%
+\renewcommand{\url}[1]{\udot{\oldurl{#1}}}
+\let\oldhref\href%
+\renewcommand{\href}[2]{\oldhref{#1}{\udot{#2}}}
+
+\renewcommand{\strong}[1]{\textsb{#1}}
+
+% The band is an every-page hook (not a one-off) so that an overflow second
+% page stays styled.
+\AddEverypageHook{
+\begin{tikzpicture}[overlay,remember picture]
+     \draw [draw=none, fill=black!30]
+    	(current page.north east)
+    	rectangle
+    	([xshift=-5.4cm] current page.south east);
+\end{tikzpicture}
+}
+% See cv.tex.in for why these leads are tuned tight rather than left loose: the
+% sidebar's block placement is what plain pdftotext keys its column detection on.
+\newcommand{\sidesection}[1]{\par\vspace{0.7em}{\largefont\fontsize{11pt}{13pt}\selectfont\color{sideheading}#1}\par\vspace{0.2em}}
+
+\hyphenation{Schrö-ding-er}
+
+<# Contact entries render their own destination as the visible text, so the
+   address survives a parser that strips link annotations. Unlike the research
+   CV's contact line, this variant omits Google Scholar: it is an academic signal
+   in the most-read block, and the publications one-liner at the foot already
+   links the full record for anyone who wants it. #>
+<+ macro contact_line() +>
+<+- set parts = [] +>
+<+- for key in tech.contact_keys +>
+<+- set val = contact[key][0] +>
+<+- set pre = contact[key][1] +>
+<+- set disp = val if pre.startswith("mailto:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
+<+- set _ = parts.append("\\href{" ~ pre ~ val ~ "}{" ~ disp ~ "}") +>
+<+- endfor +>
+<< parts|join("~$\\cdot$~") >>
+<+- endmacro +>
+
+<# Experience is the CV's own `employment`, flattened. A position appears here
+   only if it carries a `tech` list, which is also its bullets — so the
+   undergraduate assistantship drops out without needing a flag. The company
+   line is composed from the same dept and institution the academic CV prints
+   separately. #>
+<+ macro experience_block() +>
+<+ set jobs = [] +>
+<+ for e in employment +>
+<+ for p in e.positions if p.tech +>
+<+ set _ = jobs.append((p, e)) +>
+<+ endfor +>
+<+ endfor +>
+<+ for job, org in jobs +>
+<# Role and company line both carry the markdown links the academic CV shows, so
+   strip the dotted underline across the whole block: the destinations survive,
+   and the titles stay uniform. The company line runs broadest first, employer
+   then the unit inside it, with the city behind a dash so it does not read as
+   one more level of org chart. #>
+{\small\renewcommand{\udot}[1]{#1}%
+\textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
+\emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
+\vspace{0.15em}
+\begin{itemize}\small
+<+ for b in job.tech +>
+\item << b >>
+<+ endfor +>
+\end{itemize}
+<# The research CV's 0.7em inter-record gap: enough to separate a record from the
+   sidebar blocks alongside it in a flowed extraction (0.4em was too tight; see
+   cv.tex.in), and no more. This variant deliberately does not stretch the gap to
+   fill the page — the extra room is left as blank space at the foot. #>
+<+ if not loop.last +>\vspace{0.7em}<+ endif +>
+<+ endfor +>
+<+ endmacro +>
+
+\begin{document}
+
+<#- ============================ MAIN COLUMN ============================ -#>
+<# The title takes the pale grey "Jan" carries, and \lightface thins it a step
+   below the family's lightest face — so it recedes by both colour and weight
+   without a second type size. `\ ` keeps the period from picking up sentence
+   spacing. #>
+<# Unlike the research and academic CVs, this variant drops the "Dr." from the
+   name line by default — a program/engineering-leadership reader does not weight
+   it, and the plainer name reads less academic. Set `show_title: true` in the
+   `tech` namespace to bring it back. The -1.55pt hang correction stays: it
+   compensates the 26pt line's first glyph's side bearing whichever word leads. #>
+{\largefont\fontsize{26pt}{28pt}\selectfont
+ \hspace*{-1.55pt}<+ if tech.show_title +>\lightface{Dr.}\ <+ endif +>\textsb{\textcolor{black!40}{Jan} \textcolor{black!65}{Hermann}}}\par
+\vspace{0.3em}
+{\itshape\color{black!60}<< tech.tagline >>}\par
+\vspace{0.4em}
+<+ set ncites = custom_data.scholar_citations.value.values()|sum +>
+<# Delivery currency, not research currency: team scale, shipping outcomes,
+   tenure. No stars, no citations, no publication count in this line — those are
+   the wrong signal for a program-leadership screener, and the one credibility
+   line about depth lives under Experience instead. Numbers are held to the same
+   source facts as the research CV: `tech.team_size` matches Skala's headcount,
+   the code count is the shared production-code list, tenure is understated. #>
+{\small\color{black!60}\textsb{<< tech.team_size >>}~person team
+ ~$\cdot$~ships in \textsb{<< industry.production_codes|length >>+}~production codes
+ ~$\cdot$~\textsb{<< tech.tenure >>}~years in research computing}\par
+\vspace{0.3em}
+% Colour-only links: five dot-underlined URLs in a row made the busiest line on
+% the page out of the one a reader should scan fastest.
+{\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
+ Berlin $\cdot$ << contact_line() >>}\par
+\vspace{0.55em}
+{\small << tech.summary >>}\par
+
+<#- ========================= SIDEBAR ========================= -#>
+
+<# Placed here, after the summary, rather than at the end of the document — an
+   overlay tikzpicture occupies no space but is still a box on the vertical list,
+   so at the end of a nearly-full page TeX would break the page to place it and
+   the whole sidebar would land on page 2. See cv.tex.in for the full reasoning;
+   this variant frees a third of the main column by collapsing the publication
+   block to one line, so its page-1 slack is generous and only the sidebar's
+   horizontal alignment against the summary matters. #>
+\begin{tikzpicture}[overlay,remember picture]
+% Sidebar starts below the summary, clear of the name/contact header. The offset
+% is absolute, so it does not track the summary — it is -6.15cm here, the
+% research CV's -5.4cm plus the 0.75cm the lowered top margin pushed the whole
+% header down. Any further movement of the summary has to move this too.
+\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-6.15cm] current page.north east) {%
+\begin{minipage}[t]{3.9cm}
+\raggedright\setlength{\parskip}{1.5pt}\footnotesize
+\sidesection{Skills}
+<+ for s in tech.skills +>
+{\sbseries << s.area >>}\par
+{\color{sidegrey}<< s["items"] >>}\par\vspace{1pt}
+<+ endfor +>
+
+\sidesection{Open source}
+<# Descriptions reframed toward users and adoption, keyed by name in
+   `tech.software_blurbs`; this block is the sidebar's strongest "ships real
+   software" evidence for a program-leadership reader. #>
+<+ for name in tech.software +>
+<+ set item = software|selectattr("name", "equalto", name)|first +>
+{\sbseries\href{<< item.url >>}{<< item.name >>}} $\cdot$ << item.role >><+ if item.stars +> $\cdot$ << item.stars >> stars<+ endif +>\par
+{\color{sidegrey}<< tech.software_blurbs[name] if name in tech.software_blurbs else item.description.rsplit(" (", 1)[0] >>}\par\vspace{1pt}
+<+ endfor +>
+
+\sidesection{Education}
+<# Derived from the CV's own `education` block. Degrees taken at one university
+   at the same level in the same year are merged onto a line (the two B.S.
+   degrees), which is the only way the sidebar's presentation differs from the
+   source. #>
+<+ for school in education +>
+<+ set groups = {} +>
+<+ for d in school.degrees +>
+<+ set _ = groups.setdefault(d.degree ~ " " ~ d.date.split()[-1], []).append(d) +>
+<+ endfor +>
+<+ for _, ds in groups.items() +>
+{\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
+{\color{sidegrey}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
+<+ endfor +>
+<+ endfor +>
+
+\sidesection{Awards}
+<# Derived from the CV's own `awards`, so the wording lives in one place.
+   `industry: false` keeps an award off both one-pagers; `tech: false` keeps it
+   off this variant only (the Olympiad medal), leaving it on the research and
+   academic CVs and the homepage. #>
+<+ for item in awards if (item.industry is not defined or item.industry) and (item.tech is not defined or item.tech) +>
+{\color{sidegrey}<< item.date.split()[-1] >> $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>}\par\vspace{1pt}
+<+ endfor +>
+
+\sidesection{Ships inside}
+<# The production-code list is shared fact, read straight from `industry` rather
+   than restated. "& others" rather than a closed list: the tail is genuinely
+   fuzzy. This reads even better to a program lead than to a researcher. #>
+{\color{sidegrey}<< industry.production_codes|join(", ") >> \& others}\par
+
+\sidesection{Mentoring and service}
+<# The leadership-flavoured items only; the manuscript-review line the research
+   CV carries is dropped in the data, as academic noise to this reader. Items
+   are emitted one at a time so each passes through the markdown finalizer
+   individually. #>
+<+ for item in tech.service +>
+{\color{sidegrey}<< item >>}\par\vspace{1pt}
+<+ endfor +>
+
+\end{minipage}};
+% Pinned to the foot of the band. Size declared as a node option, not in the
+% body, so the note wraps on \scriptsize's own leading (see cv.tex.in).
+\node[anchor=south west, inner sep=0, text width=3.9cm, font=\scriptsize] at ([xshift=-4.6cm, yshift=1.2cm] current page.south east)
+  {\color{sidegrey}(generated on \today, with live citation and star counts)};
+\end{tikzpicture}%
+
+\section{Experience}
+<< experience_block() >>
+
+<# Publications reduced to one line — credibility ballast, not the argument. It
+   names two or three flagship venues (the credibility work) and hands the full
+   list to the academic CV; the counts come from the live data so they never
+   drift from the research CV's header. This is what frees roughly a third of the
+   page, and that space is deliberately left as white space, not backfilled. #>
+\vspace{0.7em}
+{\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
+\textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
+ Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
+
+\end{document}

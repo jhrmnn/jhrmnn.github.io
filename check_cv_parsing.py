@@ -26,12 +26,18 @@ nothing. Landing *inside* a job record costs a lot -- it detaches a title
 from its dates, or strands a job's achievements fifty lines from the job.
 That is the failure worth gating on, and it is what RECORDS measures.
 
+Works on either one-pager: cv.pdf (the research CV) and cv-tech.pdf (the
+technical-program-leadership CV) share this layout but tell the career with
+different landmarks and bullets, so the marker profile is chosen by filename.
+
 Usage:  python3 check_cv_parsing.py cv.pdf
+        python3 check_cv_parsing.py cv-tech.pdf
 Exit:   0 if all extractors pass every check, 1 otherwise.
 """
 
 import subprocess
 import sys
+from pathlib import Path
 
 # --- expectations -----------------------------------------------------------
 
@@ -57,27 +63,67 @@ SIDEBAR_MARKERS = [
 # fires.
 SIDEBAR_COLUMN_INDENT = 40
 
-# Ordered landmarks that belong to the main column narrative.
-MAIN_MARKERS = [
-    "Experience",
-    "Principal Research Manager",
-    "Junior Research Group Leader",
-    "Doctoral Researcher",
-    "Selected publications",
-]
+# The two CVs share this layout and these sidebar sections but tell the career
+# differently, so their main-column landmarks and the bullet phrases that anchor
+# each job record differ. The profile is chosen by filename (see `profile_for`):
+# cv.pdf is the research CV, cv-tech.pdf the technical-program-leadership one.
+# The employment records are what an applicant-tracking system builds its history
+# from: a job title, who it was with, when, and what came of it. All four parts
+# have to stay together for the record to mean anything. Bullet fragments are
+# chosen to be unique in the document -- "Microsoft Research" and "Co-lead" also
+# occur in the summary paragraph, so the fuller company line and a phrase from the
+# bullet stand in for them; the two "Postdoctoral Researcher" titles are left out
+# precisely because they are not unique.
+PROFILES = {
+    "research": {
+        # Ordered landmarks that belong to the main column narrative.
+        "main_markers": [
+            "Experience",
+            "Principal Research Manager",
+            "Junior Research Group Leader",
+            "Doctoral Researcher",
+            "Selected publications",
+        ],
+        "job_records": [
+            ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "60-year-old"),
+            ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
+            ("Doctoral Researcher", "Theory Department", "Oct 2013", "Developed many-body"),
+        ],
+    },
+    "tech": {
+        # The tech CV collapses the publication block to a single "Publications:"
+        # line under Experience, so that -- not "Selected publications" -- is the
+        # closing landmark. The anchoring bullet phrases are the tech-variant
+        # wordings, still each unique in the document.
+        "main_markers": [
+            "Experience",
+            "Principal Research Manager",
+            "Junior Research Group Leader",
+            "Doctoral Researcher",
+            "Publications",
+        ],
+        # The anchoring phrases are plain (unlinked) text sitting in each record's
+        # first bullet: a dot-underlined link (Skala, libMBD) extracts with its
+        # dot-leader spliced through it and, worse, each such leader adds a stray
+        # line that pushes a later bullet out of the record window -- so the
+        # phrases are chosen early in the first bullet and clear of any link.
+        "job_records": [
+            ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "machine-learned method"),
+            ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
+            ("Doctoral Researcher", "Theory Department", "Oct 2013", "embedded in major production"),
+        ],
+    },
+}
 
-# The employment records an applicant-tracking system builds its history from:
-# a job title, who it was with, when, and what came of it. All four parts have
-# to stay together for the record to mean anything. Fragments are chosen to be
-# unique in the document -- "Microsoft Research" and "Co-lead" also occur in the
-# summary paragraph, for instance, so the fuller company line and a phrase from
-# the bullet stand in for them. The two "Postdoctoral Researcher" titles are
-# left out precisely because they are not unique.
-JOB_RECORDS = [
-    ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "60-year-old"),
-    ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
-    ("Doctoral Researcher", "Theory Department", "Oct 2013", "Developed many-body"),
-]
+
+def profile_for(path):
+    """Pick the marker profile by filename: cv-tech.pdf -> tech, else research."""
+    return PROFILES["tech"] if "tech" in Path(path).stem else PROFILES["research"]
+
+
+# Set by main() from the selected profile before the checks run.
+MAIN_MARKERS = PROFILES["research"]["main_markers"]
+JOB_RECORDS = PROFILES["research"]["job_records"]
 
 # How far from its title the rest of a record may sit. Extractors disagree on
 # the order of a right-aligned date (pdfminer emits it before the title,
@@ -229,6 +275,11 @@ def main():
         print(__doc__)
         return 2
     path = sys.argv[1]
+
+    global MAIN_MARKERS, JOB_RECORDS
+    profile = profile_for(path)
+    MAIN_MARKERS = profile["main_markers"]
+    JOB_RECORDS = profile["job_records"]
 
     all_ok = True
     ok, detail = check_pages(path)
