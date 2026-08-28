@@ -153,8 +153,10 @@
 \hyphenation{Schrö-ding-er}
 
 <# Contact entries render their own destination as the visible text, so the
-   address survives a parser that strips link annotations. Google Scholar is the
-   one exception: its URL is a bare user id, useless as visible text. #>
+   address survives a parser that strips link annotations. Unlike the research
+   CV's contact line, this variant omits Google Scholar: it is an academic signal
+   in the most-read block, and the publications one-liner at the foot already
+   links the full record for anyone who wants it. #>
 <+ macro contact_line() +>
 <+- set parts = [] +>
 <+- for key in tech.contact_keys +>
@@ -163,8 +165,6 @@
 <+- set disp = val if pre.startswith("mailto:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
 <+- set _ = parts.append("\\href{" ~ pre ~ val ~ "}{" ~ disp ~ "}") +>
 <+- endfor +>
-<+- set gs = contact["Google Scholar"] +>
-<+- set _ = parts.append("\\href{" ~ gs[1] ~ gs[0] ~ "}{Google Scholar}") +>
 << parts|join("~$\\cdot$~") >>
 <+- endmacro +>
 
@@ -290,9 +290,10 @@
 
 \sidesection{Awards}
 <# Derived from the CV's own `awards`, so the wording lives in one place.
-   `industry: false` on an award keeps it out of this column while leaving it on
-   the academic CV and the homepage. #>
-<+ for item in awards if item.industry is not defined or item.industry +>
+   `industry: false` keeps an award off both one-pagers; `tech: false` keeps it
+   off this variant only (the Olympiad medal), leaving it on the research and
+   academic CVs and the homepage. #>
+<+ for item in awards if (item.industry is not defined or item.industry) and (item.tech is not defined or item.tech) +>
 {\color{sidegrey}<< item.date.split()[-1] >> $\cdot$ << item.title >><+ if item.institution +>, << item.institution >><+ endif +><+ if item.note +> \emph{(<< item.note >>)}<+ endif +>}\par\vspace{1pt}
 <+ endfor +>
 

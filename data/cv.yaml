@@ -86,7 +86,7 @@ tech:
   # sidebar falls back to.
   software_blurbs:
     DeepQMC: maintained package with an active user community
-    Skala: deep-learned DFT functional, reaching third-party codes
+    Skala: ML model for chemistry simulation, reaching third-party codes
     libMBD: embedded in major production simulation codes
     Pyberny: molecular-geometry optimizer
   # Flagship venues named in the one-line publications summary; the counts come
@@ -233,6 +233,11 @@ awards:
 - date: Jul 2008
   title: "[Gold Medal](https://ipho-unofficial.org/timeline/2008/individual)"
   institution: 39th International Physics Olympiad
+  # Kept on the research one-pager (olympiad medals are recognized currency in
+  # AI-lab culture) but dropped from the tech CV, whose delivery-lead reader
+  # reads an 18-year-old academic prize as noise. `tech: false` is honoured only
+  # by cv-tech.tex.in's awards filter; every other document still shows it.
+  tech: false
 mentorship:
 - date: Sep 2022-Jul 2024
   who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), Master student"
