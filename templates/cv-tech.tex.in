@@ -18,7 +18,11 @@
 \usepackage[no-math]{fontspec}
 
 % Same 14.1cm measure for the main column as a left sidebar would give.
-\usepackage[a4paper,left=1.1cm,right=6.4cm,top=1.2cm,bottom=1.2cm]{geometry}
+% top=1.95cm, not the research CV's 1.2cm: with the publications block collapsed
+% this page carries less material, and pinned to a 1.2cm top edge it read
+% top-heavy. Starting the name lower re-centres the column; the sidebar's
+% absolute node offsets below are tuned to this value and move with it.
+\usepackage[a4paper,left=1.1cm,right=6.4cm,top=1.95cm,bottom=1.2cm]{geometry}
 \usepackage{tikz}
 \usepackage{everypage}
 
@@ -106,13 +110,13 @@
 
 % Main-column headings outrank the sidebar's: larger, accented, ruled.
 \titleformat{\section}{\largefont\fontsize{13pt}{15pt}\selectfont\color{accent}}{\thesection}{}{}[{\color{accent!25}\titlerule[0.5pt]}]
-\titlespacing*{\section}{0pt}{1.7em}{0.5em}
+\titlespacing*{\section}{0pt}{1.4em}{0.5em}
 
 % Roomier than the research CV's list (topsep/itemsep 1.5pt there): this variant
 % carries fewer, shorter bullets, so a more generous rhythm fills the page the
 % collapsed publication block would otherwise leave short — see the experience
 % inter-record \vspace and \section spacing below, all raised for the same reason.
-\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=3pt,itemsep=4.5pt,
+\setlist[itemize]{nosep,leftmargin=1em,labelsep=0.45em,topsep=3pt,itemsep=3.5pt,
   label=\textcolor{black!40}{$\bullet$}}
 
 \setlength{\ULdepth}{1.8pt}
@@ -198,9 +202,10 @@
 <# The gap between records both fills the page (this variant runs short) and
    separates a record from the sidebar blocks alongside it in a flowed
    extraction — larger is safer for that, not riskier (see cv.tex.in for the
-   0.4em-was-too-tight measurements). The page has ample slack here, so 1.5em
-   sits well clear of both failure modes. #>
-<+ if not loop.last +>\vspace{2.1em}<+ endif +>
+   0.4em-was-too-tight measurements). 1.7em, down from a 2.1em that read
+   top-heavy against the lowered start: the freed room moved into the top
+   margin rather than the record gaps. #>
+<+ if not loop.last +>\vspace{1.7em}<+ endif +>
 <+ endfor +>
 <+ endmacro +>
 
@@ -250,10 +255,10 @@
    horizontal alignment against the summary matters. #>
 \begin{tikzpicture}[overlay,remember picture]
 % Sidebar starts below the summary, clear of the name/contact header. The offset
-% is absolute, so it does not track the summary — the summary is held to roughly
-% the research CV's length precisely so this same -5.4cm clears it. Any growth of
-% the summary has to move this too.
-\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-5.4cm] current page.north east) {%
+% is absolute, so it does not track the summary — it is -6.15cm here, the
+% research CV's -5.4cm plus the 0.75cm the lowered top margin pushed the whole
+% header down. Any further movement of the summary has to move this too.
+\node[anchor=north west, inner sep=0] at ([xshift=-4.6cm, yshift=-6.15cm] current page.north east) {%
 \begin{minipage}[t]{3.9cm}
 \raggedright\setlength{\parskip}{1.5pt}\footnotesize
 \sidesection{Skills}
@@ -327,7 +332,7 @@
    list to the academic CV; the counts come from the live data so they never
    drift from the research CV's header. This is what frees roughly a third of the
    page, and that space is deliberately left as white space, not backfilled. #>
-\vspace{1.4em}
+\vspace{1.2em}
 {\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
 \textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
  Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
