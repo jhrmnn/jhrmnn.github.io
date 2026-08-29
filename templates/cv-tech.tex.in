@@ -306,12 +306,12 @@
 <+ endfor +>
 
 \sidesection{Ships inside}
-<# The production-code names are cut to a count here, matching the header metric
-   and bullet 3: the specific package names are specialist noise to this reader,
-   and "commercial and open-source" carries the interpretive weight instead. The
-   count is the length of the shared `industry.production_codes` list, so it
-   stays in step with the header's "ships in 6+ production codes". #>
-{\color{sidegrey}<< industry.production_codes|length >>+ production simulation packages, commercial and open-source}\par
+<# The names stay here, cut only from the prose (bullet 3 uses the count): in the
+   sidebar an unfamiliar package name is a skippable credibility hit rather than
+   noise, and a reader who does know the codes gets a concrete anchor. Read
+   straight from the shared `industry.production_codes`; "& others" rather than a
+   closed list, since the tail is genuinely fuzzy. #>
+{\color{sidegrey}<< industry.production_codes|join(", ") >> \& others}\par
 
 \sidesection{Mentoring and service}
 <# The leadership-flavoured items only; the manuscript-review line the research
