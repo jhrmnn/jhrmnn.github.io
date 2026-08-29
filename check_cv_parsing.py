@@ -89,6 +89,7 @@ PROFILES = {
             ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
             ("Doctoral Researcher", "Theory Department", "Oct 2013", "Developed many-body"),
         ],
+        "record_window": 12,
     },
     "tech": {
         # The tech CV collapses the publication block to a single "Publications:"
@@ -118,6 +119,10 @@ PROFILES = {
             ("Junior Research Group Leader", "Free University of Berlin", "Nov 2020", "Founded and led"),
             ("Doctoral Researcher", "Fritz Haber Institute", "Oct 2013", "embedded in major production"),
         ],
+        # See RECORD_WINDOW: the short main column strands the last record's
+        # flush-right date in pdfminer's linearisation (~13 lines); 15 tolerates
+        # that benign spread while still catching a genuinely broken-open record.
+        "record_window": 15,
     },
 }
 
@@ -133,9 +138,20 @@ JOB_RECORDS = PROFILES["research"]["job_records"]
 
 # How far from its title the rest of a record may sit. Extractors disagree on
 # the order of a right-aligned date (pdfminer emits it before the title,
-# poppler after), so the window is measured in both directions. Six lines is
-# the widest gap any current extractor produces; twelve leaves room for that
-# spread without tolerating a sidebar dumped into the middle of a job.
+# poppler after), so the window is measured in both directions. The research
+# CV's records spread to ~10 lines; 12 leaves room for that.
+#
+# The tech CV overrides this to 15 (see the profiles' "record_window"). Its
+# compact, deliberately short main column leaves the LAST record's flush-right
+# date sitting in the sidebar's vertical band, and pdfminer — which reads the
+# right-hand column after the left — then linearises that date ~13 lines from
+# its title (the date is on the title's line visually; the other three
+# extractors keep it within 8). That is a benign linearisation artefact of the
+# short-column layout, not a stranded record: a record actually broken open by
+# the sidebar produces the 39-79 line gaps this guards against, far outside 15,
+# and a sidebar heading landing inside a record's span is caught separately by
+# sidebar_intrusions() regardless of this window. Set per profile, so the
+# research check keeps its tighter bound.
 RECORD_WINDOW = 12
 
 # --- extractors -------------------------------------------------------------
@@ -282,10 +298,11 @@ def main():
         return 2
     path = sys.argv[1]
 
-    global MAIN_MARKERS, JOB_RECORDS
+    global MAIN_MARKERS, JOB_RECORDS, RECORD_WINDOW
     profile = profile_for(path)
     MAIN_MARKERS = profile["main_markers"]
     JOB_RECORDS = profile["job_records"]
+    RECORD_WINDOW = profile.get("record_window", RECORD_WINDOW)
 
     all_ok = True
     ok, detail = check_pages(path)
