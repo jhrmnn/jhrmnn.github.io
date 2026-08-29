@@ -107,10 +107,16 @@ PROFILES = {
         # dot-leader spliced through it and, worse, each such leader adds a stray
         # line that pushes a later bullet out of the record window -- so the
         # phrases are chosen early in the first bullet and clear of any link.
+        # Employer fragments are the flattened, institution-level company lines
+        # (the department/group sub-unit is dropped on this variant). "Microsoft
+        # Research" alone also occurs in the summary, so the location-qualified
+        # form stands in for it; "Free University of Berlin" first appears on the
+        # Junior record (before the postdoc that shares it); "Fritz Haber
+        # Institute" is unique.
         "job_records": [
-            ("Principal Research Manager", "Microsoft Research, AI for Science", "Nov 2022", "machine-learned method"),
-            ("Junior Research Group Leader", "Department of Mathematics", "Nov 2020", "Founded and led"),
-            ("Doctoral Researcher", "Theory Department", "Oct 2013", "embedded in major production"),
+            ("Principal Research Manager", "Microsoft Research – Berlin", "Nov 2022", "machine-learned method"),
+            ("Junior Research Group Leader", "Free University of Berlin", "Nov 2020", "Founded and led"),
+            ("Doctoral Researcher", "Fritz Haber Institute", "Oct 2013", "embedded in major production"),
         ],
     },
 }

@@ -193,7 +193,11 @@
    one more level of org chart. #>
 {\small\renewcommand{\udot}[1]{#1}%
 \textsb{<< job.role >>}\hfill{\footnotesize\color{black!60}<< job.date|dateformat >>}\\
-\emph{<< org.institution >>, << job.dept >><+ if org.location +> – << org.location >><+ endif +>}}\par
+<# Affiliation flattened to institution level: the department/group line (and the
+   PI name it carried, e.g. "(F. Noé)") is dropped on this variant — a delivery
+   reader weights the employer, not the academic sub-unit. The research and
+   academic CVs keep the full "institution, department" line. #>
+\emph{<< org.institution >><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.tech +>
@@ -302,10 +306,12 @@
 <+ endfor +>
 
 \sidesection{Ships inside}
-<# The production-code list is shared fact, read straight from `industry` rather
-   than restated. "& others" rather than a closed list: the tail is genuinely
-   fuzzy. This reads even better to a program lead than to a researcher. #>
-{\color{sidegrey}<< industry.production_codes|join(", ") >> \& others}\par
+<# The production-code names are cut to a count here, matching the header metric
+   and bullet 3: the specific package names are specialist noise to this reader,
+   and "commercial and open-source" carries the interpretive weight instead. The
+   count is the length of the shared `industry.production_codes` list, so it
+   stays in step with the header's "ships in 6+ production codes". #>
+{\color{sidegrey}<< industry.production_codes|length >>+ production simulation packages, commercial and open-source}\par
 
 \sidesection{Mentoring and service}
 <# The leadership-flavoured items only; the manuscript-review line the research

@@ -154,7 +154,7 @@ employment:
     # team phrase instead.
     - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that achieved what the field had pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/)."
     - "Own the data workstream — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scale: 77k coupled-cluster reference calculations run on Azure."
-    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress), coordinating with the external engineering teams."
+    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in one, five more in progress), coordinating with the external engineering teams."
     - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
   positions:
@@ -166,7 +166,7 @@ employment:
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
     tech:
     - Founded and led a research group and secured competitive project funding as co-PI.
-    - Delivered a new research direction while managing and mentoring students and postdocs.
+    - Started independent work on ML for DFT while managing and mentoring students and postdocs.
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
@@ -175,7 +175,6 @@ employment:
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
     tech:
     - Created **PauliNet**, a first-of-its-kind method, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)** — a maintained open-source package with a user community.
-    - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
