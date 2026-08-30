@@ -241,11 +241,15 @@ awards:
   # by cv-tech.tex.in's awards filter; every other document still shows it.
   tech: false
 mentorship:
+- date: Jul 2024–Jun 2025
+  who: "A. Katbashev, Phd student (with S. Grimme)"
+- date: Jun 2023–Jun 2025
+  who: "[L. Cheng](https://sherrylixuecheng.github.io), Postdoc"
 - date: Sep 2022-Jul 2024
   who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), Master student"
 - date: Mar–Sep 2022
   who: "[E. Trushin](https://scholar.google.com/citations?user=GDHKpaUAAAAJ), Postdoc (with F. Noé)"
-- date: Sep 2021-Oct 2022
+- date: Sep 2021-Dec 2025
   who: "[B. Szabó](https://www.linkedin.com/in/bernat97/), Phd student (with F. Noé)"
 - date: May 2021-Dec 2022
   who: "[P. del Mazo](https://pablomazo.github.io), Postdoc"
@@ -253,7 +257,7 @@ mentorship:
   who: M. Höfler, Master student
 - date: Jul 2019-Jul 2020
   who: "[J. Lederer](https://www.researchgate.net/profile/Jonas-Lederer), Phd student, TU Berlin (with K.-R. Müller)"
-- date: Jan 2019-Oct 2022
+- date: Jan 2019-Mar 2025
   who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), Master/Phd student (with F. Noé)"
 defense:
 - date: 2022-2024
