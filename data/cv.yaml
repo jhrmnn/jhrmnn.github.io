@@ -137,6 +137,10 @@ employment:
   - date: Nov 2022-present
     role: Principal Research Manager
     dept: "[AI for Science](https://www.microsoft.com/en-us/research/lab/microsoft-research-ai-for-science)"
+    # The tech CV flattens affiliations to institution level, but keeps this one
+    # sub-unit: "AI for Science" is a recognizable industrial AI lab, not academic
+    # cruft. Honoured only by cv-tech.tex.in; the other CVs show every dept.
+    tech_keep_dept: true
     industry:
     - Co-lead **[Skala](https://github.com/microsoft/skala)** (15+ researchers and engineers across ML, quantum chemistry, and HPC), an ML exchange–correlation functional that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in quantum chemistry by establishing a new accuracy–cost frontier.
     - Lead the data workstream (in-house training-data generation and academic collaborations on data-generation protocols), with the Accurate Chemistry Collection (MSR-ACC) as its public output, carrying an unprecedented dataset of [77k coupled-cluster energies](https://doi.org/10.1038/s41597-026-07200-8).
@@ -152,9 +156,9 @@ employment:
     # check_cv_parsing.py anchors the Microsoft record on, and a dot-underlined
     # link would splice its dot-leader through it. The Skala repo link rides the
     # team phrase instead.
-    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that achieved what the field had pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/)."
-    - "Own the data workstream — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) of unprecedented scale: 77k coupled-cluster reference calculations run on Azure."
-    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress), coordinating with the external engineering teams."
+    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in the field."
+    - "Own the data workstream (in-house generation and external academic collaborations), publicly shipping a [dataset](https://doi.org/10.1038/s41597-026-07200-8) 100× larger than prior reference sets."
+    - "Drive adoption of the resulting methods into [6+ third-party codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), coordinating with the external engineering teams."
     - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
   positions:
@@ -165,8 +169,7 @@ employment:
     - Founded and led a group on ML for materials science, and was co-PI on a competitively funded MATH+ project.
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
     tech:
-    - Founded and led a research group and secured competitive project funding as co-PI.
-    - Delivered a new research direction while managing and mentoring students and postdocs.
+    - "Founded a research group from scratch: secured competitive funding as co-PI, hired and supervised its first postdoc and PhD student."
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
@@ -174,8 +177,7 @@ employment:
     - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained as a package for users.
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
     tech:
-    - Created **PauliNet**, a first-of-its-kind method, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)** — a maintained open-source package with a user community.
-    - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
+    - Created **PauliNet**, one of the first deep-learning methods to reach benchmark accuracy for molecular simulation, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained across 12 releases with 10 contributors.
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
@@ -196,7 +198,7 @@ employment:
     - Created **[libMBD](https://github.com/libmbd/libmbd)** and was a core contributor to FHI-aims.
     tech:
     - Built **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in major production simulation codes, and contributed to the FHI-aims code.
-    - First-authored the field's standard review (*Chem. Rev.* 2017).
+    - First-authored the field's standard review (*Chem. Rev.* 2017, cited 780+ times).
 - institution: Institute of Organic Chemistry and Biochemistry
   location: Prague
   positions:
