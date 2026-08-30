@@ -30,7 +30,7 @@ industry:
   - area: Engineering
     items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
   service:
-  - Mentored 7 researchers
+  - Mentored 9 researchers
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   - 40+ manuscripts reviewed
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
@@ -78,7 +78,7 @@ tech:
   # The manuscript-review line from `industry.service` is dropped here -- academic
   # noise to this reader; the leadership-flavoured items stay.
   service:
-  - Mentored 7 researchers
+  - Mentored 9 researchers
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   software: [DeepQMC, Skala, libMBD, Pyberny]
   # Sidebar blurbs reframed toward users and adoption rather than method, keyed
