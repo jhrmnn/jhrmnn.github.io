@@ -156,9 +156,9 @@ employment:
     # check_cv_parsing.py anchors the Microsoft record on, and a dot-underlined
     # link would splice its dot-leader through it. The Skala repo link rides the
     # team phrase instead.
-    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that achieved what the field had pursued for [60 years](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) (accepted in principle at Nature)."
-    - "Own the data workstream — in-house generation plus external academic collaborations — shipping a [public dataset](https://doi.org/10.1038/s41597-026-07200-8) about 100× larger than prior reference sets: 77k high-accuracy reference calculations run on Azure."
-    - "Drive adoption of the resulting methods into [six third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/) (live in one, five more in progress), coordinating with the external engineering teams."
+    - "Co-lead a team of **[15+ researchers and engineers](https://github.com/microsoft/skala)** across ML, quantum chemistry, and HPC, delivering a machine-learned method that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in the field."
+    - "Own the data workstream (in-house generation and external academic collaborations), publicly shipping a [dataset](https://doi.org/10.1038/s41597-026-07200-8) 100× larger than prior reference sets."
+    - "Drive adoption of the resulting methods into [6+ third-party and commercial codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), coordinating with the external engineering teams."
     - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
   positions:
