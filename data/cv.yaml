@@ -169,7 +169,7 @@ employment:
     - Founded and led a group on ML for materials science, and was co-PI on a competitively funded MATH+ project.
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
     tech:
-    - Founded a research group from scratch — secured competitive funding as co-PI, hired and supervised its first postdoc and PhD student.
+    - "Founded a research group from scratch: secured competitive funding as co-PI, hired and supervised its first postdoc and PhD student."
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
@@ -177,7 +177,7 @@ employment:
     - Created **PauliNet** (*Nat. Chem.* 2020), the first neural-network wavefunction to reach chemical accuracy, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained as a package for users.
     - Concurrently a fellow in TU Berlin's Machine Learning group (K.-R. Müller).
     tech:
-    - Created **PauliNet**, one of the first deep-learning methods to reach benchmark accuracy for molecular simulation, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)** — maintained across 12 releases with 10 contributors.
+    - Created **PauliNet**, one of the first deep-learning methods to reach benchmark accuracy for molecular simulation, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained across 12 releases with 10 contributors.
 - institution: University of Luxembourg
   positions:
   - date: Jan-Dec 2018
