@@ -2,6 +2,14 @@
 # (<Surname><JournalInitials><YY>, derived in fetch.py and used as the reference
 # id). The trailing comment is the canonical DOI/handle and the title.
 ref_extras:
+  FosterNC26:  # 10.1038/s41467-026-76604-2 — An ab initio foundation model of wavefunctions that acc
+    PDF: https://nablapsi.science/s41467-026-76604-2_reference.pdf
+  EhlertSD26:  # 10.1038/s41597-026-07200-8 — Accurate Chemistry Collection: Coupled cluster atomiza
+    PDF: https://nablapsi.science/s41597-026-07200-8.pdf
+  Luise25:  # 10.48550/arXiv.2506.14665 — Accurate and scalable exchange-correlation with deep learn
+    PDF: https://nablapsi.science/2506.14665v6.pdf
+  GasevicJCIM25:  # 10.1021/acs.jcim.5c01364 — Chemical Space Exploration with Artificial "Mindless" M
+    PDF: https://nablapsi.science/chemical-space-exploration-with-artificial-mindless-molecules.pdf
   AbbottES26:  # 10.1088/2516-1075/ae8067 — Roadmap on Advancements of the FHI-aims Software Package
     PDF: https://nablapsi.science/2505.00125v1.pdf
   ChengJCP25:  # 10.1063/5.0236919 — Highly accurate real-space electron densities with neural ne
