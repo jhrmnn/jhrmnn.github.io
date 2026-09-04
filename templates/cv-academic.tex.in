@@ -165,7 +165,7 @@
 \vspace{-2.25cm}
 {\raggedleft%
  {\itshape\color{black!60}
-  <+ for item in ["URL", "email", "ORCID"] +>
+  <+ for item in ["URL", "ORCID"] +>
   << item >>\@: \href{<< contact[item][1] >><< contact[item][0] >>}{<< contact[item][0] >>} \\
   <+ endfor +>
  \vspace{0.6cm}
