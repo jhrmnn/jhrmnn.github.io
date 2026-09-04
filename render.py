@@ -393,7 +393,11 @@ def apply_derived(ctx, derived):
     for item in ctx['software']:
         gh = item.get('github')
         if gh in software:
-            item.update(software[gh])
+            # Fetched fields fill in what cv.yaml leaves unset; an explicit key
+            # in cv.yaml (e.g. Skala's description, which otherwise redundantly
+            # leads with the repo name) wins over the crawl.
+            for key, value in software[gh].items():
+                item.setdefault(key, value)
     ctx['references'] = derived['references']
     # Substitute the live Publons review count into cv.yaml's NUMREV placeholder.
     # When it's unavailable (Publons rate-limited the fetch and no prior value
@@ -402,6 +406,13 @@ def apply_derived(ctx, derived):
     n_reviews = derived.get('n_reviews')
     token = f'{n_reviews} ' if n_reviews is not None else ''
     ctx['activity'] = [a.replace('NUMREV ', token) for a in ctx.get('activity', [])]
+    # Substitute the mentorship-list length into the NUMMENT placeholder of the
+    # one-pagers' service lines, so the count cannot drift from the list.
+    n_mentees = str(len(ctx.get('mentorship', [])))
+    for variant in ('industry', 'tech'):
+        service = ctx.get(variant, {}).get('service')
+        if service:
+            ctx[variant]['service'] = [s.replace('NUMMENT', n_mentees) for s in service]
     ctx['custom_data'] = derived.get('custom_data', {})
 
 

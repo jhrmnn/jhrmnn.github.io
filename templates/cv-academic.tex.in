@@ -185,14 +185,21 @@
 \end{cvblock}
 <+ endif +>
 
-\section{Employment}
+\section{Appointments}
 
 \begin{cvblock}
 <+ for item in employment +>
   && \textbf{<< item.institution >>}<+ if item.location +>, << item.location >><+ endif +> \\
   <+ for position in item.positions +>
   \hfill\color{white}<< position.date|dateformat >> &&
-  << position.role >>~$\cdot$ << position.dept >><+ if not loop.last +>\\
+  << position.role >>~$\cdot$ << position.dept >>
+  <+ if position.academic +>\\
+  && {\footnotesize\begin{itemize}
+  <+ for bullet in position.academic +>
+  \item << bullet >>
+  <+ endfor +>
+  \end{itemize}}
+  <+ endif +><+ if not loop.last +>\\
   <+ endif +>
   <+ endfor +><+ if not loop.last +>\\[6pt]
   <+ endif +>
@@ -318,38 +325,16 @@
 <+ endfor +>
 \end{cvblock}
 
-% The Presentations header spans a section title, an intro note and a
-% subsection title before the first talk appears. nobottomtitles* only
-% guards a single title, so the header could sit at a page bottom with no
-% actual talk beneath it. Reserve enough room for the whole header plus the
-% first subsection's own bottom-title allowance; otherwise start it on the
-% next page (a conditional replacement for the former hard \newpage).
-\needspace{12\baselineskip}
-\section{Presentations}
-
-\begin{cvblock}%
-\hfill && \vspace{-\baselineskip}\begin{itemize}%
-\item Includes future presentations
-\end{itemize}\vspace{-0.7\baselineskip}
-\end{cvblock}
-
-\vspace{-0.4em}
-\subsection{Invited conference talks}
-
-<< talk_block(presentations.invited) >>  % chktex 36
-
-\subsection{Contributed conference talks}
-
-<< talk_block(presentations.contributed) >>  % chktex 36
-
-\subsection{Conference poster presentations}
-
-<< talk_block(presentations.posters) >>  % chktex 36
-
-\subsection{Invited seminars}
-
-<< talk_block(presentations.seminars) >>  % chktex 36
-
+% The Publications and Presentations headers each span a section title, an
+% intro note and a subsection title before the first row appears.
+% nobottomtitles* only guards a single title, so a header could sit at a page
+% bottom with no actual content beneath it. Reserve enough room for the whole
+% header plus the first subsection's own bottom-title allowance; otherwise
+% start it on the next page (a conditional replacement for a hard \newpage).
+% \Needspace, not \needspace: both guards sit right after a longtable, where
+% the rubber variant's \pagetotal estimate runs short and fires a break with
+% a dozen usable lines still free; \Needspace measures the page exactly.
+\Needspace{12\baselineskip}
 \section{Publications}
 
 \begin{cvblock}%
@@ -373,5 +358,36 @@
 \subsection{Theses}
 
 << pub_block(["thesis"]) >>
+
+<# The Presentations header is shorter than the Publications one -- its intro
+   note is usually absent now -- so it reserves less. #>
+\Needspace{8\baselineskip}
+\section{Presentations}
+
+<# The note holds only while the list actually reaches into the future. At
+   year granularity a talk later this year cannot be told apart from a past
+   one, so the note errs on the quiet side. #>
+<+ if (presentations.invited + presentations.seminars + presentations.contributed)|selectattr("year", "gt", settings.now[:4]|int)|list +>
+\begin{cvblock}%
+\hfill && \vspace{-\baselineskip}\begin{itemize}%
+\item Includes future presentations
+\end{itemize}\vspace{-0.7\baselineskip}
+\end{cvblock}
+
+<+ endif +>
+\vspace{-0.4em}
+\subsection{Invited conference talks}
+
+<< talk_block(presentations.invited) >>  % chktex 36
+
+\subsection{Invited seminars}
+
+<< talk_block(presentations.seminars) >>  % chktex 36
+
+\subsection{Contributed conference talks}
+
+<# Pre-Ph.D. talks (2013 and earlier) stay in the data but are not shown;
+   posters are left off this CV entirely. #>
+<< talk_block(presentations.contributed|selectattr("year", "gt", 2013)) >>  % chktex 36
 
 \end{document}
