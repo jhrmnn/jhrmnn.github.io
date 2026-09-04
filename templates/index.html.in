@@ -142,7 +142,7 @@
   {% endfor %}
 
   <section id="CV" aria-label="CV">
-    <h2>Employment</h2>
+    <h2>Experience</h2>
     <table class="cvblock">
       {% for item in employment %}
         <tr class="heading">
@@ -171,19 +171,6 @@
             <td><strong>{{ degree.degree }}</strong> in <strong>{{ degree.field }}</strong>{% if degree.note %}&nbsp;&middot; <em>{{ degree.note }}</em>{% endif %}</td>
           </tr>
         {% endfor %}
-      {% endfor %}
-    </table>
-
-    <h2>Secondary appointments</h2>
-    <table class="cvblock">
-      {% for item in secondary %}
-        <tr>
-          <td>{{ item.date|dateformat }}</td>
-          <td>
-            {{ item.role }}&nbsp;&middot; {{ item.where }}
-            {% if item.subtitle %}<br/>{{ item.subtitle }}{% endif %}
-          </td>
-        </tr>
       {% endfor %}
     </table>
 
