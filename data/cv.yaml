@@ -54,9 +54,8 @@ tech:
   summary: >-
     Research-computing leader who takes large, cross-disciplinary technical
     efforts from concept to shipped software.
-    At **[Microsoft Research](https://www.microsoft.com/en-us/research/)** I co-lead
-    a team of 15+ across ML, quantum chemistry, and HPC and drive its output into
-    third-party and commercial code.
+    At Microsoft Research I co-lead a team of 15+ across ML, quantum
+    chemistry, and HPC and drive its output into third-party and commercial code.
     Earlier I founded and led a university research group and built open-source
     tools now used across the field.
   contact_keys: [email, URL, GitHub, LinkedIn]
@@ -95,16 +94,6 @@ tech:
   # Journal names are always italic and use the same abbreviations as the
   # experience bullets (Nat., not Nature).
   pub_venues: "*Nat. Chem.*, *Nat. Rev. Chem.*, *Phys. Rev. Lett.*"
-  # Home pages of the shared `industry.production_codes`, so the sidebar's
-  # "Ships inside" list can link each code. Every code in that list needs an
-  # entry here; the template fails on a missing one.
-  production_code_urls:
-    VASP: https://www.vasp.at
-    Q-Chem: https://www.q-chem.com
-    FHI-aims: https://fhi-aims.org
-    DFTB+: https://dftbplus.org
-    Quantum ESPRESSO: https://www.quantum-espresso.org
-    CP2K: https://www.cp2k.org
 contact:
   URL: [hrmnn.net, https://]
   email: [info@hrmnn.net, "mailto:"]
@@ -126,14 +115,12 @@ links:
   chess: [Lichess]
 education:
 - university: Humboldt University of Berlin
-  url: https://www.hu-berlin.de
   degrees:
   - date: Dec 2017
     degree: Ph.D.
     field: Physics
     note: summa cum laude
 - university: Charles University
-  url: https://cuni.cz
   location: Prague
   degrees:
   - date: Sep 2013
@@ -146,10 +133,7 @@ education:
     degree: B.S.
     field: Chemistry
 employment:
-# `url` links the institution on the tech CV's company line (cv-tech.tex.in
-# only; the other documents print the name plain).
 - institution: Microsoft Research
-  url: https://www.microsoft.com/en-us/research/
   location: Berlin
   positions:
   - date: Nov 2022-present
@@ -170,9 +154,9 @@ employment:
     # are the same as the `industry` bullets above -- 15+ people, 77k energies,
     # six adoption targets -- only the emphasis differs.
     #
-    # Typography of the tech prose (summary and bullets): bold is reserved for
-    # proper nouns (products, organisations), every proper noun is a link, and
-    # journal names are italic and link the paper in question.
+    # Typography of the tech prose: bold is reserved for my own software tools
+    # (Skala, PauliNet, DeepQMC, libMBD), each linked; journal names are italic
+    # and link the paper in question. Nothing else is bold.
     tech:
     # "machine-learned method" is kept as plain (unlinked) text: it is the phrase
     # check_cv_parsing.py anchors the Microsoft record on, and a dot-underlined
@@ -181,9 +165,8 @@ employment:
     - "Co-lead a team of 15+ researchers and engineers across ML, quantum chemistry, and HPC, delivering **[Skala](https://github.com/microsoft/skala)**, a machine-learned method that tackles a [60-year-old challenge](https://www.microsoft.com/en-us/research/blog/breaking-bonds-breaking-ground-advancing-the-accuracy-of-computational-chemistry-with-deep-learning/) in the field."
     - "Own the data workstream (in-house generation and external academic collaborations), publicly shipping a [dataset](https://doi.org/10.1038/s41597-026-07200-8) 100× larger than prior reference sets."
     - "Drive adoption of the resulting methods into [6+ third-party codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), coordinating with the external engineering teams."
-    - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: **[Flagship Pioneering](https://www.flagshippioneering.com/)**)."
+    - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
 - institution: Free University of Berlin
-  url: https://www.fu-berlin.de/en/
   positions:
   - date: Nov 2020-Oct 2022
     role: "[Junior Research Group](https://web.archive.org/web/20210623074243/https://www.mi.fu-berlin.de/en/math/groups/ML4MatSci/index.html) Leader"
@@ -192,7 +175,7 @@ employment:
     - Founded and led a group on ML for materials science, and was co-PI on a competitively funded MATH+ project.
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
     tech:
-    - "Founded a research group from scratch: secured competitive funding as co-PI, hired and supervised its first postdoc and Ph.D. student."
+    - "Founded a research group from scratch: secured competitive funding as co-PI, hired and supervised its first postdoc and Phd student."
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
@@ -202,7 +185,6 @@ employment:
     tech:
     - Created **[PauliNet](https://doi.org/10.1038/s41557-020-0544-y)**, one of the first deep-learning methods to reach benchmark accuracy for molecular simulation, and grew it into **[DeepQMC](https://github.com/deepqmc/deepqmc)**, maintained across 12 releases with 10 contributors.
 - institution: University of Luxembourg
-  url: https://www.uni.lu
   positions:
   - date: Jan-Dec 2018
     role: Postdoctoral Researcher
@@ -212,7 +194,6 @@ employment:
     tech:
     - Unified two competing modeling approaches into a single method ([*Phys. Rev. Lett.*](https://doi.org/10.1103/PhysRevLett.124.146401) 2020).
 - institution: Fritz Haber Institute of the Max Planck Society
-  url: https://www.fhi.mpg.de
   location: Berlin
   positions:
   - date: Oct 2013-Dec 2017
@@ -222,10 +203,9 @@ employment:
     - Developed many-body models of van der Waals interactions, and first-authored the field's standard review (*Chem. Rev.* 2017).
     - Created **[libMBD](https://github.com/libmbd/libmbd)** and was a core contributor to FHI-aims.
     tech:
-    - Built **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in major production simulation codes, and contributed to the **[FHI-aims](https://fhi-aims.org)** code.
+    - Built **[libMBD](https://github.com/libmbd/libmbd)**, now embedded in major production simulation codes, and contributed to the FHI-aims code.
     - First-authored the field's standard review ([*Chem. Rev.*](https://doi.org/10.1021/acs.chemrev.6b00446) 2017, cited 780+ times).
 - institution: Institute of Organic Chemistry and Biochemistry
-  url: https://www.uochb.cz
   location: Prague
   positions:
   - date: Mar 2010-Sep 2013
@@ -249,7 +229,7 @@ funding:
   sum: €160k
 awards:
 - date: Feb 2021
-  title: "[Marie Skłodowska-Curie Individual Fellowship](https://marie-sklodowska-curie-actions.ec.europa.eu)"
+  title: Marie Skłodowska-Curie Individual Fellowship
   note: "awarded, declined"
 - date: Jan 2014
   title: "[Heyrovsky Prize](https://cuni.cz/UK-5581.html) for the best science graduate"
@@ -270,21 +250,21 @@ mentorship:
 - date: Jul 2024–Jun 2025
   who: "A. Katbashev, Phd student (with S. Grimme)"
 - date: Jun 2023–Jun 2025
-  who: "[L. Cheng](https://sherrylixuecheng.github.io), Postdoc"
+  who: "[L. Cheng](https://sherrylixuecheng.github.io), postdoc"
 - date: Sep 2022-Jul 2024
-  who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), Master student"
+  who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), master student"
 - date: Mar–Sep 2022
-  who: "[E. Trushin](https://scholar.google.com/citations?user=GDHKpaUAAAAJ), Postdoc (with F. Noé)"
+  who: "[E. Trushin](https://scholar.google.com/citations?user=GDHKpaUAAAAJ), postdoc (with F. Noé)"
 - date: Sep 2021-Dec 2025
   who: "[B. Szabó](https://www.linkedin.com/in/bernat97/), Phd student (with F. Noé)"
 - date: May 2021-Dec 2022
-  who: "[P. del Mazo](https://pablomazo.github.io), Postdoc"
+  who: "[P. del Mazo](https://pablomazo.github.io), postdoc"
 - date: Apr 2021-Apr 2022
-  who: M. Höfler, Master student
+  who: M. Höfler, master student
 - date: Jul 2019-Jul 2020
   who: "[J. Lederer](https://www.researchgate.net/profile/Jonas-Lederer), Phd student, TU Berlin (with K.-R. Müller)"
 - date: Jan 2019-Mar 2025
-  who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), Master/Phd student (with F. Noé)"
+  who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), master/Phd student (with F. Noé)"
 defense:
 - date: 2022-2024
   who: B. Ames, University of Luxembourg
@@ -356,7 +336,7 @@ presentations:
     year: 2023
   - title: "Libmbd: A general-purpose package for scalable many-body dispersion calculations"
     event: Electronic Structure Software Development
-    where: Lausane, Switzerland
+    where: Lausanne, Switzerland
     note: virtual
     event_url: https://www.cecam.org/workshop-details/1121
     pdf: http://pub.hrmnn.net/dc/61d7af9d/2022-10-10-cecam-lausanne.pdf

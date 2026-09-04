@@ -198,10 +198,7 @@
    reader weights the employer, not the academic sub-unit. The one exception is a
    position flagged `tech_keep_dept` (Microsoft's "AI for Science", a named
    industrial lab). The research and academic CVs keep the full line always. #>
-<# The institution links its home page when the data carries a `url`, so every
-   proper noun on the record is a link; with \udot disabled above the link stays
-   invisible and only the destination survives. #>
-\emph{<< "[" ~ org.institution ~ "](" ~ org.url ~ ")" if org.url else org.institution >><+ if job.tech_keep_dept +>, << job.dept >><+ endif +><+ if org.location +> – << org.location >><+ endif +>}}\par
+\emph{<< org.institution >><+ if job.tech_keep_dept +>, << job.dept >><+ endif +><+ if org.location +> – << org.location >><+ endif +>}}\par
 \vspace{0.15em}
 \begin{itemize}\small
 <+ for b in job.tech +>
@@ -296,7 +293,7 @@
 <+ endfor +>
 <+ for _, ds in groups.items() +>
 {\sbseries << ds[0].degree >> << ds|map(attribute="field")|join(" & ") >>}\par
-{\color{sidegrey}<< "[" ~ school.university ~ "](" ~ school.url ~ ")" if school.url else school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
+{\color{sidegrey}<< school.university >><+ if school.location +>, << school.location >><+ endif +>, << ds[0].date.split()[-1] >><+ if ds[0].note +> (\emph{<< ds[0].note >>})<+ endif +>}\par\vspace{1pt}
 <+ endfor +>
 <+ endfor +>
 
@@ -314,13 +311,8 @@
    sidebar an unfamiliar package name is a skippable credibility hit rather than
    noise, and a reader who does know the codes gets a concrete anchor. Read
    straight from the shared `industry.production_codes`; "& others" rather than a
-   closed list, since the tail is genuinely fuzzy. Each code links its home page
-   (`tech.production_code_urls`), like every other proper noun on the page. #>
-<+ set codes = [] +>
-<+ for c in industry.production_codes +>
-<+ set _ = codes.append("[" ~ c ~ "](" ~ tech.production_code_urls[c] ~ ")") +>
-<+ endfor +>
-{\color{sidegrey}<< codes|join(", ") >> \& others}\par
+   closed list, since the tail is genuinely fuzzy. #>
+{\color{sidegrey}<< industry.production_codes|join(", ") >> \& others}\par
 
 \sidesection{Mentoring and service}
 <# The leadership-flavoured items only; the manuscript-review line the research
@@ -346,8 +338,8 @@
    list to the academic CV; the counts come from the live data so they never
    drift from the research CV's header. The full-list pointer is forced onto its
    own line (\hfill\break, not \\, so the first line keeps natural spacing
-   instead of being stretched to the measure). This is what frees roughly a third of the
-   page, and that space is deliberately left as white space, not backfilled. #>
+   instead of being stretched to the measure). This is what frees roughly a third
+   of the page, and that space is deliberately left as white space, not backfilled. #>
 \vspace{0.7em}
 {\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
 \textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
