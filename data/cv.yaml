@@ -30,7 +30,9 @@ industry:
   - area: Engineering
     items: Python, Fortran, HPC & cloud compute (Azure), open-source maintainership
   service:
-  - Mentored 9 researchers
+  # NUMMENT is replaced with the length of `mentorship` at render time, so the
+  # count cannot drift from the list (see apply_derived in render.py).
+  - Mentored NUMMENT researchers
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   - 40+ manuscripts reviewed
   # Entries of cv.yaml's `software` to show (role/URL/stars come from there),
@@ -78,7 +80,7 @@ tech:
   # The manuscript-review line from `industry.service` is dropped here -- academic
   # noise to this reader; the leadership-flavoured items stay.
   service:
-  - Mentored 9 researchers
+  - Mentored NUMMENT researchers
   - 25+ invited talks (Harvard, Caltech, Cambridge)
   software: [DeepQMC, Skala, libMBD, Pyberny]
   # Sidebar blurbs reframed toward users and adoption rather than method, keyed
@@ -160,6 +162,14 @@ employment:
     - "Own the data workstream (in-house generation and external academic collaborations), publicly shipping a [dataset](https://doi.org/10.1038/s41597-026-07200-8) 100× larger than prior reference sets."
     - "Drive adoption of the resulting methods into [6+ third-party codes](https://www.microsoft.com/en-us/research/blog/broadening-access-to-skala-creates-a-faster-path-to-predictive-dft/), coordinating with the external engineering teams."
     - "Run an [industrial early-access program](https://www.microsoft.com/en-us/research/project/dft/early-access/) with external R&D partners (first partner: [Flagship Pioneering](https://www.flagshippioneering.com/))."
+    # Academic-facing highlights for cv-academic: papers are the anchors
+    # (preprint and journal citations rather than blog links) and the science is
+    # the subject. Facts and numbers stay identical to the `industry`/`tech`
+    # bullets above -- 15+ people, 77k energies, six adoption targets.
+    academic:
+    - Co-lead **[Skala](https://arxiv.org/abs/2506.14665)**, a deep-learned exchange–correlation functional trained on coupled-cluster data, with a team of 15+ researchers across ML, quantum chemistry, and HPC.
+    - Lead its training-data effort, whose public output is the [Accurate Chemistry Collection](https://doi.org/10.1038/s41597-026-07200-8) of 77k coupled-cluster atomization energies (*Sci. Data* 2026).
+    - Coordinate Skala's adoption into third-party electronic-structure codes (announced in CP2K; ORCA, VASP, Turbomole, Psi4, and FHI-aims in progress).
 - institution: Free University of Berlin
   positions:
   - date: Nov 2020-Oct 2022
@@ -170,6 +180,9 @@ employment:
     - Started independent work on ML for DFT (*J. Chem. Phys.* 2023) while supervising students and postdocs.
     tech:
     - "Founded a research group from scratch: secured competitive funding as co-PI, hired and supervised its first postdoc and PhD student."
+    academic:
+    - Founded and led a group on machine learning for materials science; co-PI on the competitively funded MATH+ project AA2-8.
+    - Started an independent research line on machine-learned density functionals (*J. Chem. Phys.* 2023) while supervising students and postdocs.
   - date: Jan 2019-Oct 2020
     role: Postdoctoral Researcher
     dept: "[AI4Science group](https://www.mi.fu-berlin.de/en/math/groups/ai4s) (F. Noé)"
@@ -246,7 +259,7 @@ mentorship:
 - date: Jun 2023–Jun 2025
   who: "[L. Cheng](https://sherrylixuecheng.github.io), Postdoc"
 - date: Sep 2022-Jul 2024
-  who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), Master student"
+  who: "[U. C. Kaya](https://www.linkedin.com/in/umurcankaya/), master student"
 - date: Mar–Sep 2022
   who: "[E. Trushin](https://scholar.google.com/citations?user=GDHKpaUAAAAJ), Postdoc (with F. Noé)"
 - date: Sep 2021-Dec 2025
@@ -254,11 +267,11 @@ mentorship:
 - date: May 2021-Dec 2022
   who: "[P. del Mazo](https://pablomazo.github.io), Postdoc"
 - date: Apr 2021-Apr 2022
-  who: M. Höfler, Master student
+  who: M. Höfler, master student
 - date: Jul 2019-Jul 2020
   who: "[J. Lederer](https://www.researchgate.net/profile/Jonas-Lederer), Phd student, TU Berlin (with K.-R. Müller)"
 - date: Jan 2019-Mar 2025
-  who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), Master/Phd student (with F. Noé)"
+  who: "[Z. Schätzle](https://orcid.org/0000-0002-5345-6592), master/Phd student (with F. Noé)"
 defense:
 - date: 2022-2024
   who: B. Ames, University of Luxembourg
@@ -280,7 +293,7 @@ lectures:
   year: 2019
 activity:
 - Peer-reviewed [NUMREV manuscripts](https://www.webofscience.com/wos/author/record/1129328) for *Phys. Rev. X*, *Nat. Commun.*, *Nat. Mach. Intell.*, *Phys. Rev. Lett.*, *J. Chem. Phys.*, and other journals
-- Reviewed 1 grant proposal for *U. S. Department of Energy*
+- Grant proposal reviewer for the *U.S. Department of Energy*
 outreach:
 - date: Sep 2019
   what: Public lecture in the [Six Minute Challenge](https://www.facebook.com/events/tschechisches-zentrum-berlin/2-czexperts-six-minute-challenge-berlin/338317880432496/) series, Czech Center, Berlin
@@ -293,16 +306,21 @@ software:
   role: creator
   blurb: Deep-learning quantum Monte Carlo
   github: deepqmc/deepqmc
+- name: Skala
+  role: co-lead
+  blurb: Deep-learned XC functional for DFT
+  # An explicit description wins over the fetched GitHub one (see apply_derived
+  # in render.py), which leads with the repo name and would render "Skala ·
+  # co-lead ... Skala exchange-correlation functional" on the academic CV and
+  # the homepage.
+  description: Deep-learned exchange–correlation functional for DFT (Python)
+  github: microsoft/skala
 - name: libMBD
   role: creator
   github: libmbd/libmbd
 - name: Pyberny
   role: creator
   github: jhrmnn/pyberny
-- name: Skala
-  role: co-lead
-  blurb: Deep-learned XC functional for DFT
-  github: microsoft/skala
 - name: FHI-aims
   role: core contributor
   url: https://fhi-aims.org
@@ -330,7 +348,7 @@ presentations:
     year: 2023
   - title: "Libmbd: A general-purpose package for scalable many-body dispersion calculations"
     event: Electronic Structure Software Development
-    where: Lausane, Switzerland
+    where: Lausanne, Switzerland
     note: virtual
     event_url: https://www.cecam.org/workshop-details/1121
     pdf: http://pub.hrmnn.net/dc/61d7af9d/2022-10-10-cecam-lausanne.pdf
@@ -426,7 +444,7 @@ presentations:
   - title: Many-body dispersion meets non-local density functionals
     event: Modeling Many-Body Interactions
     event_url: https://th.fhi-berlin.mpg.de/meetings/MMBI2015/
-    where: Lake La Garda, Italy
+    where: Lake Garda, Italy
     year: 2015
   - title: Many-body dispersion meets non-local density functionals
     event: DPG March Meeting

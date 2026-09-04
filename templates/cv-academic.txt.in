@@ -19,13 +19,17 @@
 Dr. Jan Hermann
 ===============
 
-Employment
-----------
+Appointments
+------------
 
 {% for item in employment %}
 {% for position in item.positions %}
 - {{ position.date|dateformat }}, {{ position.role }}, {{ position.dept }}, {{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}
 
+{% for bullet in position.academic %}
+    - {{ bullet }}
+
+{% endfor %}
 {% endfor %}
 {% endfor %}
 
@@ -70,10 +74,6 @@ Mentorship
 - {{ item.date|dateformat }}, {{ item.who }}
 {% endfor %}
 
-Invited talks
--------------
-
-{{ talk_block(presentations.invited, "cvblock wide") }}
 Publications
 ------------
 
@@ -83,3 +83,7 @@ Research articles
 Book chapters
 
 {{ pub_block(["chapter"]) }}
+Invited talks
+-------------
+
+{{ talk_block(presentations.invited, "cvblock wide") }}
