@@ -336,11 +336,13 @@
 <# Publications reduced to one line — credibility ballast, not the argument. It
    names two or three flagship venues (the credibility work) and hands the full
    list to the academic CV; the counts come from the live data so they never
-   drift from the research CV's header. This is what frees roughly a third of the
-   page, and that space is deliberately left as white space, not backfilled. #>
+   drift from the research CV's header. The full-list pointer is forced onto its
+   own line (\hfill\break, not \\, so the first line keeps natural spacing
+   instead of being stretched to the measure). This is what frees roughly a third
+   of the page, and that space is deliberately left as white space, not backfilled. #>
 \vspace{0.7em}
 {\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
 \textsb{Publications:} << references|length >> papers, << "{:,}".format(ncites // 100 * 100) >>+ citations, incl.\ << tech.pub_venues >>
- Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
+\hfill\break Full list: \href{https://hrmnn.net/cv-academic.pdf}{hrmnn.net/cv-academic.pdf}}\par
 
 \end{document}
