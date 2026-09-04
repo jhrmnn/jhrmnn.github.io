@@ -331,7 +331,10 @@
 % bottom with no actual content beneath it. Reserve enough room for the whole
 % header plus the first subsection's own bottom-title allowance; otherwise
 % start it on the next page (a conditional replacement for a hard \newpage).
-\needspace{12\baselineskip}
+% \Needspace, not \needspace: both guards sit right after a longtable, where
+% the rubber variant's \pagetotal estimate runs short and fires a break with
+% a dozen usable lines still free; \Needspace measures the page exactly.
+\Needspace{12\baselineskip}
 \section{Publications}
 
 \begin{cvblock}%
@@ -356,7 +359,9 @@
 
 << pub_block(["thesis"]) >>
 
-\needspace{12\baselineskip}
+<# The Presentations header is shorter than the Publications one -- its intro
+   note is usually absent now -- so it reserves less. #>
+\Needspace{8\baselineskip}
 \section{Presentations}
 
 <# The note holds only while the list actually reaches into the future. At
