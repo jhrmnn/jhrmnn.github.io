@@ -165,7 +165,9 @@
 \vspace{-2.25cm}
 {\raggedleft%
  {\itshape\color{black!60}
-  <+ for item in ["URL", "ORCID"] +>
+<# Which contact lines head the page comes from `academic.contact_keys`, so a
+   private overlay (EXTRA_CTX) can prepend email and phone to the public pair. #>
+  <+ for item in academic.contact_keys +>
   << item >>\@: \href{<< contact[item][1] >><< contact[item][0] >>}{<< contact[item][0] >>} \\
   <+ endfor +>
  \vspace{0.6cm}

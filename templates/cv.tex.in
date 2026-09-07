@@ -148,19 +148,31 @@
 \hyphenation{Schrö-ding-er}
 
 <# Contact entries render their own destination as the visible text, so the
-   address survives a parser that strips link annotations. Google Scholar is the
+   address survives a parser that strips link annotations. A phone entry (a
+   "tel:" prefix, only present when a private contact overlay is layered in via
+   EXTRA_CTX) shows its number as-is, with spaces stripped from the link target.
+   `contact_keys` is a flat list for one line, or a list of lists to put each
+   group on its own line (the overlay does that once the phone no longer fits). Google Scholar is the
    one exception: its URL is a bare user id, useless as visible text. #>
 <+ macro contact_line() +>
+<+- set keys = industry.contact_keys +>
+<+- set groups = keys if keys[0] is not string else [keys] +>
+<+- set lines = [] +>
+<+- for group in groups +>
 <+- set parts = [] +>
-<+- for key in industry.contact_keys +>
+<+- for key in group +>
 <+- set val = contact[key][0] +>
 <+- set pre = contact[key][1] +>
-<+- set disp = val if pre.startswith("mailto:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
-<+- set _ = parts.append("\\href{" ~ pre ~ val ~ "}{" ~ disp ~ "}") +>
+<+- set disp = val if pre in ("mailto:", "tel:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
+<+- set _ = parts.append("\\href{" ~ pre ~ (val|replace(" ", "") if pre == "tel:" else val) ~ "}{" ~ disp ~ "}") +>
 <+- endfor +>
+<+- if loop.last +>
 <+- set gs = contact["Google Scholar"] +>
 <+- set _ = parts.append("\\href{" ~ gs[1] ~ gs[0] ~ "}{Google Scholar}") +>
-<< parts|join("~$\\cdot$~") >>
+<+- endif +>
+<+- set _ = lines.append(parts|join(" $\\cdot$~")) +>
+<+- endfor +>
+<< lines|join("\\\\\n ") >>
 <+- endmacro +>
 
 <# Experience is the CV's own `employment`, flattened. A position appears here
@@ -229,7 +241,9 @@
 \vspace{0.3em}
 % Colour-only links: five dot-underlined URLs in a row made the busiest line on
 % the page out of the one a reader should scan fastest.
-{\footnotesize\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
+<# Breakable only at the separators (a tie follows each dot), ragged so a second
+   line, when a private phone entry pushes one out, does not stretch the first. #>
+{\footnotesize\raggedright\renewcommand{\udot}[1]{\textcolor{accent}{#1}}%
  Berlin $\cdot$ << contact_line() >>}\par
 \vspace{0.55em}
 {\small << industry.summary >>}\par
