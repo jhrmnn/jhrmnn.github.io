@@ -77,12 +77,12 @@ $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 $(BLDDIR)/%.b64: % | $(BLDDIR)
 	base64 $^ >$@
 
-# The rendered files also depend on *which* context files went in, not just
-# their mtimes: switching EXTRA_CTX on or off must re-render even though no
-# input file changed. The stamp is rewritten only when the list changes.
+# The rendered files also depend on *which* context files and flags went in,
+# not just on file mtimes: switching EXTRA_CTX or --pic must re-render even
+# though no input file changed. The stamp is rewritten only when they change.
 CTX_STAMP = $(BLDDIR)/ctx.stamp
 $(CTX_STAMP): FORCE | $(BLDDIR)
-	@echo '$(CTX)' | cmp -s - $@ || echo '$(CTX)' >$@
+	@echo '$(CTX) $(FLAGS)' | cmp -s - $@ || echo '$(CTX) $(FLAGS)' >$@
 
 $(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) $(CTX_STAMP) | $(OUTDIR)
 	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
