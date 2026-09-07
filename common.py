@@ -59,9 +59,18 @@ def strip_html(str):
 def load_ctx(paths):
     # The static context files are YAML/JSON; other data files (e.g. the
     # hubs.md miniarticle source, read directly by render.py) are skipped.
-    return dict(
-        x
-        for c in paths
-        if c.suffix in ('.yaml', '.yml', '.json')
-        for x in yaml.safe_load(c.read_text()).items()
-    )
+    # Files are layered in order: a later file's top-level key replaces an
+    # earlier one's, except that two mappings merge key by key, so an overlay
+    # (e.g. a private contact file kept outside this repo, passed via the
+    # Makefile's EXTRA_CTX) can add or override a single entry of `contact`
+    # or `industry` without restating the rest of it.
+    ctx = {}
+    for c in paths:
+        if c.suffix not in ('.yaml', '.yml', '.json'):
+            continue
+        for key, val in yaml.safe_load(c.read_text()).items():
+            if isinstance(val, dict) and isinstance(ctx.get(key), dict):
+                ctx[key] = {**ctx[key], **val}
+            else:
+                ctx[key] = val
+    return ctx

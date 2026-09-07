@@ -96,6 +96,14 @@ tech:
   # Journal names are always italic and use the same abbreviations as the
   # experience bullets (Nat., not Nature).
   pub_venues: "*Nat. Chem.*, *Nat. Rev. Chem.*, *Phys. Rev. Lett.*"
+academic:
+  # The academic CV heads with only the public identifiers. A private overlay
+  # (see EXTRA_CTX in the Makefile) replaces this list to add email and phone.
+  contact_keys: [URL, ORCID]
+# Each entry is [value, link prefix]; the link is prefix + value and the visible
+# text is derived from both. The one-pager and academic CVs pick from this via
+# their `contact_keys`. A private overlay can add e.g. `phone: [..., "tel:"]`
+# and override `email` without restating the rest (mappings merge key by key).
 contact:
   URL: [hrmnn.net, https://]
   email: [info@hrmnn.net, "mailto:"]

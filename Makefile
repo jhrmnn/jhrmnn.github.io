@@ -1,7 +1,12 @@
 export BLDDIR = build
 OUTDIR = _site
 DERIVED = $(BLDDIR)/derived.json
-CTX = $(wildcard data/*)
+# Extra context files layered over data/* (later files override earlier ones,
+# mappings merge key by key; see load_ctx in common.py). Used to render the CVs
+# with private contact details kept in a separate repo, e.g.
+# `make EXTRA_CTX=/path/to/contact.yaml _site/cv.pdf`.
+EXTRA_CTX ?=
+CTX = $(wildcard data/*) $(EXTRA_CTX)
 
 vpath %.in templates
 vpath %.css templates
@@ -72,10 +77,17 @@ $(OUTDIR)/%: $(BLDDIR)/% | $(OUTDIR)
 $(BLDDIR)/%.b64: % | $(BLDDIR)
 	base64 $^ >$@
 
-$(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(OUTDIR)
+# The rendered files also depend on *which* context files went in, not just
+# their mtimes: switching EXTRA_CTX on or off must re-render even though no
+# input file changed. The stamp is rewritten only when the list changes.
+CTX_STAMP = $(BLDDIR)/ctx.stamp
+$(CTX_STAMP): FORCE | $(BLDDIR)
+	@echo '$(CTX)' | cmp -s - $@ || echo '$(CTX)' >$@
+
+$(OUTDIR)/%: %.in render.py $(CTX) $(DERIVED) $(CTX_STAMP) | $(OUTDIR)
 	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
-$(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) | $(BLDDIR)
+$(BLDDIR)/%: %.in render.py $(CTX) $(DERIVED) $(CTX_STAMP) | $(BLDDIR)
 	./render.py $< $(CTX) --derived $(DERIVED) $(FLAGS) -o $@
 
 # assets/profile-pic-web.png is not embedded, but its size feeds the footer's
