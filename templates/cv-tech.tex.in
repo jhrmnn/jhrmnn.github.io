@@ -160,19 +160,27 @@
 <# Contact entries render their own destination as the visible text, so the
    address survives a parser that strips link annotations. A phone entry (a
    "tel:" prefix, only present when a private contact overlay is layered in via
-   EXTRA_CTX) shows its number as-is, with spaces stripped from the link target. Unlike the research
+   EXTRA_CTX) shows its number as-is, with spaces stripped from the link target.
+   `contact_keys` is a flat list for one line, or a list of lists to put each
+   group on its own line (the overlay does that once the phone no longer fits). Unlike the research
    CV's contact line, this variant omits Google Scholar: it is an academic signal
    in the most-read block, and the publications one-liner at the foot already
    links the full record for anyone who wants it. #>
 <+ macro contact_line() +>
+<+- set keys = tech.contact_keys +>
+<+- set groups = keys if keys[0] is not string else [keys] +>
+<+- set lines = [] +>
+<+- for group in groups +>
 <+- set parts = [] +>
-<+- for key in tech.contact_keys +>
+<+- for key in group +>
 <+- set val = contact[key][0] +>
 <+- set pre = contact[key][1] +>
 <+- set disp = val if pre in ("mailto:", "tel:") else (pre|replace("https://", "")|replace("www.", "")) ~ val +>
 <+- set _ = parts.append("\\href{" ~ pre ~ (val|replace(" ", "") if pre == "tel:" else val) ~ "}{" ~ disp ~ "}") +>
 <+- endfor +>
-<< parts|join(" $\\cdot$~") >>
+<+- set _ = lines.append(parts|join(" $\\cdot$~")) +>
+<+- endfor +>
+<< lines|join("\\\\\n ") >>
 <+- endmacro +>
 
 <# Experience is the CV's own `employment`, flattened. A position appears here
