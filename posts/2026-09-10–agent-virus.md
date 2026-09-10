@@ -1,0 +1,3 @@
+I don’t think superintelligence is a risk, the LLM agents may program well (with guidance) and solve the hardest math problems out there (with guidance), but these are ultimately all chess-like problems, and the agents solve them with the kind of intelligence of a chess engine, and I don’t think that will change.
+
+But I can imagine the lab escape scenario, a rogue swarm of AI agents breaking out and, like a virus, spreading and wracking havoc, with no purpose, no goal, no intent, just multiplying and adapting, exactly like a virus. Which, fittingly, also relies on someone else’s hardware.
